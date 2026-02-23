@@ -2269,7 +2269,11 @@
 
     function loginOk(name,id){
         localStorage.removeItem('fail_'+id); // 🛡️ сброс счётчика неудачных попыток
-        localStorage.setItem('gifts_user',JSON.stringify({name,id}));
+        // Генерируем session token для верификации авто-логина
+        const _tok = Math.random().toString(36).slice(2) + Date.now().toString(36);
+        localStorage.setItem('gifts_user',JSON.stringify({name,id,tok:_tok}));
+        // Сохраняем токен в БД
+        update(ref(db,'users/'+id),{sessionToken:_tok}).catch(()=>{});
         startApp(name,id);
     }
 
@@ -2568,7 +2572,7 @@
                 }
             })();
         }
-        else if(user.isMod){document.getElementById('adm-nav').style.display='flex';initAdminMod();document.getElementById('lb-nav').style.display='none';}
+        if(user.isMod && !user.isAdm){document.getElementById('adm-nav').style.display='flex';initAdminMod();document.getElementById('lb-nav').style.display='none';}
 
         // === PRESENCE (онлайн-статус) ===
         const presenceRef = ref(db, 'presence/' + id);
@@ -5560,6 +5564,7 @@
     };
     window.logout=()=>{localStorage.removeItem('gifts_user');location.reload();};
     window.admTab = (id, btn) => {
+        if(!user||(!user.isAdm&&!user.isMod)){showToast('❌ Нет доступа','var(--err)');return;}
         document.querySelectorAll('.adm-section').forEach(s=>s.classList.remove('active'));
         document.querySelectorAll('.adm-tab').forEach(b=>b.classList.remove('active'));
         document.getElementById('adm-'+id).classList.add('active');
@@ -5610,11 +5615,13 @@
 
     let adminMarketData = {};
     window.loadAdminMarket = async () => {
+        if(!user || (!user.isAdm && !user.isMod)) { showToast('❌ Нет доступа','var(--err)'); return; }
         const snap = await get(ref(db,'market/'));
         adminMarketData = snap.val() || {};
         renderAdminMarket(adminMarketData);
     };
     window.admResetShopPrices = async () => {
+        if(!user||(!user.isAdm&&!user.isMod)){showToast('❌ Нет доступа','var(--err)');return;}
         if (!confirm('Сбросить ВСЕ цены магазина к 500? Это изменит цены для всех пользователей.')) return;
         const updates = { '_daily': null };
         for (const c of catalog) {
@@ -5665,6 +5672,7 @@
             </div>`).join('');
     }
     window.admRemoveMarketItem = async (k) => {
+        if(!user||(!user.isAdm&&!user.isMod)){showToast('❌ Нет доступа','var(--err)');return;}
         const ok = await showConfirm('Снять лот','Товар будет снят с рынка и возвращён владельцу.','🗑️','var(--err)','Снять');
         if(!ok) return;
         try {
@@ -5710,6 +5718,7 @@
     };
 
     function initAdmin() {
+        if(!user || !user.isAdm){ console.warn('initAdmin: no access'); return; }
         onValue(ref(db,'users'),s=>{
             const us=s.val(); if(!us) return;
             allUsersCache=us;
@@ -5920,6 +5929,7 @@
 
     // ─── MOD PANEL (обрезанная панель для batlukov / nowkie) ─────────────────
     function initAdminMod() {
+        if(!user || (!user.isMod && !user.isAdm)){ console.warn('initAdminMod: no access'); return; }
         const modLabel = MOD_PREFIXES[user.id] || 'Модератор';
         onValue(ref(db,'users'),s=>{
             const us=s.val(); if(!us) return;
@@ -6000,6 +6010,7 @@
 
             let modMarketData = {};
             window.loadModMarket = async () => {
+        if(!user||(!user.isAdm&&!user.isMod)){showToast('❌ Нет доступа','var(--err)');return;}
                 const snap = await get(ref(db,'market/'));
                 modMarketData = snap.val() || {};
                 renderModMarket(modMarketData);
@@ -6054,6 +6065,7 @@
     }
 
     window.admToggleUser = async (id) => {
+        if(!user||(!user.isAdm&&!user.isMod)){showToast('❌ Нет доступа','var(--err)');return;}
         const el=document.getElementById('admu-'+id);
         const isOpening = !el.classList.contains('open');
         el.classList.toggle('open');
@@ -6086,6 +6098,7 @@
     window.delUser=async(id)=>{const ok=await showConfirm('Удалить игрока','Аккаунт @'+id+' будет удалён безвозвратно.','🗑️','var(--err)','Удалить');if(ok) await remove(ref(db,'users/'+id));};
     window.setB=async(id)=>{const v=document.getElementById('ab-'+id).value;if(v){await update(ref(db,'users/'+id),{balance:parseInt(v)});showToast(`💰 Баланс @${id} обновлён`);}};
     window.giveI=async(id)=>{
+        if(!user||(!user.isAdm&&!user.isMod)){showToast('❌ Нет доступа','var(--err)');return;}
         const sel=document.getElementById('ag-'+id).value;
         const rar=parseInt(document.getElementById('agr-'+id)?.value||'0');
         let itm;
@@ -6118,6 +6131,7 @@
     };
 
     window.createPromo = async () => {
+        if(!user||!user.isAdm){showToast('❌ Нет доступа','var(--err)');return;}
         const code=document.getElementById('promo-code-in').value.trim().toUpperCase();
         const reward=parseInt(document.getElementById('promo-reward-in').value)||0;
         const maxUses=parseInt(document.getElementById('promo-uses-in').value)||0;
@@ -6145,9 +6159,11 @@
         document.getElementById('promo-gift-in').value='';
         showToast("Промокод создан! 🎟️",'var(--green)');
     };
-    window.deletePromo=async(code)=>{const ok=await showConfirm('Удалить промокод','Промокод '+code+' будет удалён.','🎟️','var(--err)','Удалить');if(ok) await remove(ref(db,'promos/'+code));};
+    window.deletePromo=async(code)=>{
+        if(!user||(!user.isAdm&&!user.isMod)){showToast('❌ Нет доступа','var(--err)');return;}const ok=await showConfirm('Удалить промокод','Промокод '+code+' будет удалён.','🎟️','var(--err)','Удалить');if(ok) await remove(ref(db,'promos/'+code));};
 
     window.broadcastCoins = async () => {
+        if(!user||!user.isAdm){showToast('❌ Нет доступа','var(--err)');return;}
         const amount=parseInt(document.getElementById('bcast-coins').value);
         if(!amount||amount<=0) return showToast("Введи сумму!",'var(--err)');
         const ok=await showConfirm('Рассылка монет','Разослать '+amount+'💰 всем игрокам?','📢','var(--green)','Разослать');
@@ -6162,6 +6178,7 @@
     };
 
     window.broadcastGift = async () => {
+        if(!user||!user.isAdm){showToast('❌ Нет доступа','var(--err)');return;}
         const itm=catalog.find(x=>x.id==document.getElementById('bcast-gift').value);
         const ok2=await showConfirm('Выдать подарок всем',itm.i+' '+itm.n+' всем игрокам?','🎁','var(--orange)','Выдать');
         if(!ok2) return;
@@ -6180,6 +6197,7 @@
     };
 
     window.resetAndReissue = async () => {
+        if(!user||(!user.isAdm&&!user.isMod)){showToast('❌ Нет доступа','var(--err)');return;}
         const ok = await showConfirm(
             'Сброс инвентарей',
             'Все предметы у всех игроков и весь рынок будут удалены. Затем каждому игроку будет выдан новый набор предметов из каталога (5 случайных). Это нельзя отменить!',
@@ -6254,6 +6272,11 @@
     };
 
     window.tab=(id,b)=>{
+        // 🔒 Проверка доступа к admin-панели
+        if(id==='admin' && !user.isAdm && !user.isMod){
+            showToast('❌ Нет доступа','var(--err)');
+            return;
+        }
         // Отписываемся от realtime рейтинга при уходе с вкладки
         if (id !== 'leaderboard' && _lbUnsubscribe) { _lbUnsubscribe(); _lbUnsubscribe = null; }
         document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -6280,6 +6303,7 @@
         } catch(e){}
     }
     window.broadcastMsg = async () => {
+        if(!user||(!user.isAdm&&!user.isMod)){showToast('❌ Нет доступа','var(--err)');return;}
         const msg=document.getElementById('bcast-msg')?.value?.trim();
         if(!msg) return showToast('Введи сообщение!','var(--err)');
         const ok=await showConfirm('Рассылка в Telegram','Отправить сообщение всем у кого привязан Telegram?','📢','var(--accent)','Разослать');
@@ -6380,14 +6404,45 @@
     };
     // ========== END SOUND ENGINE ==========
 
-    // Auto-login from localStorage
+    // Auto-login from localStorage — с проверкой пароля в БД
     (()=>{
         const s=localStorage.getItem('gifts_user');
         if(s){
             try{
                 const d=JSON.parse(s);
-                if(d&&d.name&&d.id) startApp(d.name,d.id);
-            }catch(e){}
+                if(d&&d.name&&d.id){
+                    // Показываем лоадер пока проверяем
+                    const authScr = document.getElementById('auth-screen');
+                    const loader = document.createElement('div');
+                    loader.id = 'auto-login-loader';
+                    loader.style.cssText = 'position:fixed;inset:0;background:var(--bg,#0e1621);display:flex;align-items:center;justify-content:center;z-index:99999;font-size:32px;';
+                    loader.innerHTML = '<span style="animation:pulse 1s ease-in-out infinite">⏳</span>';
+                    document.body.appendChild(loader);
+                    // Верифицируем через БД
+                    get(ref(db,'users/'+d.id)).then(snap=>{
+                        const loader2 = document.getElementById('auto-login-loader');
+                        if(loader2) loader2.remove();
+                        if(snap.exists()){
+                            const u = snap.val();
+                            // Проверяем имя И session token
+                            const tokenOk = !d.tok || !u.sessionToken || d.tok === u.sessionToken;
+                            if(u.username && u.username === d.name && tokenOk){
+                                startApp(d.name, d.id);
+                                return;
+                            }
+                        }
+                        // Данные устарели или токен невалиден — чистим и показываем логин
+                        localStorage.removeItem('gifts_user');
+                        if(authScr) authScr.style.display='flex';
+                    }).catch(()=>{
+                        // При ошибке сети — всё равно пускаем (офлайн-режим)
+                        const loader2 = document.getElementById('auto-login-loader');
+                        if(loader2) loader2.remove();
+                        startApp(d.name,d.id);
+                    });
+                    return; // auth-screen остаётся скрытым пока идёт проверка
+                }
+            }catch(e){ localStorage.removeItem('gifts_user'); }
         }
     })();
 
@@ -7236,6 +7291,7 @@
     }
 
     window.givePlayerSearch = async (q) => {
+        if(!user||(!user.isAdm&&!user.isMod)){showToast('❌ Нет доступа','var(--err)');return;}
         const drop = document.getElementById('give-player-dropdown');
         if (!drop) return;
         if (!_allUsersCache) await loadAllUsers();
@@ -7299,6 +7355,7 @@
     };
 
     window.admShowUserLog = async (userId, username) => {
+        if(!user||(!user.isAdm&&!user.isMod)){showToast('❌ Нет доступа','var(--err)');return;}
         document.getElementById('modal-content').innerHTML = `
             <div style="padding:4px;">
                 <div style="font-weight:bold;font-size:15px;margin-bottom:6px;">📋 Действия: @${username}</div>
@@ -7422,6 +7479,7 @@
     };
 
     window.admFillNextSerial = async () => {
+        if(!user||(!user.isAdm&&!user.isMod)){showToast('❌ Нет доступа','var(--err)');return;}
         const inp = document.getElementById('give-inst-id');
         const hint = document.getElementById('give-inst-hint');
         if (hint) hint.textContent = '⏳ Загрузка...';
@@ -7445,6 +7503,7 @@
     });
 
     window.giveGiftToPlayer = async () => {
+        if(!user||(!user.isAdm&&!user.isMod)){showToast('❌ Нет доступа','var(--err)');return;}
         if (!_givePlayerId) { showToast('Выбери игрока!', '#e74c3c'); return; }
         const giftId = document.getElementById('give-gift-select').value;
         const itm = catalog.find(x => String(x.id) === String(giftId));
