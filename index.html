@@ -188,6 +188,15 @@
         body.light-theme .market-listing-card [style*="background:rgba(255,255,255,0.06)"] { background: rgba(0,0,0,0.06) !important; }
         body.light-theme .market-listing-card [style*="background:rgba(255,255,255,0.04)"] { background: rgba(0,0,0,0.04) !important; border-color: rgba(0,0,0,0.08) !important; }
         body.light-theme .market-listing-card [style*="color:#4a6080"] { color: #6a8090 !important; }
+        /* === FORCE ALL TEXT VISIBLE IN MARKET CARDS (light theme) === */
+        body.light-theme .market-listing-card * { color: #111 !important; -webkit-text-fill-color: #111 !important; }
+        body.light-theme .market-listing-card[data-rarity="legendary"] * ,
+        body.light-theme .market-listing-card[data-rarity="nft"] * { color: #7a5500 !important; -webkit-text-fill-color: #7a5500 !important; }
+        body.light-theme .market-listing-card[data-rarity="lizard"] * { color: #006630 !important; -webkit-text-fill-color: #006630 !important; }
+        body.light-theme .market-listing-card[data-rarity="epic"] * { color: #4a1f99 !important; -webkit-text-fill-color: #4a1f99 !important; }
+        body.light-theme .market-listing-card[data-rarity="rare"] * { color: #1a3a99 !important; -webkit-text-fill-color: #1a3a99 !important; }
+        body.light-theme .market-listing-card[data-rarity="none"] * { color: #aaa !important; -webkit-text-fill-color: #aaa !important; }
+        body.light-theme .market-listing-card [style*="background:rgba(36,129,204"] { color: #fff !important; -webkit-text-fill-color: #fff !important; }
 
         /* ===== MODALS & OVERLAYS ===== */
         body.light-theme [style*="background:#0e1621"][style*="border-radius:20px"],
@@ -429,6 +438,8 @@
         .filter-btn.active { background: var(--accent); border-color: var(--accent); color: white; box-shadow: 0 4px 12px rgba(36,129,204,0.35); }
 
         @keyframes rainbow { 0%{color:#ff6b6b} 16%{color:#ffd93d} 33%{color:#6bcb77} 50%{color:#4d96ff} 66%{color:#c77dff} 83%{color:#ff6bcd} 100%{color:#ff6b6b} }
+        @keyframes rainbowBorder { 0%{border-color:rgba(255,107,107,0.6)} 16%{border-color:rgba(255,217,61,0.6)} 33%{border-color:rgba(107,203,119,0.6)} 50%{border-color:rgba(77,150,255,0.6)} 66%{border-color:rgba(199,125,255,0.6)} 83%{border-color:rgba(255,107,205,0.6)} 100%{border-color:rgba(255,107,107,0.6)} }
+        @keyframes rainbowGlow { 0%{box-shadow:0 2px 14px rgba(255,107,107,0.25)} 16%{box-shadow:0 2px 14px rgba(255,217,61,0.25)} 33%{box-shadow:0 2px 14px rgba(107,203,119,0.25)} 50%{box-shadow:0 2px 14px rgba(77,150,255,0.25)} 66%{box-shadow:0 2px 14px rgba(199,125,255,0.25)} 83%{box-shadow:0 2px 14px rgba(255,107,205,0.25)} 100%{box-shadow:0 2px 14px rgba(255,107,107,0.25)} }
         .lb-tab { flex:1;padding:9px 6px;border-radius:12px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);color:var(--secondary);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s; }
         .lb-tab-active { background:rgba(36,129,204,0.2);border-color:rgba(36,129,204,0.5);color:var(--accent); }
         .lb-row { display:flex;align-items:center;gap:10px;background:#0e1621;border-radius:14px;padding:11px 12px;border:1px solid rgba(255,255,255,0.06);transition:transform 0.15s;width:100%;box-sizing:border-box; }
@@ -3394,9 +3405,35 @@
             const itemId2 = x.nftSerial ? x.nftSerial : (x.inst ? String(x.inst).slice(-6) : '');
             const btnStyle = isMine
                 ? 'background:rgba(231,76,60,0.15);color:var(--err);border:1px solid rgba(231,76,60,0.3);'
-                : isNFT ? `background:linear-gradient(90deg,${isLizard?'#007744,#4dff91':'#b8860b,#ffd700'});color:#000;border:none;`
+                : isLizard ? 'background:linear-gradient(90deg,#007744,#4dff91);color:#000;border:none;'
+                : isNFT ? 'background:linear-gradient(90deg,#b8860b,#ffd700);color:#000;border:none;'
+                : isLeg ? 'background:linear-gradient(90deg,#b8860b,#ffd700);color:#000;border:none;'
+                : isEpic ? 'background:rgba(162,155,254,0.25);color:#a29bfe;border:1px solid rgba(162,155,254,0.4);'
+                : isRare ? 'background:rgba(77,180,255,0.18);color:#4db4ff;border:1px solid rgba(77,180,255,0.3);'
                 : 'background:rgba(36,129,204,0.18);color:var(--accent);border:1px solid rgba(36,129,204,0.3);';
-            return `<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:14px;">
+            const lotBg = isLizard ? 'linear-gradient(135deg,rgba(0,40,16,0.7),rgba(0,60,24,0.5))'
+                : isNFT ? 'linear-gradient(135deg,rgba(40,28,0,0.7),rgba(60,42,0,0.5))'
+                : isLeg ? 'linear-gradient(135deg,rgba(40,32,0,0.6),rgba(50,38,0,0.4))'
+                : isEpic ? 'linear-gradient(135deg,rgba(20,12,60,0.6),rgba(30,18,80,0.4))'
+                : isRare ? 'linear-gradient(135deg,rgba(8,18,50,0.6),rgba(12,24,70,0.4))'
+                : 'rgba(255,255,255,0.03)';
+            const lotBorder = isLizard ? 'rgba(77,255,145,0.35)'
+                : isNFT ? 'rgba(255,215,0,0.35)'
+                : isLeg ? 'rgba(255,215,0,0.3)'
+                : isEpic ? 'rgba(162,155,254,0.3)'
+                : isRare ? 'rgba(77,180,255,0.25)'
+                : 'rgba(255,255,255,0.06)';
+            const lotGlow = isLizard ? '0 2px 12px rgba(77,255,145,0.12)'
+                : isNFT ? '0 2px 12px rgba(255,215,0,0.12)'
+                : isLeg ? '0 2px 10px rgba(255,215,0,0.1)'
+                : isEpic ? '0 2px 10px rgba(162,155,254,0.1)'
+                : isRare ? '0 2px 8px rgba(77,180,255,0.08)'
+                : 'none';
+            const nftLotShimmer = isNFT ? `<div style="position:absolute;inset:0;border-radius:14px;pointer-events:none;background:linear-gradient(115deg,transparent 20%,rgba(255,255,255,0.07) 40%,transparent 60%,rgba(255,255,255,0.04) 80%,transparent 100%);background-size:300% 100%;animation:nftGoldShimmer 2s linear infinite;"></div>` : (isLeg ? `<div style="position:absolute;inset:0;border-radius:14px;pointer-events:none;background:linear-gradient(115deg,transparent 30%,rgba(255,215,0,0.1) 50%,transparent 70%);background-size:200% 100%;animation:nftGoldShimmer 2.5s linear infinite;"></div>` : '');
+            // Extra rainbow animation classes for lot wrapper
+            const lotExtraAnim = isNFT && !isLizard ? 'animation:rainbowBorder 3s linear infinite,rainbowGlow 3s linear infinite;' : '';
+            const buyLabel = isMine ? '❌ Снять' : isLizard ? '🦎 Купить' : isNFT ? '✦ Купить' : isLeg ? '👑 Купить' : isEpic ? '💜 Купить' : isRare ? '💙 Купить' : '🛒 Купить';
+            return `<div style="position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;padding:10px 12px;background:${lotBg};border:1.5px solid ${lotBorder};box-shadow:${lotGlow};border-radius:14px;${lotExtraAnim}">${nftLotShimmer}
                 <div style="flex:1;min-width:0;">
                     <div style="font-size:11px;color:var(--secondary);margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;" onclick="openUserProfile('${x.sI}')">${buildUsername({username:x.sN,activeCosmetic:x.sCosm||{}})}${isMine?' <span style="color:#4a6080;">(вы)</span>':''}</div>
                     <div style="display:flex;align-items:center;gap:6px;">${upgStr}${timerStr}${itemId2?`<span style="font-size:10px;color:#3a5070;font-family:monospace;">#${itemId2}</span>`:''}</div>
@@ -3404,7 +3441,7 @@
                 <div style="text-align:right;flex-shrink:0;">
                     <div style="font-size:16px;font-weight:900;color:${priceColor};">${x.mP.toLocaleString()}</div>
                     <button style="margin-top:4px;border-radius:10px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer;${btnStyle}" onclick="${isMine?`remM('${k}');closeModal()`:`buyM('${k}',${x.mP},'${x.sI}',event)`}">
-                        ${isMine?'❌ Снять':isNFT?'✦ Купить':'🛒 Купить'}
+                        ${buyLabel}
                     </button>
                 </div>
             </div>`;
