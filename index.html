@@ -3440,7 +3440,7 @@
         }
 
         // --- Берём весь каталог как основу ---
-        let catItems = catalog.filter(c => !c.nft); // Исключаем NFT подарки
+        let catItems = catalog.slice();
 
         // Поиск по названию
         const q = marketFilter.q;
