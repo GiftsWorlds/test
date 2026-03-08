@@ -893,7 +893,7 @@
             flex-shrink: 0; transition: 0.2s;
         }
         .profile-more-close:hover { background: rgba(255,255,255,0.12); }
-        .profile-more-title { flex: 1; text-align: center; font-size: 16px; font-weight: 700; color: var(--text); margin-right: 38px; }
+        .profile-more-title { flex: 1; text-align: center; font-size: 16px; font-weight: 700; color: var(--text); margin-left: 38px; }
         .profile-more-list { display: flex; flex-direction: column; gap: 0; padding: 10px 0; flex: 1; overflow-y: auto; }
         .profile-more-item {
             display: flex; align-items: center; gap: 16px;
@@ -5608,7 +5608,8 @@ ${rarObj.icon} <b>${itm.n}</b> ${itm.i||''}
 
         document.getElementById('profile').innerHTML = `
         <div class="tg-profile">
-            <div class="tg-profile-hero">
+            <div class="tg-profile-hero" style="position:relative;">
+                <button onclick="openProfileMore()" style="position:absolute;top:14px;right:14px;z-index:10;width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.08);color:var(--text);font-size:22px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);">⋯</button>
                 <div class="avatar-ring-wrap">
                     ${(() => {
                         const pinnedArr = [...pinnedInsts]
@@ -5665,9 +5666,6 @@ ${rarObj.icon} <b>${itm.n}</b> ${itm.i||''}
                     <div class="tg-stat"><div class="tg-stat-val">${(d.balance||0).toLocaleString()}</div><div class="tg-stat-lbl">💰 Монет</div></div>
                 </div>
                 ${renderProfileValueBlock(inv)}
-                <div class="tg-actions">
-                    <button class="tg-action-btn" onclick="openProfileMore()"><span class="tg-action-icon">⋯</span><span>Ещё</span></button>
-                </div>
             </div>
             <div class="tg-gifts-section">
                 <div class="tg-gifts-header">
@@ -9966,8 +9964,8 @@ window.maintSaveMsg = async () => {
 <!-- ===== PROFILE MORE MENU OVERLAY ===== -->
 <div id="profile-more-overlay" class="profile-more-overlay">
     <div class="profile-more-header">
-        <button class="profile-more-close" onclick="closeProfileMore()">✕</button>
         <div class="profile-more-title">Меню</div>
+        <button class="profile-more-close" onclick="closeProfileMore()">✕</button>
     </div>
     <div class="profile-more-list">
         <div class="profile-more-item" onclick="closeProfileMore(); setTimeout(openEdit, 200);">
