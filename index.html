@@ -5255,13 +5255,13 @@ ${rarObj.icon} <b>${itm.n}</b> ${itm.i||''}
             const all = snap.val()||{};
 
             const toPlayer = ([id,u]) => ({
-                id, name:u.name, level:u.level||1,
-                duelWins:u.duelWins||0, avatar:u.avatar||'',
+                id, name:u.username||u.name||id, level:u.level||1,
+                duelWins:u.duelWins||0, avatar:u.avatar||u.pic||'',
                 cosmetics:u.cosmetics||[],
                 online: u.lastSeen && (Date.now()-u.lastSeen<5*60*1000)
             });
             const allPlayers = Object.entries(all)
-                .filter(([id,u])=>id!==user.id && u && u.name)
+                .filter(([id,u])=>id!==user.id && u && (u.username||u.name))
                 .map(toPlayer);
 
             _duelCache = { all: allPlayers, friendIds, recentIds };
@@ -5376,7 +5376,7 @@ ${rarObj.icon} <b>${itm.n}</b> ${itm.i||''}
             const all = snap.val()||{};
             let players = Object.entries(all)
                 .filter(([id,u])=>id!==user.id && u && u.name)
-                .map(([id,u])=>({id,name:u.name,level:u.level||1,duelWins:u.duelWins||0,avatar:u.avatar,cosmetics:u.cosmetics||[],online:u.lastSeen&&(Date.now()-u.lastSeen<5*60*1000)}))
+                .map(([id,u])=>({id,name:u.username||u.name||id,level:u.level||1,duelWins:u.duelWins||0,avatar:u.avatar||u.pic||'',cosmetics:u.cosmetics||[],online:u.lastSeen&&(Date.now()-u.lastSeen<5*60*1000)}))
                 .filter(p=>p.name.toLowerCase().includes(q));
             if(!players.length){section.innerHTML=`<div style="text-align:center;padding:40px 20px;"><div style="font-size:36px;margin-bottom:10px;">🔍</div><div style="color:var(--secondary);font-size:14px;">Игрок не найден</div></div>`;return;}
             section.innerHTML=`<div style="font-size:11px;color:var(--secondary);font-weight:bold;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px;">🔍 Результаты (${players.length})</div><div style="display:flex;flex-direction:column;gap:7px;">${players.map(p=>_duelPlayerCard(p,'')).join('')}</div>`;
