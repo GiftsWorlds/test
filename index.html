@@ -2078,14 +2078,41 @@
     </div>
 
     <div class="nav" id="main-nav" style="display:none;">
-        <button class="nav-btn active" onclick="tab('shop',this)"><i>🛍️</i><span>Магазин</span></button>
-        <button class="nav-btn" onclick="tab('inv',this)"><div id="badge-inv" class="badge">0</div><i>📦</i><span>Склад</span></button>
-        <button class="nav-btn" onclick="tab('market',this)"><i>⚖️</i><span>Рынок</span></button>
-        <button class="nav-btn" onclick="tab('friends',this)"><div id="badge-fr" class="badge">0</div><i>👥</i><span>Друзья</span></button>
-        <button class="nav-btn" id="duel-nav-btn" onclick="tab('duel',this)" style="position:relative;"><div id="badge-duel" class="badge" style="right:8px;display:none;">0</div><i>⚔️</i><span>Дуэль</span></button>
-        <button class="nav-btn" onclick="tab('profile',this)"><i>👤</i><span>Профиль</span></button>
-        <button class="nav-btn" id="lb-nav" onclick="tab('leaderboard',this)"><i>🏆</i><span>Рейтинг</span></button>
-        <button id="adm-nav" class="nav-btn" style="display:none;color:var(--orange)" onclick="tab('admin',this)"><i>⚙️</i><span>Админ</span></button>
+        <button class="nav-btn active" onclick="tab('shop',this)">
+          <i><svg viewBox="0 0 80 80" fill="none" width="26" height="26"><defs><linearGradient id="ni_s1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#64B5F6"/><stop offset="100%" stopColor="#1565C0"/></linearGradient></defs><path d="M28 30 C28 18 52 18 52 30" stroke="#90CAF9" strokeWidth="5" strokeLinecap="round"/><path d="M14 30 L66 30 L62 68 L18 68 Z" fill="url(#ni_s1)"/><path d="M14 30 L30 30 L26 68 L18 68 Z" fill="white" fillOpacity="0.18"/><path d="M54 30 L66 30 L62 68 L50 68 Z" fill="black" fillOpacity="0.18"/><line x1="15" y1="44" x2="65" y2="44" stroke="black" strokeOpacity="0.15" strokeWidth="2"/><circle cx="40" cy="52" r="7" fill="white" fillOpacity="0.18"/></svg></i>
+          <span>Магазин</span>
+        </button>
+        <button class="nav-btn" onclick="tab('inv',this)">
+          <div id="badge-inv" class="badge">0</div>
+          <i><svg viewBox="0 0 80 80" fill="none" width="26" height="26"><defs><linearGradient id="ni_i1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#FFB74D"/><stop offset="100%" stopColor="#E65100"/></linearGradient><linearGradient id="ni_i2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#FFD54F"/><stop offset="100%" stopColor="#FF8F00"/></linearGradient></defs><rect x="12" y="36" width="52" height="32" rx="6" fill="url(#ni_i1)"/><path d="M56 36 L64 36 L64 68 L58 68 Z" fill="black" fillOpacity="0.2"/><rect x="8" y="22" width="60" height="18" rx="6" fill="url(#ni_i2)"/><rect x="9" y="23" width="58" height="7" rx="5" fill="white" fillOpacity="0.22"/><rect x="36" y="22" width="8" height="46" fill="white" fillOpacity="0.28"/><rect x="12" y="45" width="52" height="7" fill="white" fillOpacity="0.22"/><ellipse cx="36" cy="22" rx="9" ry="7" fill="white" fillOpacity="0.55"/><ellipse cx="44" cy="22" rx="9" ry="7" fill="white" fillOpacity="0.55"/><ellipse cx="40" cy="22" rx="5" ry="4" fill="url(#ni_i2)"/></svg></i>
+          <span>Склад</span>
+        </button>
+        <button class="nav-btn" onclick="tab('market',this)">
+          <i><svg viewBox="0 0 80 80" fill="none" width="26" height="26"><defs><linearGradient id="ni_m1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#80DEEA"/><stop offset="100%" stopColor="#00838F"/></linearGradient></defs><rect x="32" y="54" width="16" height="12" rx="3" fill="url(#ni_m1)"/><rect x="22" y="62" width="36" height="9" rx="6" fill="url(#ni_m1)"/><rect x="10" y="30" width="60" height="10" rx="5" fill="url(#ni_m1)"/><rect x="11" y="31" width="58" height="4" rx="3" fill="white" fillOpacity="0.2"/><circle cx="40" cy="35" r="7" fill="url(#ni_m1)"/><circle cx="40" cy="35" r="4" fill="#070d14"/><line x1="16" y1="40" x2="14" y2="54" stroke="#4DD0E1" strokeWidth="2.5" strokeDasharray="3 2"/><line x1="16" y1="40" x2="20" y2="54" stroke="#4DD0E1" strokeWidth="2.5" strokeDasharray="3 2"/><path d="M8 54 Q14 63 20 54" stroke="#00BCD4" strokeWidth="6" fill="none" strokeLinecap="round"/><circle cx="14" cy="48" r="7" fill="#FFD700"/><line x1="64" y1="40" x2="62" y2="57" stroke="#4DD0E1" strokeWidth="2.5" strokeDasharray="3 2"/><line x1="64" y1="40" x2="68" y2="57" stroke="#4DD0E1" strokeWidth="2.5" strokeDasharray="3 2"/><path d="M56 57 Q62 66 68 57" stroke="#00BCD4" strokeWidth="6" fill="none" strokeLinecap="round"/></svg></i>
+          <span>Рынок</span>
+        </button>
+        <button class="nav-btn" onclick="tab('friends',this)">
+          <div id="badge-fr" class="badge">0</div>
+          <i><svg viewBox="0 0 80 80" fill="none" width="26" height="26"><defs><linearGradient id="ni_fr1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#9575CD"/><stop offset="100%" stopColor="#4527A0"/></linearGradient><linearGradient id="ni_fr2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#CE93D8"/><stop offset="100%" stopColor="#7B1FA2"/></linearGradient></defs><circle cx="28" cy="28" r="14" fill="url(#ni_fr2)"/><ellipse cx="28" cy="62" rx="18" ry="13" fill="url(#ni_fr2)"/><circle cx="52" cy="28" r="14" fill="url(#ni_fr1)"/><ellipse cx="52" cy="62" rx="18" ry="13" fill="url(#ni_fr1)"/><path d="M40 26 C40 21 34 17 30 21 C26 25 30 33 40 40 C50 33 54 25 50 21 C46 17 40 21 40 26Z" fill="#FF4081"/><ellipse cx="36" cy="23" rx="4" ry="2.5" fill="white" fillOpacity="0.35"/></svg></i>
+          <span>Друзья</span>
+        </button>
+        <button class="nav-btn" id="duel-nav-btn" onclick="tab('duel',this)" style="position:relative;">
+          <div id="badge-duel" class="badge" style="right:8px;display:none;">0</div>
+          <i><svg viewBox="0 0 80 80" fill="none" width="26" height="26"><defs><linearGradient id="ni_d1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#ECEFF1"/><stop offset="100%" stopColor="#78909C"/></linearGradient><linearGradient id="ni_d2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#FFE082"/><stop offset="100%" stopColor="#FF8F00"/></linearGradient><radialGradient id="ni_d3" cx="50%" cy="50%" r="50%"><stop offset="0%" stopColor="#FFFDE7" stopOpacity="1"/><stop offset="50%" stopColor="#FFD700" stopOpacity="0.8"/><stop offset="100%" stopColor="#FF6F00" stopOpacity="0"/></radialGradient></defs><line x1="14" y1="14" x2="60" y2="60" stroke="url(#ni_d1)" strokeWidth="7" strokeLinecap="round"/><line x1="14" y1="14" x2="60" y2="60" stroke="white" strokeWidth="2.5" strokeLinecap="round" opacity="0.45"/><line x1="20" y1="38" x2="42" y2="16" stroke="url(#ni_d2)" strokeWidth="8" strokeLinecap="round"/><circle cx="20" cy="38" r="4.5" fill="url(#ni_d2)"/><circle cx="42" cy="16" r="4.5" fill="url(#ni_d2)"/><circle cx="64" cy="64" r="8" fill="url(#ni_d2)"/><circle cx="64" cy="64" r="4" fill="#FFF9C4" fillOpacity="0.75"/><line x1="66" y1="14" x2="20" y2="60" stroke="url(#ni_d1)" strokeWidth="7" strokeLinecap="round"/><line x1="66" y1="14" x2="20" y2="60" stroke="white" strokeWidth="2.5" strokeLinecap="round" opacity="0.38"/><line x1="60" y1="38" x2="38" y2="16" stroke="url(#ni_d2)" strokeWidth="8" strokeLinecap="round"/><circle cx="60" cy="38" r="4.5" fill="url(#ni_d2)"/><circle cx="38" cy="16" r="4.5" fill="url(#ni_d2)"/><circle cx="16" cy="64" r="8" fill="url(#ni_d2)"/><circle cx="16" cy="64" r="4" fill="#FFF9C4" fillOpacity="0.75"/><circle cx="40" cy="38" r="16" fill="url(#ni_d3)"/></svg></i>
+          <span>Дуэль</span>
+        </button>
+        <button class="nav-btn" onclick="tab('profile',this)">
+          <i><svg viewBox="0 0 80 80" fill="none" width="26" height="26"><defs><linearGradient id="ni_p1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#64B5F6"/><stop offset="100%" stopColor="#1565C0"/></linearGradient></defs><ellipse cx="40" cy="70" rx="28" ry="16" fill="url(#ni_p1)" opacity="0.88"/><circle cx="40" cy="30" r="20" fill="url(#ni_p1)"/><circle cx="40" cy="30" r="20" fill="white" fillOpacity="0.1"/><circle cx="60" cy="14" r="12" fill="#FFD700"/><circle cx="60" cy="14" r="8" fill="#FFF9C4" fillOpacity="0.55"/><path d="M60 6 L62 11 L67 11 L63 14 L65 19 L60 16 L55 19 L57 14 L53 11 L58 11 Z" fill="#FF8F00" opacity="0.9"/></svg></i>
+          <span>Профиль</span>
+        </button>
+        <button class="nav-btn" id="lb-nav" onclick="tab('leaderboard',this)">
+          <i><svg viewBox="0 0 80 80" fill="none" width="26" height="26"><defs><linearGradient id="ni_lb1" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stopColor="#FFD700"/><stop offset="100%" stopColor="#FFF9C4"/></linearGradient></defs><rect x="30" y="20" width="20" height="48" rx="4" fill="url(#ni_lb1)"/><rect x="8" y="34" width="20" height="34" rx="4" fill="#90CAF9"/><rect x="52" y="40" width="20" height="28" rx="4" fill="#EF9A9A"/><path d="M40 8 L43 16 L52 16 L45 21 L48 30 L40 25 L32 30 L35 21 L28 16 L37 16 Z" fill="url(#ni_lb1)"/></svg></i>
+          <span>Рейтинг</span>
+        </button>
+        <button id="adm-nav" class="nav-btn" style="display:none;color:var(--orange)" onclick="tab('admin',this)">
+          <i><svg viewBox="0 0 80 80" fill="none" width="26" height="26"><defs><linearGradient id="ni_a1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#FFB74D"/><stop offset="100%" stopColor="#E65100"/></linearGradient><linearGradient id="ni_a2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#FFE082"/><stop offset="100%" stopColor="#FF8F00"/></linearGradient></defs><path d="M40 14 L43 20 L50 18 L47 25 L54 26 L50 32 L56 36 L50 39 L52 46 L45 44 L43 52 L40 46 L37 52 L35 44 L28 46 L30 39 L24 36 L30 32 L26 26 L33 25 L30 18 L37 20 Z" fill="url(#ni_a1)"/><circle cx="40" cy="34" r="10" fill="#0d1521"/><circle cx="40" cy="34" r="6" fill="url(#ni_a1)" opacity="0.6"/><circle cx="40" cy="34" r="3" fill="white" fillOpacity="0.8"/><path d="M22 62 L22 54 L30 58 L40 50 L50 58 L58 54 L58 62 Z" fill="url(#ni_a2)"/><circle cx="30" cy="52" r="4" fill="#F44336"/><circle cx="40" cy="49" r="4" fill="#4CAF50"/><circle cx="50" cy="52" r="4" fill="#2196F3"/></svg></i>
+          <span>Админ</span>
+        </button>
     </div>
 </div>
 
@@ -5202,71 +5229,159 @@ ${rarObj.icon} <b>${itm.n}</b> ${itm.i||''}
     //  ⚔️ ДУЭЛЬ ПОДАРКАМИ
     // ═══════════════════════════════════════════
     // ===== FULL DUEL PAGE =====
-    let _duelAllUsers = [];
     let _duelSearchTimeout = null;
+    let _duelCache = null; // { all, friendIds, recentIds }
 
     window.renderDuelPage = async () => {
+        const inp = document.getElementById('duel-search-input');
+        if(inp) inp.value = '';
         const s = await get(ref(db,'users/'+user.id)), d = s.val();
-        // Update wins badge
         const winsEl = document.getElementById('duel-wins-badge');
         if(winsEl) winsEl.textContent = `⚔️ ${d.duelWins||0} побед`;
-        // Render players list
-        await duelLoadPlayers('');
+
+        // Load all users + build friends/recent sets
+        try {
+            const snap = await get(ref(db,'users'));
+            const all = snap.val()||{};
+            const friendIds = new Set(Object.keys(d.friends||{}));
+
+            // Recent opponents from activity log (last 3 unique)
+            const actSnap = await get(ref(db,'activity'));
+            const actArr = actSnap.val() ? Object.values(actSnap.val()) : [];
+            const recentIds = [];
+            const seenR = new Set();
+            actArr
+                .filter(e=>e.type==='duel_result'&&(e.winnerId===user.id||e.loserId===user.id))
+                .sort((a,b)=>(b.ts||0)-(a.ts||0))
+                .forEach(e=>{
+                    const oppId = e.winnerId===user.id ? e.loserId : e.winnerId;
+                    if(oppId && oppId!==user.id && !seenR.has(oppId)){seenR.add(oppId);recentIds.push(oppId);}
+                });
+            const recentIdsTrim = recentIds.slice(0,3);
+
+            const toPlayer = ([id,u]) => ({
+                id, name:u.name, level:u.level||1,
+                duelWins:u.duelWins||0, avatar:u.avatar,
+                cosmetics:u.cosmetics||[],
+                online: u.lastSeen && (Date.now()-u.lastSeen<5*60*1000)
+            });
+            const allPlayers = Object.entries(all)
+                .filter(([id,u])=>id!==user.id && u && u.name)
+                .map(toPlayer);
+
+            _duelCache = {
+                all: allPlayers,
+                friendIds,
+                recentIds: recentIdsTrim
+            };
+        } catch(e) {
+            _duelCache = { all:[], friendIds:new Set(), recentIds:[] };
+        }
+        _duelRenderDefault();
     };
+
+    function _duelRenderDefault() {
+        const section = document.getElementById('duel-players-section');
+        if(!section || !_duelCache) return;
+        const { all, friendIds, recentIds } = _duelCache;
+        let html = '';
+
+        // Recent opponents (max 3)
+        if(recentIds.length) {
+            const recPlayers = recentIds.map(id=>all.find(p=>p.id===id)).filter(Boolean);
+            if(recPlayers.length) {
+                html += `<div style="font-size:11px;color:#ff9800;font-weight:bold;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px;margin-top:2px;">🕐 Недавние</div>`;
+                html += `<div style="display:flex;flex-direction:column;gap:7px;margin-bottom:16px;">${recPlayers.map(p=>_duelPlayerCard(p,'recent')).join('')}</div>`;
+            }
+        }
+
+        // Friends
+        const friends = all.filter(p=>friendIds.has(p.id));
+        if(friends.length) {
+            html += `<div style="font-size:11px;color:#7c4dff;font-weight:bold;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px;">👥 Друзья</div>`;
+            html += `<div style="display:flex;flex-direction:column;gap:7px;margin-bottom:16px;">${friends.map(p=>_duelPlayerCard(p,'friend')).join('')}</div>`;
+        }
+
+        // All players (excluding friends and recent already shown above)
+        const shownIds = new Set([...recentIds, ...friends.map(p=>p.id)]);
+        const others = all.filter(p=>!shownIds.has(p.id)).sort((a,b)=>(b.duelWins-a.duelWins)||a.name.localeCompare(b.name));
+        if(others.length) {
+            html += `<div style="font-size:11px;color:var(--secondary);font-weight:bold;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px;">⚔️ Все игроки (${others.length})</div>`;
+            html += `<div style="display:flex;flex-direction:column;gap:7px;">${others.map(p=>_duelPlayerCard(p,'')).join('')}</div>`;
+        }
+
+        if(!html) {
+            html = `<div style="text-align:center;padding:40px 20px;"><div style="font-size:40px;margin-bottom:12px;">🏜️</div><div style="color:var(--secondary);font-size:14px;">Нет других игроков</div></div>`;
+        }
+        section.innerHTML = html;
+    }
+
+    function _duelPlayerCard(p, type) {
+        const badge = p.cosmetics.find(c=>c.startsWith('bdg_'));
+        const badgeInfo = badge ? (window.COSMETICS||[]).find(cc=>cc.id===badge) : null;
+        let borderCol = 'rgba(255,255,255,0.07)';
+        let bgCol = 'rgba(255,255,255,0.04)';
+        let hoverBg = 'rgba(255,107,107,0.08)';
+        let hoverBorder = 'rgba(255,107,107,0.3)';
+        if(type==='friend'){borderCol='rgba(124,77,255,0.25)';bgCol='rgba(124,77,255,0.06)';}
+        if(type==='recent'){borderCol='rgba(255,152,0,0.25)';bgCol='rgba(255,152,0,0.06)';}
+        return `<div onclick="duelPickGiftForPlayer('${p.id}','${p.name.replace(/'/g,"\\'")}',this)"
+            style="display:flex;align-items:center;gap:12px;background:${bgCol};border:1px solid ${borderCol};border-radius:16px;padding:11px 14px;cursor:pointer;transition:all 0.18s;"
+            onmouseover="this.style.background='${hoverBg}';this.style.borderColor='${hoverBorder}'"
+            onmouseout="this.style.background='${bgCol}';this.style.borderColor='${borderCol}'">
+            <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#1a2a3a,#0a1520);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;border:2px solid ${type==='friend'?'rgba(124,77,255,0.4)':type==='recent'?'rgba(255,152,0,0.4)':'rgba(255,107,107,0.2)'};position:relative;">
+                ${p.avatar?`<img src="${p.avatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" onerror="this.style.display='none'">`:'👤'}
+                ${p.online?`<div style="position:absolute;bottom:0;right:0;width:9px;height:9px;background:#2ecc71;border-radius:50%;border:2px solid var(--bg);"></div>`:''}
+            </div>
+            <div style="flex:1;min-width:0;">
+                <div style="font-weight:bold;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.name}</div>
+                <div style="font-size:11px;color:var(--secondary);">⭐ Ур.${p.level} &nbsp;•&nbsp; ⚔️ ${p.duelWins} пб.${badgeInfo?` &nbsp;${badgeInfo.val}`:''}</div>
+            </div>
+            <div style="background:linear-gradient(135deg,#e74c3c,#c0392b);border-radius:10px;padding:7px 12px;font-size:12px;font-weight:bold;color:white;white-space:nowrap;flex-shrink:0;">
+                ⚔️
+            </div>
+        </div>`;
+    }
 
     window.duelSearchUsers = (q) => {
         clearTimeout(_duelSearchTimeout);
-        _duelSearchTimeout = setTimeout(()=>duelLoadPlayers(q.trim().toLowerCase()), 250);
+        const trimmed = q.trim().toLowerCase();
+        if(!trimmed) {
+            _duelRenderDefault();
+            return;
+        }
+        _duelSearchTimeout = setTimeout(()=>duelLoadPlayers(trimmed), 200);
     };
 
     window.duelLoadPlayers = async (q) => {
         const section = document.getElementById('duel-players-section');
         if(!section) return;
-        section.innerHTML = `<div style="text-align:center;padding:30px;color:var(--secondary);font-size:13px;">⏳ Загрузка игроков...</div>`;
+
+        // If cache exists, search locally (instant)
+        if(_duelCache && _duelCache.all.length > 0) {
+            const results = _duelCache.all.filter(p=>p.name.toLowerCase().includes(q));
+            if(!results.length) {
+                section.innerHTML=`<div style="text-align:center;padding:40px 20px;"><div style="font-size:36px;margin-bottom:10px;">🔍</div><div style="color:var(--secondary);font-size:14px;">Игрок не найден</div></div>`;
+                return;
+            }
+            section.innerHTML = `
+                <div style="font-size:11px;color:var(--secondary);font-weight:bold;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px;">🔍 Результаты (${results.length})</div>
+                <div style="display:flex;flex-direction:column;gap:7px;">${results.map(p=>_duelPlayerCard(p,_duelCache.friendIds.has(p.id)?'friend':_duelCache.recentIds.includes(p.id)?'recent':'')).join('')}</div>`;
+            return;
+        }
+
+        // Fallback: load from DB
+        section.innerHTML=`<div style="text-align:center;padding:30px;color:var(--secondary);font-size:13px;">⏳ Поиск...</div>`;
         try {
             const snap = await get(ref(db,'users'));
             const all = snap.val()||{};
             let players = Object.entries(all)
-                .filter(([id,u])=> id !== user.id && u && u.name)
-                .map(([id,u])=>({id, name:u.name, level:u.level||1, duelWins:u.duelWins||0, avatar:u.avatar, cosmetics:u.cosmetics||[], online: u.lastSeen && (Date.now()-u.lastSeen<5*60*1000)}));
-            if(q) players = players.filter(p=>p.name.toLowerCase().includes(q));
-            players.sort((a,b)=>(b.duelWins-a.duelWins)||a.name.localeCompare(b.name));
-            if(!players.length) {
-                section.innerHTML=`<div style="text-align:center;padding:40px 20px;"><div style="font-size:40px;margin-bottom:12px;">🏜️</div><div style="color:var(--secondary);font-size:14px;">${q?'Игрок не найден':'Нет других игроков'}</div></div>`;
-                return;
-            }
-            section.innerHTML = `
-                <div style="font-size:11px;color:var(--secondary);font-weight:bold;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:10px;">
-                    ${q ? `🔍 Результаты поиска (${players.length})` : `⚔️ Все игроки (${players.length})`}
-                </div>
-                <div style="display:flex;flex-direction:column;gap:8px;">
-                    ${players.map(p=>{
-                        const badge = p.cosmetics.find(c=>c.startsWith('bdg_'));
-                        const badgeInfo = badge ? (window.COSMETICS||[]).find(cc=>cc.id===badge) : null;
-                        return `<div onclick="duelPickGiftForPlayer('${p.id}','${p.name.replace(/'/g,"\\'")}',this)" 
-                            style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:12px 14px;cursor:pointer;transition:all 0.2s;active-transform:scale(0.98);"
-                            onmouseover="this.style.background='rgba(255,107,107,0.08)';this.style.borderColor='rgba(255,107,107,0.3)'"
-                            onmouseout="this.style.background='rgba(255,255,255,0.04)';this.style.borderColor='rgba(255,255,255,0.07)'">
-                            <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#1a2a3a,#0a1520);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;border:2px solid rgba(255,107,107,0.2);position:relative;">
-                                ${p.avatar?`<img src="${p.avatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" onerror="this.style.display='none'">`:'👤'}
-                                ${p.online?`<div style="position:absolute;bottom:0;right:0;width:10px;height:10px;background:#2ecc71;border-radius:50%;border:2px solid var(--bg);"></div>`:''}
-                            </div>
-                            <div style="flex:1;min-width:0;">
-                                <div style="font-weight:bold;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.name}</div>
-                                <div style="font-size:11px;color:var(--secondary);">
-                                    ⭐ Ур. ${p.level} &nbsp;•&nbsp; ⚔️ ${p.duelWins} побед
-                                    ${badgeInfo?` &nbsp;•&nbsp; ${badgeInfo.val}`:''}
-                                </div>
-                            </div>
-                            <div style="background:linear-gradient(135deg,#e74c3c,#c0392b);border-radius:12px;padding:8px 14px;font-size:12px;font-weight:bold;color:white;white-space:nowrap;">
-                                ⚔️ Вызвать
-                            </div>
-                        </div>`;
-                    }).join('')}
-                </div>`;
-        } catch(e) {
-            section.innerHTML=`<div style="text-align:center;padding:30px;color:var(--err);">Ошибка загрузки</div>`;
-        }
+                .filter(([id,u])=>id!==user.id && u && u.name)
+                .map(([id,u])=>({id,name:u.name,level:u.level||1,duelWins:u.duelWins||0,avatar:u.avatar,cosmetics:u.cosmetics||[],online:u.lastSeen&&(Date.now()-u.lastSeen<5*60*1000)}))
+                .filter(p=>p.name.toLowerCase().includes(q));
+            if(!players.length){section.innerHTML=`<div style="text-align:center;padding:40px 20px;"><div style="font-size:36px;margin-bottom:10px;">🔍</div><div style="color:var(--secondary);font-size:14px;">Игрок не найден</div></div>`;return;}
+            section.innerHTML=`<div style="font-size:11px;color:var(--secondary);font-weight:bold;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px;">🔍 Результаты (${players.length})</div><div style="display:flex;flex-direction:column;gap:7px;">${players.map(p=>_duelPlayerCard(p,'')).join('')}</div>`;
+        } catch(e){section.innerHTML=`<div style="text-align:center;padding:30px;color:var(--err);">Ошибка</div>`;}
     };
 
     window.duelPickGiftForPlayer = async (targetId, targetName, rowEl) => {
