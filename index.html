@@ -5233,35 +5233,30 @@ ${rarObj.icon} <b>${itm.n}</b> ${itm.i||''}
     let _duelCache = null; // { all, friendIds, recentIds }
 
     window.renderDuelPage = async () => {
+        if(!user || !user.id) return;
         const inp = document.getElementById('duel-search-input');
         if(inp) inp.value = '';
-        const s = await get(ref(db,'users/'+user.id)), d = s.val();
-        const winsEl = document.getElementById('duel-wins-badge');
-        if(winsEl) winsEl.textContent = `⚔️ ${d.duelWins||0} побед`;
 
-        // Load all users + build friends/recent sets
+        // Show loading immediately
+        const section = document.getElementById('duel-players-section');
+        if(section) section.innerHTML = '<div style="text-align:center;padding:40px 20px;"><div style="font-size:32px;margin-bottom:10px;">⚔️</div><div style="color:var(--secondary);font-size:13px;">Загрузка игроков...</div></div>';
+
         try {
+            const s = await get(ref(db,'users/'+user.id));
+            const d = s.val() || {};
+            const winsEl = document.getElementById('duel-wins-badge');
+            if(winsEl) winsEl.textContent = `⚔️ ${d.duelWins||0} побед`;
+
+            const friendIds = new Set(Object.keys(d.friends||{}));
+            // Recent opponents from user profile field (fast, no heavy activity fetch)
+            const recentIds = (d.duelRecentOpponents || []).slice(0,3);
+
             const snap = await get(ref(db,'users'));
             const all = snap.val()||{};
-            const friendIds = new Set(Object.keys(d.friends||{}));
-
-            // Recent opponents from activity log (last 3 unique)
-            const actSnap = await get(ref(db,'activity'));
-            const actArr = actSnap.val() ? Object.values(actSnap.val()) : [];
-            const recentIds = [];
-            const seenR = new Set();
-            actArr
-                .filter(e=>e.type==='duel_result'&&(e.winnerId===user.id||e.loserId===user.id))
-                .sort((a,b)=>(b.ts||0)-(a.ts||0))
-                .forEach(e=>{
-                    const oppId = e.winnerId===user.id ? e.loserId : e.winnerId;
-                    if(oppId && oppId!==user.id && !seenR.has(oppId)){seenR.add(oppId);recentIds.push(oppId);}
-                });
-            const recentIdsTrim = recentIds.slice(0,3);
 
             const toPlayer = ([id,u]) => ({
                 id, name:u.name, level:u.level||1,
-                duelWins:u.duelWins||0, avatar:u.avatar,
+                duelWins:u.duelWins||0, avatar:u.avatar||'',
                 cosmetics:u.cosmetics||[],
                 online: u.lastSeen && (Date.now()-u.lastSeen<5*60*1000)
             });
@@ -5269,13 +5264,17 @@ ${rarObj.icon} <b>${itm.n}</b> ${itm.i||''}
                 .filter(([id,u])=>id!==user.id && u && u.name)
                 .map(toPlayer);
 
-            _duelCache = {
-                all: allPlayers,
-                friendIds,
-                recentIds: recentIdsTrim
-            };
+            _duelCache = { all: allPlayers, friendIds, recentIds };
         } catch(e) {
+            console.error('renderDuelPage error:', e);
             _duelCache = { all:[], friendIds:new Set(), recentIds:[] };
+            // Show error with retry button
+            if(section) section.innerHTML = `<div style="text-align:center;padding:40px 20px;">
+                <div style="font-size:36px;margin-bottom:10px;">⚠️</div>
+                <div style="color:var(--secondary);font-size:13px;margin-bottom:14px;">Не удалось загрузить игроков</div>
+                <button class="btn" style="width:auto;padding:8px 20px;font-size:13px;" onclick="renderDuelPage()">🔄 Попробовать снова</button>
+            </div>`;
+            return;
         }
         _duelRenderDefault();
     };
@@ -5579,7 +5578,9 @@ ${rarObj.icon} <b>${itm.n}</b> ${itm.i||''}
                 if(iWin && (current.duelWins||0)+1 >= 10 && !ownedSet.has('bdg_duelist')) {
                     winsUpdate.cosmetics = [...(current.cosmetics||[]), 'bdg_duelist'];
                 }
-                return {...current, cloudInv:inv, ...winsUpdate};
+                // Save recent opponent
+                const myRecent = [challengerId, ...(current.duelRecentOpponents||[]).filter(id=>id!==challengerId)].slice(0,5);
+                return {...current, cloudInv:inv, ...winsUpdate, duelRecentOpponents:myRecent};
             }),
             runTransaction(ref(db,'users/'+challengerId), (current) => {
                 if(!current) return;
@@ -5590,7 +5591,9 @@ ${rarObj.icon} <b>${itm.n}</b> ${itm.i||''}
                     inv.push({...myItem, from:`⚔️ ${user.name}`, seen:false, inst:_duelTs});
                     inv.push({...theirItem, from:'⚔️ Дуэль', inst:_duelTs+1});
                 }
-                return {...current, cloudInv:inv};
+                // Save recent opponent
+                const theirRecent = [user.id, ...(current.duelRecentOpponents||[]).filter(id=>id!==user.id)].slice(0,5);
+                return {...current, cloudInv:inv, duelRecentOpponents:theirRecent};
             })
         ]);
         if(!myTx.committed || !theirTx.committed) {
