@@ -5239,13 +5239,19 @@ ${rarObj.icon} <b>${itm.n}</b> ${itm.i||''}
         const winsEl = document.getElementById('duel-wins-badge');
         if(winsEl) winsEl.textContent = `⚔️ ${d.duelWins||0} побед`;
 
+        // Убедимся, что слушатель активен
+        if(!window._duelListenerActive) {
+            listenDuelChallenges();
+            window._duelListenerActive = true;
+        }
+
         // Load all users + build friends/recent sets
         try {
             const snap = await get(ref(db,'users'));
             const all = snap.val()||{};
             const friendIds = new Set(Object.keys(d.friends||{}));
 
-            // Recent opponents from activity log (last 3 unique)
+            // Recent opponents from activity log (last 5 unique)
             const actSnap = await get(ref(db,'activity'));
             const actArr = actSnap.val() ? Object.values(actSnap.val()) : [];
             const recentIds = [];
@@ -5257,7 +5263,7 @@ ${rarObj.icon} <b>${itm.n}</b> ${itm.i||''}
                     const oppId = e.winnerId===user.id ? e.loserId : e.winnerId;
                     if(oppId && oppId!==user.id && !seenR.has(oppId)){seenR.add(oppId);recentIds.push(oppId);}
                 });
-            const recentIdsTrim = recentIds.slice(0,3);
+            const recentIdsTrim = recentIds.slice(0,5); // Увеличена с 3 до 5
 
             const toPlayer = ([id,u]) => ({
                 id, name:u.name, level:u.level||1,
@@ -5271,10 +5277,12 @@ ${rarObj.icon} <b>${itm.n}</b> ${itm.i||''}
 
             _duelCache = {
                 all: allPlayers,
-                friendIds,
+                friendIds: friendIds,
                 recentIds: recentIdsTrim
             };
+            console.log('Duel cache loaded:', {recentCount: recentIdsTrim.length, friendCount: friendIds.size, totalPlayers: allPlayers.length});
         } catch(e) {
+            console.error('Error loading duel cache:', e);
             _duelCache = { all:[], friendIds:new Set(), recentIds:[] };
         }
         _duelRenderDefault();
@@ -5286,31 +5294,31 @@ ${rarObj.icon} <b>${itm.n}</b> ${itm.i||''}
         const { all, friendIds, recentIds } = _duelCache;
         let html = '';
 
-        // Recent opponents (max 3)
-        if(recentIds.length) {
+        // Recent opponents (max 3) - ПЕРВЫЙ БЛОК
+        if(recentIds && recentIds.length > 0) {
             const recPlayers = recentIds.map(id=>all.find(p=>p.id===id)).filter(Boolean);
-            if(recPlayers.length) {
-                html += `<div style="font-size:11px;color:#ff9800;font-weight:bold;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px;margin-top:2px;">🕐 Недавние</div>`;
+            if(recPlayers.length > 0) {
+                html += `<div style="font-size:11px;color:#ff9800;font-weight:bold;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px;margin-top:8px;">🕐 Недавние</div>`;
                 html += `<div style="display:flex;flex-direction:column;gap:7px;margin-bottom:16px;">${recPlayers.map(p=>_duelPlayerCard(p,'recent')).join('')}</div>`;
             }
         }
 
-        // Friends
-        const friends = all.filter(p=>friendIds.has(p.id));
-        if(friends.length) {
-            html += `<div style="font-size:11px;color:#7c4dff;font-weight:bold;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px;">👥 Друзья</div>`;
+        // Friends - ВТОРОЙ БЛОК
+        const friends = all.filter(p=>friendIds && friendIds.has(p.id));
+        if(friends && friends.length > 0) {
+            html += `<div style="font-size:11px;color:#7c4dff;font-weight:bold;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px;margin-top:8px;">👥 Друзья</div>`;
             html += `<div style="display:flex;flex-direction:column;gap:7px;margin-bottom:16px;">${friends.map(p=>_duelPlayerCard(p,'friend')).join('')}</div>`;
         }
 
-        // All players (excluding friends and recent already shown above)
-        const shownIds = new Set([...recentIds, ...friends.map(p=>p.id)]);
+        // All other players - ТРЕТИЙ БЛОК
+        const shownIds = new Set([...(recentIds||[]), ...friends.map(p=>p.id)]);
         const others = all.filter(p=>!shownIds.has(p.id)).sort((a,b)=>(b.duelWins-a.duelWins)||a.name.localeCompare(b.name));
-        if(others.length) {
-            html += `<div style="font-size:11px;color:var(--secondary);font-weight:bold;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px;">⚔️ Все игроки (${others.length})</div>`;
+        if(others && others.length > 0) {
+            html += `<div style="font-size:11px;color:var(--secondary);font-weight:bold;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px;margin-top:8px;">⚔️ Все игроки (${others.length})</div>`;
             html += `<div style="display:flex;flex-direction:column;gap:7px;">${others.map(p=>_duelPlayerCard(p,'')).join('')}</div>`;
         }
 
-        if(!html) {
+        if(!html || html.trim().length === 0) {
             html = `<div style="text-align:center;padding:40px 20px;"><div style="font-size:40px;margin-bottom:12px;">🏜️</div><div style="color:var(--secondary);font-size:14px;">Нет других игроков</div></div>`;
         }
         section.innerHTML = html;
@@ -5345,12 +5353,12 @@ ${rarObj.icon} <b>${itm.n}</b> ${itm.i||''}
 
     window.duelSearchUsers = (q) => {
         clearTimeout(_duelSearchTimeout);
-        const trimmed = q.trim().toLowerCase();
+        const trimmed = (q || '').trim().toLowerCase();
         if(!trimmed) {
             _duelRenderDefault();
             return;
         }
-        _duelSearchTimeout = setTimeout(()=>duelLoadPlayers(trimmed), 200);
+        _duelSearchTimeout = setTimeout(()=>window.duelLoadPlayers(trimmed), 200);
     };
 
     window.duelLoadPlayers = async (q) => {
@@ -5358,15 +5366,17 @@ ${rarObj.icon} <b>${itm.n}</b> ${itm.i||''}
         if(!section) return;
 
         // If cache exists, search locally (instant)
-        if(_duelCache && _duelCache.all.length > 0) {
+        if(_duelCache && _duelCache.all && _duelCache.all.length > 0) {
             const results = _duelCache.all.filter(p=>p.name.toLowerCase().includes(q));
             if(!results.length) {
                 section.innerHTML=`<div style="text-align:center;padding:40px 20px;"><div style="font-size:36px;margin-bottom:10px;">🔍</div><div style="color:var(--secondary);font-size:14px;">Игрок не найден</div></div>`;
                 return;
             }
+            const friendIds = _duelCache.friendIds || new Set();
+            const recentIds = _duelCache.recentIds || [];
             section.innerHTML = `
                 <div style="font-size:11px;color:var(--secondary);font-weight:bold;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px;">🔍 Результаты (${results.length})</div>
-                <div style="display:flex;flex-direction:column;gap:7px;">${results.map(p=>_duelPlayerCard(p,_duelCache.friendIds.has(p.id)?'friend':_duelCache.recentIds.includes(p.id)?'recent':'')).join('')}</div>`;
+                <div style="display:flex;flex-direction:column;gap:7px;">${results.map(p=>_duelPlayerCard(p,friendIds.has(p.id)?'friend':recentIds.includes(p.id)?'recent':'')).join('')}</div>`;
             return;
         }
 
@@ -5381,7 +5391,7 @@ ${rarObj.icon} <b>${itm.n}</b> ${itm.i||''}
                 .filter(p=>p.name.toLowerCase().includes(q));
             if(!players.length){section.innerHTML=`<div style="text-align:center;padding:40px 20px;"><div style="font-size:36px;margin-bottom:10px;">🔍</div><div style="color:var(--secondary);font-size:14px;">Игрок не найден</div></div>`;return;}
             section.innerHTML=`<div style="font-size:11px;color:var(--secondary);font-weight:bold;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px;">🔍 Результаты (${players.length})</div><div style="display:flex;flex-direction:column;gap:7px;">${players.map(p=>_duelPlayerCard(p,'')).join('')}</div>`;
-        } catch(e){section.innerHTML=`<div style="text-align:center;padding:30px;color:var(--err);">Ошибка</div>`;}
+        } catch(e){console.error(e);section.innerHTML=`<div style="text-align:center;padding:30px;color:var(--err);">Ошибка при поиске</div>`;}
     };
 
     window.duelPickGiftForPlayer = async (targetId, targetName, rowEl) => {
@@ -5497,6 +5507,12 @@ ${rarObj.icon} <b>${itm.n}</b> ${itm.i||''}
         const s = await get(ref(db,'users/'+user.id)), d = s.val();
         const myInv = toArr(d.cloudInv);
         if(!myInv.length) return showToast('У тебя нет подарков для дуэли!','var(--err)');
+        
+        // Reset selection
+        selectedDuelInst = null;
+        selectedDuelEmoji = '🎁';
+        selectedDuelName = '';
+        
         const makeCard = (x) => {
             const cat = catalog.find(c=>c.id==x.id);
             const img = resolveImg(x);
@@ -5524,7 +5540,7 @@ ${rarObj.icon} <b>${itm.n}</b> ${itm.i||''}
                     <div style="font-size:11px;color:var(--secondary);">ТВОЯ СТАВКА</div>
                     <div id="duel-selected-name" style="font-weight:bold;color:#ff6b6b;"></div>
                 </div>
-                <button id="duel-fight-btn" class="btn" style="background:linear-gradient(90deg,#e74c3c,#c0392b);display:none;" onclick="fightDuel('${duelKey}','${challenge.fromId}','${challenge.itemInst}','${challenge.fromName}','${challenge.itemEmoji}','${challenge.itemName}')">⚔️ В БОЙ!</button>
+                <button id="duel-fight-btn" class="btn" style="background:linear-gradient(90deg,#e74c3c,#c0392b);display:none;" onclick="fightDuel('${duelKey}','${challenge.fromId}','${challenge.itemInst}','${challenge.fromName.replace(/'/g,"\\'")}','${challenge.itemEmoji}','${challenge.itemName.replace(/'/g,"\\'")}')">⚔️ В БОЙ!</button>
                 <button class="btn" style="background:rgba(255,255,255,0.05);color:var(--secondary);margin-top:8px;" onclick="declineDuel('${duelKey}')">🏳️ Отказаться</button>
             </div>`;
         openModal();
@@ -5545,144 +5561,168 @@ ${rarObj.icon} <b>${itm.n}</b> ${itm.i||''}
 
     window.fightDuel = async (duelKey, challengerId, theirInst, challengerName, theirEmoji, theirItemName) => {
         if(!selectedDuelInst) return showToast('Выбери ставку!','var(--err)');
+        
+        // Close modal immediately
+        closeModal();
+        
         // 🛡️ Rate limit
-        const _rlD = _protection.duel(); if(!_rlD.ok) return showToast(_rlD.msg, '#e74c3c');
+        const _rlD = _protection.duel(); 
+        if(!_rlD.ok) return showToast(_rlD.msg, '#e74c3c');
 
-        // 🛡️ Fetch both inventories для проверки наличия предметов
-        const [mySnap, theirSnap] = await Promise.all([get(ref(db,'users/'+user.id)), get(ref(db,'users/'+challengerId))]);
-        const myD = mySnap.val(), theirD = theirSnap.val();
-        const myInvCheck = toArr(myD.cloudInv), theirInvCheck = toArr(theirD.cloudInv);
-        const myItem = myInvCheck.find(x=>String(x.inst)==String(selectedDuelInst));
-        const theirItem = theirInvCheck.find(x=>String(x.inst)==String(theirInst));
-        if(!myItem||!theirItem) { closeModal(); return showToast('Один из предметов уже недоступен!','var(--err)'); }
-
-        // Determine winner 50/50 (до транзакций, результат фиксирован)
-        const iWin = Math.random() < 0.5;
-        const winnerId = iWin ? user.id : challengerId;
-        const winnerName = iWin ? user.name : challengerName;
-        const myEmoji2 = myItem.i||(catalog.find(c=>c.id==myItem.id)?.i)||'🎁';
-        const _duelTs = Date.now();
-
-        // 🛡️ Атомарное обновление инвентарей обоих участников через runTransaction
-        const [myTx, theirTx] = await Promise.all([
-            runTransaction(ref(db,'users/'+user.id), (current) => {
-                if(!current) return;
-                let inv = toArr(current.cloudInv);
-                if(!inv.some(x=>String(x.inst)==String(selectedDuelInst))) return; // предмет уже ушёл
-                inv = inv.filter(x=>String(x.inst)!=String(selectedDuelInst));
-                if(iWin) {
-                    inv.push({...myItem, from:'⚔️ Дуэль', inst:_duelTs});
-                    inv.push({...theirItem, from:`⚔️ ${challengerName}`, seen:false, inst:_duelTs+1});
-                }
-                const winsUpdate = iWin ? {duelWins:(current.duelWins||0)+1} : {};
-                const ownedSet = new Set(current.cosmetics||[]);
-                if(iWin && (current.duelWins||0)+1 >= 10 && !ownedSet.has('bdg_duelist')) {
-                    winsUpdate.cosmetics = [...(current.cosmetics||[]), 'bdg_duelist'];
-                }
-                return {...current, cloudInv:inv, ...winsUpdate};
-            }),
-            runTransaction(ref(db,'users/'+challengerId), (current) => {
-                if(!current) return;
-                let inv = toArr(current.cloudInv);
-                if(!inv.some(x=>String(x.inst)==String(theirInst))) return; // предмет уже ушёл
-                inv = inv.filter(x=>String(x.inst)!=String(theirInst));
-                if(!iWin) {
-                    inv.push({...myItem, from:`⚔️ ${user.name}`, seen:false, inst:_duelTs});
-                    inv.push({...theirItem, from:'⚔️ Дуэль', inst:_duelTs+1});
-                }
-                return {...current, cloudInv:inv};
-            })
-        ]);
-        if(!myTx.committed || !theirTx.committed) {
-            closeModal();
-            return showToast('Один из предметов уже был использован!','var(--err)');
-        }
-        await remove(ref(db,`duelChallenges/${user.id}/${duelKey}`));
-        logActivity('duel_result', {winner: winnerName, winnerId, loser: iWin ? challengerName : user.name, loserId: iWin ? challengerId : user.id, item1: myItem.n, item2: theirItem.n});
-        // XP: +50 победителю, -20 проигравшему
-        awardXp(winnerId, 50);
-        awardXp(iWin ? challengerId : user.id, -20);
-
-        // DUEL ANIMATION
-        const overlay = document.getElementById('modal-overlay');
-        document.getElementById('modal-content').innerHTML = `
-            <div style="text-align:center;padding:20px 0;" id="duel-anim-wrap">
-                <div style="font-size:13px;color:var(--secondary);margin-bottom:20px;letter-spacing:1px;text-transform:uppercase;">⚔️ Дуэль начинается!</div>
-                <div style="display:flex;align-items:center;justify-content:center;gap:20px;">
-                    <div id="duel-left" style="text-align:center;transition:all 1s ease;">
-                        <div style="font-size:52px;margin-bottom:8px;">${myEmoji2}</div>
-                        <div style="font-size:12px;font-weight:bold;color:#4db4ff;">${user.name}</div>
-                    </div>
-                    <div id="duel-vs" style="font-size:32px;font-weight:900;color:#ff6b6b;">VS</div>
-                    <div id="duel-right" style="text-align:center;transition:all 1s ease;">
-                        <div style="font-size:52px;margin-bottom:8px;">${theirEmoji}</div>
-                        <div style="font-size:12px;font-weight:bold;color:#ff6b6b;">${challengerName}</div>
-                    </div>
-                </div>
-                <div id="duel-result" style="margin-top:24px;opacity:0;transition:opacity 0.5s;"></div>
-            </div>`;
-
-        // Phase 1: shake
-        setTimeout(()=>{
-            document.getElementById('duel-left').style.animation='duelShakeL 0.4s ease-in-out 4';
-            document.getElementById('duel-right').style.animation='duelShakeR 0.4s ease-in-out 4';
-            overlay.style.animation='duelFlash 0.4s ease 4';
-        },300);
-
-        // Phase 2: clash emoji
-        setTimeout(()=>{
-            const el=document.createElement('div');el.className='duel-clash-emoji';el.innerText='💥';
-            document.body.appendChild(el);setTimeout(()=>el.remove(),900);
-        },900);
-
-        // Phase 3: result
-        setTimeout(()=>{
-            overlay.style.animation='';
-            if(iWin){
-                document.getElementById('duel-left').style.animation='duelWinner 0.6s ease forwards';
-                document.getElementById('duel-right').style.animation='duelLoser 0.6s ease forwards';
-            } else {
-                document.getElementById('duel-right').style.animation='duelWinner 0.6s ease forwards';
-                document.getElementById('duel-left').style.animation='duelLoser 0.6s ease forwards';
+        try {
+            // 🛡️ Fetch both inventories для проверки наличия предметов
+            const [mySnap, theirSnap] = await Promise.all([
+                get(ref(db,'users/'+user.id)), 
+                get(ref(db,'users/'+challengerId))
+            ]);
+            const myD = mySnap.val(), theirD = theirSnap.val();
+            const myInvCheck = toArr(myD.cloudInv), theirInvCheck = toArr(theirD.cloudInv);
+            const myItem = myInvCheck.find(x=>String(x.inst)==String(selectedDuelInst));
+            const theirItem = theirInvCheck.find(x=>String(x.inst)==String(theirInst));
+            
+            if(!myItem||!theirItem) { 
+                return showToast('Один из предметов уже недоступен!','var(--err)'); 
             }
-        },1800);
 
-        // Phase 4: show result text
-        setTimeout(()=>{
-            const res=document.getElementById('duel-result');
-            if(!res) return;
-            res.style.opacity='1';
-            if(iWin){
-                spawnConfetti(window.innerWidth/2,window.innerHeight/2,60);
-                const newWins2 = (myD.duelWins||0) + 1;
-                const badgeJustUnlocked = newWins2 >= 10 && !new Set(myD.cosmetics||[]).has('bdg_duelist');
-                res.innerHTML=`<div style="font-size:36px;margin-bottom:10px;">🏆</div><div style="font-size:20px;font-weight:900;color:gold;">ТЫ ПОБЕДИЛ!</div><div style="font-size:13px;color:var(--secondary);margin-top:6px;">Ты получил оба подарка</div><div style="font-size:12px;color:#4db4ff;margin-top:8px;">⚔️ Побед: ${newWins2}/10</div>${badgeJustUnlocked?'<div style="margin-top:10px;background:linear-gradient(135deg,rgba(255,107,107,0.15),rgba(255,215,0,0.1));border:1px solid rgba(255,215,0,0.4);border-radius:14px;padding:10px;"><div style="font-size:22px;">⚔️</div><div style="font-weight:bold;color:gold;font-size:13px;">Бейдж «Дуэлянт» разблокирован!</div></div>':''}`;
-                if(badgeJustUnlocked) setTimeout(()=>showToast('⚔️ Бейдж «Дуэлянт» разблокирован!','gold'), 500);
-            } else {
-                res.innerHTML=`<div style="font-size:36px;margin-bottom:10px;">💀</div><div style="font-size:20px;font-weight:900;color:#ff6b6b;">ТЫ ПРОИГРАЛ</div><div style="font-size:13px;color:var(--secondary);margin-top:6px;">${challengerName} забрал оба подарка</div>`;
+            // Determine winner 50/50 (до транзакций, результат фиксирован)
+            const iWin = Math.random() < 0.5;
+            const winnerId = iWin ? user.id : challengerId;
+            const winnerName = iWin ? user.name : challengerName;
+            const myEmoji2 = myItem.i||(catalog.find(c=>c.id==myItem.id)?.i)||'🎁';
+            const _duelTs = Date.now();
+
+            // 🛡️ Атомарное обновление инвентарей обоих участников через runTransaction
+            const [myTx, theirTx] = await Promise.all([
+                runTransaction(ref(db,'users/'+user.id), (current) => {
+                    if(!current) return;
+                    let inv = toArr(current.cloudInv);
+                    if(!inv.some(x=>String(x.inst)==String(selectedDuelInst))) return; // предмет уже ушёл
+                    inv = inv.filter(x=>String(x.inst)!=String(selectedDuelInst));
+                    if(iWin) {
+                        inv.push({...myItem, from:'⚔️ Дуэль', inst:_duelTs});
+                        inv.push({...theirItem, from:`⚔️ ${challengerName}`, seen:false, inst:_duelTs+1});
+                    }
+                    const winsUpdate = iWin ? {duelWins:(current.duelWins||0)+1} : {};
+                    const ownedSet = new Set(current.cosmetics||[]);
+                    if(iWin && (current.duelWins||0)+1 >= 10 && !ownedSet.has('bdg_duelist')) {
+                        winsUpdate.cosmetics = [...(current.cosmetics||[]), 'bdg_duelist'];
+                    }
+                    return {...current, cloudInv:inv, ...winsUpdate};
+                }),
+                runTransaction(ref(db,'users/'+challengerId), (current) => {
+                    if(!current) return;
+                    let inv = toArr(current.cloudInv);
+                    if(!inv.some(x=>String(x.inst)==String(theirInst))) return; // предмет уже ушёл
+                    inv = inv.filter(x=>String(x.inst)!=String(theirInst));
+                    if(!iWin) {
+                        inv.push({...myItem, from:`⚔️ ${user.name}`, seen:false, inst:_duelTs});
+                        inv.push({...theirItem, from:'⚔️ Дуэль', inst:_duelTs+1});
+                    }
+                    return {...current, cloudInv:inv};
+                })
+            ]);
+            
+            if(!myTx.committed || !theirTx.committed) {
+                return showToast('Один из предметов уже был использован!','var(--err)');
             }
+            
+            await remove(ref(db,`duelChallenges/${user.id}/${duelKey}`));
+            logActivity('duel_result', {winner: winnerName, winnerId, loser: iWin ? challengerName : user.name, loserId: iWin ? challengerId : user.id, item1: myItem.n, item2: theirItem.n});
+            
+            // XP: +50 победителю, -20 проигравшему
+            awardXp(winnerId, 50);
+            awardXp(iWin ? challengerId : user.id, -20);
+
+            // DUEL ANIMATION
+            const overlay = document.getElementById('modal-overlay');
+            document.getElementById('modal-content').innerHTML = `
+                <div style="text-align:center;padding:20px 0;" id="duel-anim-wrap">
+                    <div style="font-size:13px;color:var(--secondary);margin-bottom:20px;letter-spacing:1px;text-transform:uppercase;">⚔️ Дуэль начинается!</div>
+                    <div style="display:flex;align-items:center;justify-content:center;gap:20px;">
+                        <div id="duel-left" style="text-align:center;transition:all 1s ease;">
+                            <div style="font-size:52px;margin-bottom:8px;">${myEmoji2}</div>
+                            <div style="font-size:12px;font-weight:bold;color:#4db4ff;">${user.name}</div>
+                        </div>
+                        <div id="duel-vs" style="font-size:32px;font-weight:900;color:#ff6b6b;">VS</div>
+                        <div id="duel-right" style="text-align:center;transition:all 1s ease;">
+                            <div style="font-size:52px;margin-bottom:8px;">${theirEmoji}</div>
+                            <div style="font-size:12px;font-weight:bold;color:#ff6b6b;">${challengerName}</div>
+                        </div>
+                    </div>
+                    <div id="duel-result" style="margin-top:24px;opacity:0;transition:opacity 0.5s;"></div>
+                </div>`;
+            openModal();
+
+            // Phase 1: shake
             setTimeout(()=>{
-                if(!document.getElementById('duel-close-btn')){
-                    const btn=document.createElement('button');btn.className='btn';btn.id='duel-close-btn';btn.style.marginTop='16px';btn.innerText='Закрыть';btn.onclick=closeModal;
-                    document.getElementById('duel-result').appendChild(btn);
-                }
-            },200);
-        },2600);
+                document.getElementById('duel-left').style.animation='duelShakeL 0.4s ease-in-out 4';
+                document.getElementById('duel-right').style.animation='duelShakeR 0.4s ease-in-out 4';
+                overlay.style.animation='duelFlash 0.4s ease 4';
+            },300);
 
-        // Уведомления с правильными предметами
-        if(iWin) {
-            // challenger проиграл свою ставку (theirItem)
-            getTgId(challengerId).then(cid=>sendTg(cid,`⚔️ <b>Дуэль завершена!</b>\n\n🏆 Победитель: <b>${winnerName}</b>\n\n😔 К сожалению, ты проиграл.\n❌ Утеряно: <b>${theirItemName}</b> ${theirEmoji}`));
-        } else {
-            // challenger выиграл оба предмета
-            getTgId(challengerId).then(cid=>sendTg(cid,`⚔️ <b>Дуэль завершена!</b>\n\n🏆 Победитель: <b>${winnerName}</b>\n\n🎉 Поздравляем, ты победил!\n✅ Получено: <b>${theirItemName}</b> ${theirEmoji}\n✅ Сохранено: <b>${myItem.n}</b> ${myEmoji2}`));
+            // Phase 2: clash emoji
+            setTimeout(()=>{
+                const el=document.createElement('div');el.className='duel-clash-emoji';el.innerText='💥';
+                document.body.appendChild(el);setTimeout(()=>el.remove(),900);
+            },900);
+
+            // Phase 3: result
+            setTimeout(()=>{
+                overlay.style.animation='';
+                if(iWin){
+                    document.getElementById('duel-left').style.animation='duelWinner 0.6s ease forwards';
+                    document.getElementById('duel-right').style.animation='duelLoser 0.6s ease forwards';
+                } else {
+                    document.getElementById('duel-right').style.animation='duelWinner 0.6s ease forwards';
+                    document.getElementById('duel-left').style.animation='duelLoser 0.6s ease forwards';
+                }
+            },1800);
+
+            // Phase 4: show result text
+            setTimeout(()=>{
+                const res=document.getElementById('duel-result');
+                if(!res) return;
+                res.style.opacity='1';
+                if(iWin){
+                    spawnConfetti(window.innerWidth/2,window.innerHeight/2,60);
+                    const newWins2 = (myD.duelWins||0) + 1;
+                    const badgeJustUnlocked = newWins2 >= 10 && !new Set(myD.cosmetics||[]).has('bdg_duelist');
+                    res.innerHTML=`<div style="font-size:36px;margin-bottom:10px;">🏆</div><div style="font-size:20px;font-weight:900;color:gold;">ТЫ ПОБЕДИЛ!</div><div style="font-size:13px;color:var(--secondary);margin-top:6px;">Ты получил оба подарка</div><div style="font-size:12px;color:#4db4ff;margin-top:8px;">⚔️ Побед: ${newWins2}/10</div>${badgeJustUnlocked?'<div style="margin-top:10px;background:linear-gradient(135deg,rgba(255,107,107,0.15),rgba(255,215,0,0.1));border:1px solid rgba(255,215,0,0.4);border-radius:14px;padding:10px;"><div style="font-size:22px;">⚔️</div><div style="font-weight:bold;color:gold;font-size:13px;">Бейдж «Дуэлянт» разблокирован!</div></div>':''}`;
+                    if(badgeJustUnlocked) setTimeout(()=>showToast('⚔️ Бейдж «Дуэлянт» разблокирован!','gold'), 500);
+                } else {
+                    res.innerHTML=`<div style="font-size:36px;margin-bottom:10px;">💀</div><div style="font-size:20px;font-weight:900;color:#ff6b6b;">ТЫ ПРОИГРАЛ</div><div style="font-size:13px;color:var(--secondary);margin-top:6px;">${challengerName} забрал оба подарка</div>`;
+                }
+                setTimeout(()=>{
+                    if(!document.getElementById('duel-close-btn')){
+                        const btn=document.createElement('button');btn.className='btn';btn.id='duel-close-btn';btn.style.marginTop='16px';btn.innerText='Закрыть';btn.onclick=closeModal;
+                        document.getElementById('duel-result').appendChild(btn);
+                    }
+                },200);
+            },2600);
+
+            // Уведомления с правильными предметами
+            if(iWin) {
+                // challenger проиграл свою ставку (theirItem)
+                getTgId(challengerId).then(cid=>sendTg(cid,`⚔️ <b>Дуэль завершена!</b>\n\n🏆 Победитель: <b>${winnerName}</b>\n\n😔 К сожалению, ты проиграл.\n❌ Утеряно: <b>${theirItemName}</b> ${theirEmoji}`));
+            } else {
+                // challenger выиграл оба предмета
+                getTgId(challengerId).then(cid=>sendTg(cid,`⚔️ <b>Дуэль завершена!</b>\n\n🏆 Победитель: <b>${winnerName}</b>\n\n🎉 Поздравляем, ты победил!\n✅ Получено: <b>${theirItemName}</b> ${theirEmoji}\n✅ Сохранено: <b>${myItem.n}</b> ${myEmoji2}`));
+            }
+        } catch(e) {
+            console.error('Duel fight error:', e);
+            showToast('Ошибка при проведении дуэли!','var(--err)');
         }
     };
 
     window.declineDuel = async (duelKey) => {
-        await remove(ref(db,`duelChallenges/${user.id}/${duelKey}`));
-        closeModal();
-        showToast('Вызов отклонён','var(--secondary)');
+        try {
+            await remove(ref(db,`duelChallenges/${user.id}/${duelKey}`));
+            closeModal();
+            showToast('Вызов отклонён','var(--secondary)');
+        } catch(e) {
+            console.error('Error declining duel:', e);
+            showToast('Ошибка при отклонении вызова','var(--err)');
+        }
     };
 
     // Listen for duel challenges
