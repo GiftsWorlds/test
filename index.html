@@ -20,6 +20,7 @@
             --bg: #070d14; --card: #111b21; --accent: #2481cc; --text: #ffffff; 
             --secondary: #7f91a4; --err: #e74c3c; --green: #2ecc71; --orange: #f39c12;
             --glass: rgba(23, 33, 43, 0.95); --tg: #229ED9;
+            --sab: env(safe-area-inset-bottom, 0px);
         }
         body.light-theme {
             --bg: #f0f4f8; --card: #ffffff; --accent: #2481cc; --text: #1a1a2e;
@@ -10665,7 +10666,7 @@ window.addEventListener('popstate', () => {
 </div>
 
 <!-- Основной оверлей игры -->
-<div id="chicken-game-overlay" style="display:none;position:fixed;inset:0;z-index:2100;background:#0a1a0a;flex-direction:column;align-items:center;">
+<div id="chicken-game-overlay" style="display:none;position:fixed;inset:0;z-index:2100;background:#0a1a0a;flex-direction:column;align-items:center;padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box;overflow:hidden;">
     <!-- Хедер игры -->
     <div style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:rgba(0,0,0,0.5);box-sizing:border-box;flex-shrink:0;">
         <button onclick="closeChickenGame()" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:50%;width:34px;height:34px;color:white;font-size:16px;cursor:pointer;">✕</button>
@@ -10757,7 +10758,7 @@ window.addEventListener('popstate', () => {
         </div>
     </div>
     <!-- Кнопки управления -->
-    <div style="padding:4px 12px 10px;width:100%;box-sizing:border-box;flex-shrink:0;background:rgba(0,0,0,0.3);">
+    <div style="padding:4px 12px 8px;width:100%;box-sizing:border-box;flex-shrink:0;background:rgba(0,0,0,0.3);max-height:160px;overflow:hidden;">
         <style>
             /* ── D-Pad ── */
             .cg-dpad {
@@ -10782,6 +10783,12 @@ window.addEventListener('popstate', () => {
                     0 8px 16px rgba(0,0,0,0.45),
                     inset 0 1px 0 rgba(255,255,255,0.08);
                 transition:transform 0.07s, box-shadow 0.07s;
+            }
+            @media (max-height: 650px) {
+                .cg-btn { height:40px; border-radius:12px; }
+                .cg-ability-btn { height:36px; font-size:12px; }
+                .cg-dpad { gap:6px; }
+                .cg-ability-wrap { margin-top:4px; }
             }
             .cg-btn svg { pointer-events:none; }
             .cg-btn:active {
@@ -11219,7 +11226,9 @@ function cgInit() {
     const headerH  = header  ? header.offsetHeight  : 54;
     const scoreH   = scorebar ? scorebar.offsetHeight : 44;
     const ctrlH    = controls ? controls.offsetHeight : 160;
-    const safeH    = window.innerHeight - headerH - scoreH - ctrlH;
+    // Учитываем safe-area-inset-bottom (iPhone с вырезом/навигацией Android)
+    const safeAreaBottom = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sab') || '0') || 0;
+    const safeH    = window.innerHeight - headerH - scoreH - ctrlH - safeAreaBottom - 4;
     canvas.width  = window.innerWidth;
     canvas.height = Math.max(200, safeH);
 
