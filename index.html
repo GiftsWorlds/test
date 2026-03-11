@@ -11207,6 +11207,8 @@ function cgBindControls() {
 }
 
 function cgInit() {
+    // Сбрасываем кэш эмодзи при новой игре (может смениться размер ячеек)
+    for(const k in _cgEmojiCache) delete _cgEmojiCache[k];
     const char = _cgSelectedChar || CG_CHARACTERS[0];
     const canvas = document.getElementById('chicken-canvas');
     // Ждём рендер и считаем реальный размер
@@ -11259,8 +11261,10 @@ function cgInit() {
         noCoins: false,
         abilityGhost: false,
         abilityGhostTimer: 0,
-        hitCooldown: 0,   // фреймов неуязвимости после удара/щита
+        hitCooldown: 0,
         _lastMoveTime: 0,
+        _abFrame: 0,
+        _ctx: null,
     };
     // Применяем дебафф персонажа
     if(char.applyDebuff) char.applyDebuff(_cgState);
@@ -11269,6 +11273,12 @@ function cgInit() {
     cgBindControls();
     cgSpawnCars();
     cgSpawnCoins();
+    // Прогрев кэша эмодзи (рендер первого кадра без задержки)
+    const _warmSz = Math.floor(_cgState.cellH * 0.8) * 2;
+    CG_CAR_TYPES.forEach(e => { cgGetEmojiImage(e, _warmSz, false); cgGetEmojiImage(e, _warmSz, true); });
+    cgGetEmojiImage(_cgState.playerEmoji, Math.floor(_cgState.cellH * 0.85) * 2, false);
+    cgGetEmojiImage('🌳', Math.floor(_cgState.cellH * 0.6) * 2, false);
+    cgGetEmojiImage('💰', Math.floor(_cgState.cellH * 0.55) * 2, false);
     _cgRunning = true;
     const heartsArr = ['','❤️','❤️❤️','❤️❤️❤️','❤️❤️❤️❤️'];
     document.getElementById('cg-score').textContent = '0';
@@ -11411,197 +11421,191 @@ window.cgUseAbility = () => {
     }
 };
 
+// ─── OffscreenCanvas кэш для эмодзи машин ────────────────────────
+// Рисуем каждый эмодзи один раз, кэшируем как ImageBitmap
+const _cgEmojiCache = {};
+function cgGetEmojiImage(emoji, size, flipped) {
+    const key = emoji + '_' + size + (flipped ? '_f' : '');
+    if(_cgEmojiCache[key]) return _cgEmojiCache[key];
+    const oc = document.createElement('canvas');
+    oc.width = size; oc.height = size;
+    const ox = oc.getContext('2d');
+    ox.font = Math.floor(size * 0.78) + 'px serif';
+    ox.textAlign = 'center';
+    ox.textBaseline = 'middle';
+    if(flipped) {
+        ox.translate(size, 0);
+        ox.scale(-1, 1);
+    }
+    ox.fillText(emoji, flipped ? 0 : size/2, size/2);
+    _cgEmojiCache[key] = oc;
+    return oc;
+}
+
 // ─── Главный цикл ────────────────────────────────────────────────
 function cgLoop() {
     if(!_cgRunning) return;
     _cgAnimId = requestAnimationFrame(cgLoop);
     const s = _cgState;
-    const ctx = s.canvas.getContext('2d');
-    ctx.clearRect(0,0,s.canvas.width,s.canvas.height);
+    // Кэшируем ctx — не вызываем getContext каждый фрейм
+    if(!s._ctx) s._ctx = s.canvas.getContext('2d');
+    const ctx = s._ctx;
+    const W = s.canvas.width, H = s.canvas.height;
+    const now = Date.now();
 
-    // Таймеры
+    // ── Таймеры ──
     if(s.slowMode > 0) s.slowMode--;
     if(s.shieldFrames > 0) s.shieldFrames--;
     if(s.hitCooldown > 0) s.hitCooldown--;
     if(s.abilityGhost && s.abilityGhostTimer > 0) {
-        s.abilityGhostTimer--;
-        if(s.abilityGhostTimer <= 0) {
+        if(--s.abilityGhostTimer <= 0) {
             s.abilityGhost = false;
             showToast('👻 Невидимость закончилась', '#888');
         }
     }
     const slowFactor = s.slowMode > 0 ? 0.3 : 1;
-    // Обновляем бар способности (раз в 6 фреймов)
-    if(!s._abFrame) s._abFrame = 0;
-    if(++s._abFrame % 6 === 0) cgAnimateAbilityRefill();
-    // Фон — трава
+
+    // Обновляем ring-бар раз в 6 фреймов
+    if((++s._abFrame) % 6 === 0) cgAnimateAbilityRefill();
+
+    // ── Фон ──
     ctx.fillStyle = '#152b15';
-    ctx.fillRect(0,0,s.canvas.width,s.canvas.height);
-    // Синий оверлей при slowMode (после фона)
+    ctx.fillRect(0, 0, W, H);
     if(s.slowMode > 0) {
-        ctx.fillStyle = `rgba(80,160,255,0.12)`;
-        ctx.fillRect(0,0,s.canvas.width,s.canvas.height);
+        ctx.fillStyle = 'rgba(80,160,255,0.1)';
+        ctx.fillRect(0, 0, W, H);
     }
 
-    // Финишная зона (ряд 0)
-    ctx.fillStyle = '#1e4a1e';
-    ctx.fillRect(0, 0, s.canvas.width, s.cellH);
-    // Мерцающий финиш
-    const finishAlpha = 0.2 + 0.15 * Math.sin(Date.now() / 300);
-    ctx.fillStyle = `rgba(46,204,113,${finishAlpha})`;
-    ctx.fillRect(0, 0, s.canvas.width, s.cellH);
-    ctx.font = `${s.cellH * 0.55}px serif`;
-    ctx.textAlign = 'center';
-    for(let c=0;c<s.COLS;c++) ctx.fillText('🌳', c*s.cellW + s.cellW/2, s.cellH*0.78);
+    // ── Финишная зона ──
+    ctx.fillStyle = '#1a4020';
+    ctx.fillRect(0, 0, W, s.cellH);
+    const fa = 0.15 + 0.1 * Math.sin(now / 400);
+    ctx.fillStyle = 'rgba(46,204,113,' + fa + ')';
+    ctx.fillRect(0, 0, W, s.cellH);
+    // Деревья — кэшированный размер шрифта
+    const treeSz = Math.floor(s.cellH * 0.6);
+    const treeImg = cgGetEmojiImage('🌳', treeSz * 2, false);
+    for(let c = 0; c < s.COLS; c++) {
+        ctx.drawImage(treeImg, c * s.cellW + (s.cellW - treeSz)/2, s.cellH * 0.1, treeSz, treeSz);
+    }
 
-    // Дорога + безопасные ряды (тротуары)
+    // ── Дорога ──
     const safeRows = s.safeRows || new Set();
-    for(let r=1; r<s.ROWS-1; r++) {
+    ctx.lineWidth = 1;
+    for(let r = 1; r < s.ROWS - 1; r++) {
         const y = r * s.cellH;
         if(safeRows.has(r)) {
-            // Пустой ряд — просто тёмная дорога без машин
             ctx.fillStyle = '#1e1e1e';
-            ctx.fillRect(0, y, s.canvas.width, s.cellH);
+            ctx.fillRect(0, y, W, s.cellH);
         } else {
-            ctx.fillStyle = r % 2 === 0 ? '#242424' : '#2c2c2c';
-            ctx.fillRect(0, y, s.canvas.width, s.cellH);
-            // Разметка
-            ctx.strokeStyle = 'rgba(255,255,0,0.1)';
-            ctx.setLineDash([s.cellW*0.25, s.cellW*0.35]);
-            ctx.lineWidth = 1.5;
+            ctx.fillStyle = r % 2 === 0 ? '#232323' : '#2a2a2a';
+            ctx.fillRect(0, y, W, s.cellH);
+            // Пунктирная разметка
+            ctx.strokeStyle = 'rgba(255,220,0,0.09)';
+            ctx.setLineDash([s.cellW * 0.22, s.cellW * 0.38]);
             ctx.beginPath();
-            ctx.moveTo(0, y + s.cellH/2);
-            ctx.lineTo(s.canvas.width, y + s.cellH/2);
+            ctx.moveTo(0, y + s.cellH * 0.5);
+            ctx.lineTo(W, y + s.cellH * 0.5);
             ctx.stroke();
             ctx.setLineDash([]);
-            // Стрелка направления
-            const dir = r % 2 === 0 ? 1 : -1;
-            ctx.fillStyle = 'rgba(255,255,255,0.07)';
-            ctx.font = `${s.cellH * 0.28}px sans-serif`;
-            ctx.textAlign = 'center';
-            ctx.fillText(dir > 0 ? '▶▶' : '◀◀', s.canvas.width/2, y + s.cellH*0.38);
         }
     }
 
-    // Стартовая зона
+    // ── Стартовая зона ──
     ctx.fillStyle = '#152b15';
-    ctx.fillRect(0, (s.ROWS-1)*s.cellH, s.canvas.width, s.cellH);
+    ctx.fillRect(0, (s.ROWS - 1) * s.cellH, W, s.cellH);
 
-    // Монетки (призрак их не видит)
+    // ── Монетки ──
     if(!s.noCoins) {
+        const coinSz = Math.floor(s.cellH * 0.55);
         for(const coin of s.coins) {
             if(coin.collected) continue;
-            ctx.font = `${s.cellH * 0.5}px serif`;
-            ctx.textAlign = 'center';
-            const cx = coin.col * s.cellW + s.cellW/2;
-            const cy = coin.row * s.cellH + s.cellH*0.72;
-            // Пульсация монеток
-            ctx.globalAlpha = 0.7 + 0.3 * Math.sin(Date.now()/400 + coin.col);
-            ctx.fillText('💰', cx, cy);
-            ctx.globalAlpha = 1;
+            const coinImg = cgGetEmojiImage('💰', coinSz * 2, false);
+            const alpha = 0.75 + 0.25 * Math.sin(now / 450 + coin.col);
+            ctx.globalAlpha = alpha;
+            ctx.drawImage(coinImg, coin.col * s.cellW + (s.cellW - coinSz) * 0.5,
+                coin.row * s.cellH + s.cellH * 0.25, coinSz, coinSz);
         }
+        ctx.globalAlpha = 1;
     }
 
-    // Машины — всегда через translate+scale для корректного зеркалирования
-    ctx.save();
-    ctx.font = Math.floor(s.cellH * 0.7) + 'px serif';
-    ctx.textBaseline = 'middle';
-    ctx.textAlign = 'center';
-
+    // ── Машины — через кэшированные canvas ──
+    const carSz = Math.floor(s.cellH * 0.8);
     for(const car of s.cars) {
         if(car.stunned > 0) { car.stunned--; }
         else { car.x += car.speed * slowFactor; }
 
-        if(car.speed > 0 && car.x > s.canvas.width + s.cellW*2) car.x = -s.cellW*2;
-        if(car.speed < 0 && car.x < -s.cellW*3) car.x = s.canvas.width + s.cellW*2;
+        if(car.speed > 0 && car.x > W + s.cellW * 2) car.x = -s.cellW * 2;
+        if(car.speed < 0 && car.x < -s.cellW * 3)    car.x = W + s.cellW * 2;
 
-        if(car.stunned > 0 && Math.floor(car.stunned / 8) % 2 === 0) ctx.globalAlpha = 0.35;
-        else ctx.globalAlpha = 1;
+        // Мигание при оглушении
+        if(car.stunned > 0 && Math.floor(car.stunned / 8) % 2 === 0) continue;
 
-        const centerX = car.x + car.w * 0.5;
-        const centerY = car.row * s.cellH + s.cellH * 0.5;
-
-        ctx.save();
-        ctx.translate(centerX, centerY);
-        // Едет влево = facingRight:false → отражаем по X
-        if(!car.facingRight) ctx.transform(-1, 0, 0, 1, 0, 0);
-        ctx.fillText(car.emoji, 0, 0);
-        ctx.restore();
+        // Берём нужный кэш (прямой или зеркальный)
+        const img = cgGetEmojiImage(car.emoji, carSz * 2, !car.facingRight);
+        const drawX = car.x + (car.w - carSz) * 0.5;
+        const drawY = car.row * s.cellH + (s.cellH - carSz) * 0.5;
+        ctx.drawImage(img, drawX, drawY, carSz, carSz);
     }
-    ctx.restore();
-    ctx.globalAlpha = 1;
 
-    // Игрок
-    const px = s.player.col * s.cellW + s.cellW/2;
-    const py = s.player.row * s.cellH + s.cellH*0.82;
-    // Щит — визуал пока shieldFrames > 0
+    // ── Игрок ──
+    const px = s.player.col * s.cellW + s.cellW / 2;
+    const py = s.player.row * s.cellH + s.cellH * 0.5;
+
+    // Щит
     if(s.shieldFrames > 0) {
-        const pulse = 0.4 + 0.3 * Math.sin(Date.now() / 80);
-        // Внешнее кольцо
+        const pulse = 0.45 + 0.25 * Math.sin(now / 90);
+        const r = s.cellH * 0.5;
         ctx.beginPath();
-        ctx.arc(px, py - s.cellH*0.28, s.cellH*0.52, 0, Math.PI*2);
-        ctx.strokeStyle = `rgba(0,207,255,${pulse})`;
-        ctx.lineWidth = 4;
-        ctx.stroke();
-        // Заливка
-        ctx.beginPath();
-        ctx.arc(px, py - s.cellH*0.28, s.cellH*0.48, 0, Math.PI*2);
-        ctx.fillStyle = `rgba(0,207,255,${pulse * 0.15})`;
+        ctx.arc(px, py, r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(0,207,255,' + (pulse * 0.12) + ')';
         ctx.fill();
-        // Счётчик оставшегося времени (дуга)
-        const progress = s.shieldFrames / 120;
+        ctx.strokeStyle = 'rgba(0,207,255,' + pulse + ')';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        // Дуга прогресса
+        const prog = s.shieldFrames / 120;
         ctx.beginPath();
-        ctx.arc(px, py - s.cellH*0.28, s.cellH*0.52, -Math.PI/2, -Math.PI/2 + Math.PI*2*progress);
-        ctx.strokeStyle = `rgba(255,255,255,0.8)`;
+        ctx.arc(px, py, r + 3, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * prog);
+        ctx.strokeStyle = 'rgba(255,255,255,0.7)';
         ctx.lineWidth = 2;
         ctx.stroke();
     }
-    // Мигание после удара (не при щите и не при призраке)
+
+    // Прозрачность игрока
     if(s.hitCooldown > 0 && s.shieldFrames <= 0 && !s.abilityGhost) {
-        ctx.globalAlpha = Math.floor(s.hitCooldown / 5) % 2 === 0 ? 0 : 0.7;
+        if(Math.floor(s.hitCooldown / 5) % 2 === 0) ctx.globalAlpha = 0;
+        else ctx.globalAlpha = 0.65;
+    } else if(s.abilityGhost) {
+        ctx.globalAlpha = 0.32 + 0.22 * Math.sin(now / 90);
     }
-    // Призрак — мерцающая прозрачность
-    if(s.abilityGhost) ctx.globalAlpha = 0.3 + 0.25 * Math.sin(Date.now() / 80);
-    ctx.font = `${s.cellH * 0.78}px serif`;
-    ctx.textAlign = 'center';
-    ctx.fillText(s.playerEmoji, px, py);
+
+    const playerSz = Math.floor(s.cellH * 0.85);
+    const pImg = cgGetEmojiImage(s.playerEmoji, playerSz * 2, false);
+    ctx.drawImage(pImg, px - playerSz / 2, py - playerSz / 2, playerSz, playerSz);
     ctx.globalAlpha = 1;
 
-    // Проверка столкновений
+    // ── Коллизии ──
     if(!s.gameOver) {
         const hb = s.hitboxBonus || 1.0;
-        const hPad = (1 - 0.7*hb) * 0.5;
-        const pL = s.player.col * s.cellW + s.cellW * Math.max(0.05, 0.15/hb);
+        const pL = s.player.col * s.cellW + s.cellW * 0.15;
         const pR = pL + s.cellW * 0.7 * hb;
-        const pT = s.player.row * s.cellH + s.cellH*0.15;
-        const pB = pT + s.cellH * 0.75;
+        const pT = s.player.row * s.cellH + s.cellH * 0.15;
+        const pB = pT + s.cellH * 0.72;
 
-        // Коллизии
         for(const car of s.cars) {
             if(car.stunned > 0) continue;
-            const cL = car.x + s.cellW*0.08;
-            const cR = car.x + car.w - s.cellW*0.08;
-            const cT = car.row * s.cellH + s.cellH*0.15;
-            const cB = cT + s.cellH * 0.75;
-            if(pL<cR && pR>cL && pT<cB && pB>cT) {
-                if(s.abilityGhost) {
-                    // Призрак: полностью проходит сквозь — ничего не делаем
-                    // (способность исчезнет только при ручном ходе или через cgHit)
-                    break;
-                } else if(s.shieldFrames > 0) {
-                    // Щит активен — просто пропускаем, shieldFrames продолжает тикать
-                    // hitCooldown не нужен — shieldFrames сам защищает
-                    break;
-                } else if(s.hitCooldown <= 0) {
-                    // Обычный удар
-                    s.hitCooldown = 45;
-                    cgHit();
-                    break;
-                }
+            if(car.row !== s.player.row) continue; // быстрая проверка строки
+            const cL = car.x + s.cellW * 0.08;
+            const cR = car.x + car.w - s.cellW * 0.08;
+            if(pL < cR && pR > cL && pT < (car.row * s.cellH + s.cellH * 0.85) && pB > car.row * s.cellH + s.cellH * 0.15) {
+                if(s.abilityGhost)        { break; }
+                else if(s.shieldFrames > 0) { break; }
+                else if(s.hitCooldown <= 0) { s.hitCooldown = 45; cgHit(); break; }
             }
         }
 
-        // Монетки (призрак не может подбирать)
+        // Монетки
         if(!s.noCoins) {
             for(const coin of s.coins) {
                 if(coin.collected) continue;
@@ -11610,12 +11614,11 @@ function cgLoop() {
                     s.coinsEarned += 10;
                     s.score += 5;
                     document.getElementById('cg-score').textContent = s.score;
-                    showToast('💰 +10 монет!', '#ffd700');
+                    showToast('💰 +10', '#ffd700');
                 }
             }
         }
 
-        // Финиш
         if(s.player.row === 0) cgCrossed();
     }
 }
