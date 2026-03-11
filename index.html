@@ -10951,19 +10951,18 @@ const CG_CHARACTERS = [
         lives: 2, abilityCharges: 3,
         applyDebuff(s) { /* уже в lives:2 */ },
         useAbility(s) {
-            if(s.moving) return;
+            if(s.moving) return false;
+            if(s.player.row === 0) { showToast('🐸 Уже на финише!', '#2ecc71'); return false; }
             if(s.player.row >= 2) {
                 s.player.row -= 2;
                 showToast('🐸 Супер-прыжок!', '#2ecc71');
-                // Если приземлился на финиш — засчитываем
                 if(s.player.row === 0) cgCrossedInner();
-            } else if(s.player.row === 1) {
+            } else {
                 s.player.row = 0;
                 showToast('🐸 Финиш прыжком!', '#2ecc71');
                 cgCrossedInner();
-            } else {
-                showToast('🐸 Уже на финише!', '#2ecc71');
             }
+            return true;
         }
     },
     {
@@ -10986,11 +10985,12 @@ const CG_CHARACTERS = [
         lives: 3, abilityCharges: 3,
         applyDebuff(s) { s.noBackward = true; },
         useAbility(s) {
-            if(s.moving) return;
+            if(s.moving) return false; // false = не списывать заряд
             const prev = s.player.row;
             s.player.row = Math.max(0, s.player.row - 3);
             showToast('🐶 Рывок вперёд!', '#e74c3c');
             if(s.player.row === 0 && prev !== 0) cgCrossedInner();
+            return true;
         }
     },
     {
@@ -11013,10 +11013,11 @@ const CG_CHARACTERS = [
         lives: 2, abilityCharges: 4,
         applyDebuff(s) { s.noCoins = true; },
         useAbility(s) {
-            if(s.abilityGhost) { showToast('👻 Уже активен!', '#bdc3c7'); return; }
+            if(s.abilityGhost) { showToast('👻 Уже активен!', '#bdc3c7'); return false; }
             s.abilityGhost = true;
-            s.abilityGhostFrames = 0; // сброс счётчика
-            showToast('👻 Невидимость! Следующий удар не считается', '#bdc3c7');
+            s.abilityGhostTimer = 180; // 3 секунды при 60fps
+            showToast('👻 Невидимость на 3 сек!', '#bdc3c7');
+            return true;
         }
     },
 ];
@@ -11150,6 +11151,7 @@ function cgInit() {
         player: { col: Math.floor(COLS/2), row: ROWS-1 },
         cars: [],
         coins: [],       // монетки на дороге
+        safeRows: new Set(),
         score: 0,
         level: 1,
         lives: char.lives,
@@ -11168,7 +11170,8 @@ function cgInit() {
         noBackward: false,
         noCoins: false,
         abilityGhost: false,
-        abilityGhostFrames: 0,
+        abilityGhostTimer: 0,
+        hitCooldown: 0,   // фреймов неуязвимости после удара/щита
         _lastMoveTime: 0,
     };
     // Применяем дебафф персонажа
@@ -11194,28 +11197,32 @@ const CG_CAR_TYPES = [
     '🚗','🚕','🚙','🏎️','🚓','🚑','🚒','🚌','🚛','🚐'
 ];
 
+// Безопасные ряды (тротуары): каждый 3-й ряд дороги (r=3, r=6, ...)
+function cgIsSafeRow(r) { return r % 3 === 0; }
+
 function cgSpawnCars() {
     const s = _cgState;
     s.cars = [];
+    s.safeRows = new Set(); // запоминаем безопасные ряды
     for(let r = 1; r < s.ROWS-1; r++) {
-        // Базовая скорость значительно снижена, прирост с уровнем плавный
-        const baseSpeed = 0.4 + Math.random() * 0.35;
-        const levelBonus = (s.level - 1) * 0.08;
+        if(cgIsSafeRow(r)) {
+            s.safeRows.add(r);
+            continue; // тротуар — машин нет
+        }
+        const baseSpeed = 0.35 + Math.random() * 0.3;
+        const levelBonus = (s.level - 1) * 0.07;
         const spd = baseSpeed + levelBonus;
-        // Направление ряда
         const dir = r % 2 === 0 ? 1 : -1;
         const count = 2 + Math.floor(Math.random() * 2);
-        const gap = s.cellW * (2.8 + Math.random());
+        const gap = s.cellW * (3.0 + Math.random() * 0.8);
         for(let i = 0; i < count; i++) {
             const emoji = CG_CAR_TYPES[Math.floor(Math.random() * CG_CAR_TYPES.length)];
             s.cars.push({
                 row: r,
                 x: dir > 0 ? -i * gap : s.canvas.width + i * gap,
-                w: s.cellW * 1.35,
+                w: s.cellW * 1.3,
                 speed: spd * dir * (s.cellW / 16),
                 emoji,
-                // facingRight: движется вправо → не зеркалить
-                // движется влево → зеркалить (scale -1,1)
                 facingRight: dir > 0,
                 stunned: 0,
             });
@@ -11310,9 +11317,12 @@ window.cgUseAbility = () => {
     const s = _cgState;
     if(!s || !_cgRunning || s.gameOver) return;
     if(s.abilityCharges <= 0) { showToast('💤 Способность исчерпана', '#888'); return; }
-    s.abilityCharges--;
-    s.char.useAbility(s);
-    cgUpdateAbilityBtn();
+    const result = s.char.useAbility(s);
+    // Списываем заряд только если способность выполнилась (не вернула false)
+    if(result !== false) {
+        s.abilityCharges--;
+        cgUpdateAbilityBtn();
+    }
 };
 
 // ─── Главный цикл ────────────────────────────────────────────────
@@ -11326,6 +11336,14 @@ function cgLoop() {
     // Таймеры
     if(s.slowMode > 0) s.slowMode--;
     if(s.shieldFrames > 0) s.shieldFrames--;
+    if(s.hitCooldown > 0) s.hitCooldown--;
+    if(s.abilityGhost && s.abilityGhostTimer > 0) {
+        s.abilityGhostTimer--;
+        if(s.abilityGhostTimer <= 0) {
+            s.abilityGhost = false;
+            showToast('👻 Невидимость закончилась', '#888');
+        }
+    }
     const slowFactor = s.slowMode > 0 ? 0.3 : 1;
     // Обновляем бар способности (раз в 6 фреймов)
     if(!s._abFrame) s._abFrame = 0;
@@ -11350,26 +11368,48 @@ function cgLoop() {
     ctx.textAlign = 'center';
     for(let c=0;c<s.COLS;c++) ctx.fillText('🌳', c*s.cellW + s.cellW/2, s.cellH*0.78);
 
-    // Дорога + направление стрелки
+    // Дорога + безопасные ряды (тротуары)
+    const safeRows = s.safeRows || new Set();
     for(let r=1; r<s.ROWS-1; r++) {
         const y = r * s.cellH;
-        ctx.fillStyle = r % 2 === 0 ? '#262626' : '#2e2e2e';
-        ctx.fillRect(0, y, s.canvas.width, s.cellH);
-        // Разметка
-        ctx.strokeStyle = 'rgba(255,255,0,0.12)';
-        ctx.setLineDash([s.cellW*0.25, s.cellW*0.35]);
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        ctx.moveTo(0, y + s.cellH/2);
-        ctx.lineTo(s.canvas.width, y + s.cellH/2);
-        ctx.stroke();
-        ctx.setLineDash([]);
-        // Маленькая стрелка направления
-        const dir = r % 2 === 0 ? 1 : -1;
-        ctx.fillStyle = 'rgba(255,255,255,0.08)';
-        ctx.font = `${s.cellH * 0.3}px serif`;
-        ctx.textAlign = 'center';
-        ctx.fillText(dir > 0 ? '→' : '←', s.canvas.width/2, y + s.cellH*0.35);
+        if(safeRows.has(r)) {
+            // Тротуар — тёмно-зелёный с разметкой
+            ctx.fillStyle = '#1a3520';
+            ctx.fillRect(0, y, s.canvas.width, s.cellH);
+            // Полосы тротуара
+            ctx.fillStyle = 'rgba(46,204,113,0.12)';
+            ctx.fillRect(0, y, s.canvas.width, s.cellH);
+            // Иконка скамейки/отдыха
+            ctx.font = `${s.cellH * 0.45}px serif`;
+            ctx.textAlign = 'center';
+            ctx.globalAlpha = 0.35;
+            for(let c = 1; c < s.COLS; c += 2) {
+                ctx.fillText('🌿', c * s.cellW + s.cellW/2, y + s.cellH*0.72);
+            }
+            ctx.globalAlpha = 1;
+            // Надпись SAFE
+            ctx.fillStyle = 'rgba(46,204,113,0.5)';
+            ctx.font = `bold ${s.cellH * 0.28}px sans-serif`;
+            ctx.fillText('SAFE', s.canvas.width/2, y + s.cellH*0.68);
+        } else {
+            ctx.fillStyle = r % 2 === 0 ? '#242424' : '#2c2c2c';
+            ctx.fillRect(0, y, s.canvas.width, s.cellH);
+            // Разметка
+            ctx.strokeStyle = 'rgba(255,255,0,0.1)';
+            ctx.setLineDash([s.cellW*0.25, s.cellW*0.35]);
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(0, y + s.cellH/2);
+            ctx.lineTo(s.canvas.width, y + s.cellH/2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            // Стрелка направления
+            const dir = r % 2 === 0 ? 1 : -1;
+            ctx.fillStyle = 'rgba(255,255,255,0.07)';
+            ctx.font = `${s.cellH * 0.28}px sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.fillText(dir > 0 ? '▶▶' : '◀◀', s.canvas.width/2, y + s.cellH*0.38);
+        }
     }
 
     // Стартовая зона
@@ -11391,48 +11431,72 @@ function cgLoop() {
         }
     }
 
-    // Машины — зеркалим если едут влево
+    // Машины
+    const carFontSize = Math.floor(s.cellH * 0.72);
+    ctx.font = carFontSize + 'px serif';
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'left';
+
     for(const car of s.cars) {
-        // Stunned (остановка)
         if(car.stunned > 0) { car.stunned--; }
-        else {
-            car.x += car.speed * slowFactor;
-        }
-        // Wrapping
+        else { car.x += car.speed * slowFactor; }
+
         if(car.speed > 0 && car.x > s.canvas.width + s.cellW*2) car.x = -s.cellW*2;
         if(car.speed < 0 && car.x < -s.cellW*3) car.x = s.canvas.width + s.cellW*2;
 
-        ctx.save();
-        const cx = car.x + car.w/2;
-        const cy = car.row * s.cellH + s.cellH*0.72;
-        ctx.translate(cx, cy);
-        ctx.textBaseline = 'middle';
-        // Едет влево → зеркалим (все эмодзи смотрят вправо изначально)
-        if(!car.facingRight) ctx.scale(-1, 1);
-        ctx.font = `${s.cellH * 0.68}px serif`;
-        ctx.textAlign = 'center';
-        // Если оглушена — мигает
         if(car.stunned > 0 && Math.floor(car.stunned / 8) % 2 === 0) ctx.globalAlpha = 0.35;
-        ctx.fillText(car.emoji, 0, 0);
-        ctx.restore();
+
+        const drawY = car.row * s.cellH + s.cellH * 0.5;
+
+        if(car.facingRight) {
+            // Едет вправо — рисуем как есть
+            ctx.fillText(car.emoji, car.x, drawY);
+        } else {
+            // Едет влево — зеркалим через transform относительно центра машины
+            const midX = car.x + car.w * 0.5;
+            ctx.save();
+            ctx.translate(midX, drawY);
+            ctx.scale(-1, 1);
+            ctx.fillText(car.emoji, -car.w * 0.5, 0);
+            ctx.restore();
+        }
+
         ctx.globalAlpha = 1;
-        ctx.textBaseline = 'alphabetic';
     }
+    ctx.textBaseline = 'alphabetic';
+    ctx.textAlign = 'center';
 
     // Игрок
     const px = s.player.col * s.cellW + s.cellW/2;
     const py = s.player.row * s.cellH + s.cellH*0.82;
-    // Щит — ореол
+    // Щит — визуал пока shieldFrames > 0
     if(s.shieldFrames > 0) {
+        const pulse = 0.4 + 0.3 * Math.sin(Date.now() / 80);
+        // Внешнее кольцо
         ctx.beginPath();
-        ctx.arc(px, py - s.cellH*0.3, s.cellH*0.5, 0, Math.PI*2);
-        const shieldAlpha = 0.3 + 0.2 * Math.sin(Date.now()/100);
-        ctx.strokeStyle = `rgba(0,207,255,${shieldAlpha})`;
-        ctx.lineWidth = 3;
+        ctx.arc(px, py - s.cellH*0.28, s.cellH*0.52, 0, Math.PI*2);
+        ctx.strokeStyle = `rgba(0,207,255,${pulse})`;
+        ctx.lineWidth = 4;
+        ctx.stroke();
+        // Заливка
+        ctx.beginPath();
+        ctx.arc(px, py - s.cellH*0.28, s.cellH*0.48, 0, Math.PI*2);
+        ctx.fillStyle = `rgba(0,207,255,${pulse * 0.15})`;
+        ctx.fill();
+        // Счётчик оставшегося времени (дуга)
+        const progress = s.shieldFrames / 120;
+        ctx.beginPath();
+        ctx.arc(px, py - s.cellH*0.28, s.cellH*0.52, -Math.PI/2, -Math.PI/2 + Math.PI*2*progress);
+        ctx.strokeStyle = `rgba(255,255,255,0.8)`;
+        ctx.lineWidth = 2;
         ctx.stroke();
     }
-    // Призрак (способность) — полупрозрачный пока активен
-    if(s.abilityGhost) ctx.globalAlpha = 0.45 + 0.15 * Math.sin(Date.now() / 80);
+    // Мигание после удара (не при щите и не при призраке)
+    if(s.hitCooldown > 0 && s.shieldFrames <= 0 && !s.abilityGhost) {
+        ctx.globalAlpha = Math.floor(s.hitCooldown / 5) % 2 === 0 ? 0 : 0.7;
+    }
+    // Призрак — мерцающая прозрачность
+    if(s.abilityGhost) ctx.globalAlpha = 0.3 + 0.25 * Math.sin(Date.now() / 80);
     ctx.font = `${s.cellH * 0.78}px serif`;
     ctx.textAlign = 'center';
     ctx.fillText(s.playerEmoji, px, py);
@@ -11447,6 +11511,7 @@ function cgLoop() {
         const pT = s.player.row * s.cellH + s.cellH*0.15;
         const pB = pT + s.cellH * 0.75;
 
+        // Коллизии
         for(const car of s.cars) {
             if(car.stunned > 0) continue;
             const cL = car.x + s.cellW*0.08;
@@ -11455,14 +11520,19 @@ function cgLoop() {
             const cB = cT + s.cellH * 0.75;
             if(pL<cR && pR>cL && pT<cB && pB>cT) {
                 if(s.abilityGhost) {
-                    s.abilityGhost = false; // поглощает 1 удар
-                    showToast('👻 Удар поглощён призраком!', '#bdc3c7');
+                    // Призрак: полностью проходит сквозь — ничего не делаем
+                    // (способность исчезнет только при ручном ходе или через cgHit)
+                    break;
                 } else if(s.shieldFrames > 0) {
-                    s.shieldFrames = 0;
-                } else {
+                    // Щит активен — просто пропускаем, shieldFrames продолжает тикать
+                    // hitCooldown не нужен — shieldFrames сам защищает
+                    break;
+                } else if(s.hitCooldown <= 0) {
+                    // Обычный удар
+                    s.hitCooldown = 45;
                     cgHit();
+                    break;
                 }
-                break;
             }
         }
 
@@ -11648,11 +11718,8 @@ window.cgMove = (dir) => {
     const delay = s.moveDelay || 250;
     if(now - s._lastMoveTime < delay) return;
     s._lastMoveTime = now;
-    // Дебафф собаки — нельзя идти назад
-    if(s.noBackward && dir === 'down') {
-        showToast('🐶 Назад нельзя!', '#e74c3c');
-        return;
-    }
+    // Дебафф собаки — нельзя идти назад (без тоста — тихо блокируем)
+    if(s.noBackward && dir === 'down') return;
     if(dir==='up'    && s.player.row > 0)        s.player.row--;
     if(dir==='down'  && s.player.row < s.ROWS-1) s.player.row++;
     if(dir==='left'  && s.player.col > 0)        s.player.col--;
