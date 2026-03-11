@@ -11274,11 +11274,11 @@ function cgInit() {
     cgSpawnCars();
     cgSpawnCoins();
     // Прогрев кэша эмодзи (рендер первого кадра без задержки)
-    const _warmSz = Math.floor(_cgState.cellH * 0.8) * 2;
-    CG_CAR_TYPES.forEach(e => { cgGetEmojiImage(e, _warmSz, false); cgGetEmojiImage(e, _warmSz, true); });
-    cgGetEmojiImage(_cgState.playerEmoji, Math.floor(_cgState.cellH * 0.85) * 2, false);
-    cgGetEmojiImage('🌳', Math.floor(_cgState.cellH * 0.6) * 2, false);
-    cgGetEmojiImage('💰', Math.floor(_cgState.cellH * 0.55) * 2, false);
+    const _warmSz = Math.floor(_cgState.cellH * 0.85) * 2;
+    CG_CAR_TYPES.forEach(e => cgGetEmojiImage(e, _warmSz));
+    cgGetEmojiImage(_cgState.playerEmoji, Math.floor(_cgState.cellH * 0.85) * 2);
+    cgGetEmojiImage('🌳', Math.floor(_cgState.cellH * 0.6) * 2);
+    cgGetEmojiImage('💰', Math.floor(_cgState.cellH * 0.55) * 2);
     _cgRunning = true;
     const heartsArr = ['','❤️','❤️❤️','❤️❤️❤️','❤️❤️❤️❤️'];
     document.getElementById('cg-score').textContent = '0';
@@ -11421,24 +11421,19 @@ window.cgUseAbility = () => {
     }
 };
 
-// ─── OffscreenCanvas кэш для эмодзи машин ────────────────────────
-// Рисуем каждый эмодзи один раз, кэшируем как ImageBitmap
+// ─── Кэш эмодзи — только нормальный (не flipped) ────────────────
+// Зеркалирование делается через drawImage с отрицательной шириной
 const _cgEmojiCache = {};
-function cgGetEmojiImage(emoji, size, flipped) {
-    const key = emoji + '_' + size + (flipped ? '_f' : '');
-    if(_cgEmojiCache[key]) return _cgEmojiCache[key];
+function cgGetEmojiImage(emoji, size) {
+    if(_cgEmojiCache[emoji + '_' + size]) return _cgEmojiCache[emoji + '_' + size];
     const oc = document.createElement('canvas');
     oc.width = size; oc.height = size;
     const ox = oc.getContext('2d');
-    ox.font = Math.floor(size * 0.78) + 'px serif';
+    ox.font = Math.floor(size * 0.82) + 'px serif';
     ox.textAlign = 'center';
     ox.textBaseline = 'middle';
-    if(flipped) {
-        ox.translate(size, 0);
-        ox.scale(-1, 1);
-    }
-    ox.fillText(emoji, flipped ? 0 : size/2, size/2);
-    _cgEmojiCache[key] = oc;
+    ox.fillText(emoji, size / 2, size / 2);
+    _cgEmojiCache[emoji + '_' + size] = oc;
     return oc;
 }
 
@@ -11484,7 +11479,7 @@ function cgLoop() {
     ctx.fillRect(0, 0, W, s.cellH);
     // Деревья — кэшированный размер шрифта
     const treeSz = Math.floor(s.cellH * 0.6);
-    const treeImg = cgGetEmojiImage('🌳', treeSz * 2, false);
+    const treeImg = cgGetEmojiImage('🌳', treeSz * 2);
     for(let c = 0; c < s.COLS; c++) {
         ctx.drawImage(treeImg, c * s.cellW + (s.cellW - treeSz)/2, s.cellH * 0.1, treeSz, treeSz);
     }
@@ -11520,7 +11515,7 @@ function cgLoop() {
         const coinSz = Math.floor(s.cellH * 0.55);
         for(const coin of s.coins) {
             if(coin.collected) continue;
-            const coinImg = cgGetEmojiImage('💰', coinSz * 2, false);
+            const coinImg = cgGetEmojiImage('💰', coinSz * 2);
             const alpha = 0.75 + 0.25 * Math.sin(now / 450 + coin.col);
             ctx.globalAlpha = alpha;
             ctx.drawImage(coinImg, coin.col * s.cellW + (s.cellW - coinSz) * 0.5,
@@ -11529,8 +11524,9 @@ function cgLoop() {
         ctx.globalAlpha = 1;
     }
 
-    // ── Машины — через кэшированные canvas ──
-    const carSz = Math.floor(s.cellH * 0.8);
+    // ── Машины ──
+    const carSz = Math.floor(s.cellH * 0.85);
+    const carImgSz = carSz * 2;
     for(const car of s.cars) {
         if(car.stunned > 0) { car.stunned--; }
         else { car.x += car.speed * slowFactor; }
@@ -11538,14 +11534,19 @@ function cgLoop() {
         if(car.speed > 0 && car.x > W + s.cellW * 2) car.x = -s.cellW * 2;
         if(car.speed < 0 && car.x < -s.cellW * 3)    car.x = W + s.cellW * 2;
 
-        // Мигание при оглушении
         if(car.stunned > 0 && Math.floor(car.stunned / 8) % 2 === 0) continue;
 
-        // Берём нужный кэш (прямой или зеркальный)
-        const img = cgGetEmojiImage(car.emoji, carSz * 2, !car.facingRight);
+        const img = cgGetEmojiImage(car.emoji, carImgSz);
         const drawX = car.x + (car.w - carSz) * 0.5;
         const drawY = car.row * s.cellH + (s.cellH - carSz) * 0.5;
-        ctx.drawImage(img, drawX, drawY, carSz, carSz);
+
+        if(car.facingRight) {
+            // Едет вправо — нормальный рендер
+            ctx.drawImage(img, drawX, drawY, carSz, carSz);
+        } else {
+            // Едет влево — drawImage с отрицательной шириной = горизонтальное зеркало
+            ctx.drawImage(img, drawX + carSz, drawY, -carSz, carSz);
+        }
     }
 
     // ── Игрок ──
@@ -11581,7 +11582,7 @@ function cgLoop() {
     }
 
     const playerSz = Math.floor(s.cellH * 0.85);
-    const pImg = cgGetEmojiImage(s.playerEmoji, playerSz * 2, false);
+    const pImg = cgGetEmojiImage(s.playerEmoji, playerSz * 2);
     ctx.drawImage(pImg, px - playerSz / 2, py - playerSz / 2, playerSz, playerSz);
     ctx.globalAlpha = 1;
 
