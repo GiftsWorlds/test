@@ -10679,73 +10679,147 @@ window.addEventListener('popstate', () => {
     <!-- Канвас -->
     <canvas id="chicken-canvas" style="display:block;touch-action:none;flex:1;max-height:calc(100vh - 188px);"></canvas>
     <!-- Кнопки управления -->
-    <div style="padding:8px 16px 18px;width:100%;box-sizing:border-box;flex-shrink:0;">
+    <div style="padding:6px 14px 16px;width:100%;box-sizing:border-box;flex-shrink:0;">
         <style>
-            .cg-dpad { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:8px; max-width:360px; margin:0 auto; }
+            /* ── D-Pad ── */
+            .cg-dpad {
+                display:grid;
+                grid-template-columns:repeat(4,1fr);
+                gap:10px;
+                max-width:380px;
+                margin:0 auto;
+            }
             .cg-btn {
                 position:relative; overflow:hidden;
-                background:linear-gradient(145deg,rgba(46,204,113,0.22),rgba(39,174,96,0.12));
-                border:2px solid rgba(46,204,113,0.5);
-                border-radius:16px; padding:0;
-                font-size:22px; color:white; cursor:pointer;
-                user-select:none; -webkit-user-select:none;
-                height:56px;
-                box-shadow:0 4px 12px rgba(46,204,113,0.15), inset 0 1px 0 rgba(255,255,255,0.08);
-                transition:transform 0.08s, box-shadow 0.08s;
                 display:flex; align-items:center; justify-content:center;
+                height:62px;
+                border-radius:18px;
+                border:none;
+                cursor:pointer;
+                user-select:none; -webkit-user-select:none;
+                -webkit-tap-highlight-color:transparent;
+                background:linear-gradient(160deg,#1d3d25 0%,#142a1a 100%);
+                box-shadow:
+                    0 6px 0 #0b1a0f,
+                    0 8px 16px rgba(0,0,0,0.45),
+                    inset 0 1px 0 rgba(255,255,255,0.08);
+                transition:transform 0.07s, box-shadow 0.07s;
             }
-            .cg-btn:active { transform:scale(0.92); box-shadow:0 2px 6px rgba(46,204,113,0.1); background:linear-gradient(145deg,rgba(46,204,113,0.35),rgba(39,174,96,0.22)); }
+            .cg-btn svg { pointer-events:none; }
+            .cg-btn:active {
+                transform:translateY(4px);
+                box-shadow:
+                    0 2px 0 #0b1a0f,
+                    0 3px 8px rgba(0,0,0,0.4),
+                    inset 0 1px 0 rgba(255,255,255,0.06);
+            }
+            /* Кнопка ВПЕРЁД — главная */
             .cg-btn-up {
-                background:linear-gradient(145deg,rgba(46,204,113,0.35),rgba(39,174,96,0.18)) !important;
-                border-color:rgba(46,204,113,0.85) !important;
-                box-shadow:0 4px 18px rgba(46,204,113,0.35), 0 0 0 1px rgba(46,204,113,0.2), inset 0 1px 0 rgba(255,255,255,0.15) !important;
-                font-size:26px !important;
+                background:linear-gradient(160deg,#1a8f4a 0%,#0f6332 100%) !important;
+                box-shadow:
+                    0 6px 0 #074020,
+                    0 10px 24px rgba(46,204,113,0.35),
+                    inset 0 1px 0 rgba(255,255,255,0.18) !important;
             }
-            .cg-btn-up::before {
-                content:''; position:absolute; inset:0;
-                background:linear-gradient(180deg,rgba(255,255,255,0.12) 0%,transparent 60%);
-                border-radius:14px; pointer-events:none;
+            .cg-btn-up:active {
+                box-shadow:
+                    0 2px 0 #074020,
+                    0 4px 10px rgba(46,204,113,0.2),
+                    inset 0 1px 0 rgba(255,255,255,0.1) !important;
+            }
+            .cg-btn-up::after {
+                content:'';
+                position:absolute; top:0; left:0; right:0; height:50%;
+                background:linear-gradient(180deg,rgba(255,255,255,0.13) 0%,transparent 100%);
+                border-radius:18px 18px 0 0;
+                pointer-events:none;
+            }
+            /* ── Способность ── */
+            .cg-ability-wrap {
+                max-width:380px;
+                margin:10px auto 0;
+                position:relative;
             }
             .cg-ability-btn {
-                width:100%; display:block;
-                background:linear-gradient(135deg,rgba(0,207,255,0.18),rgba(0,160,220,0.1));
-                border:3px solid transparent;
-                border-radius:14px; padding:11px 0;
-                font-size:13px; font-weight:bold; color:#00cfff;
+                width:100%; display:flex; align-items:center; justify-content:center; gap:8px;
+                height:52px;
+                background:linear-gradient(160deg,#0e2a35 0%,#081a22 100%);
+                border:none;
+                border-radius:16px;
+                font-size:14px; font-weight:800; color:#00cfff;
                 cursor:pointer; user-select:none; -webkit-user-select:none;
-                transition:transform 0.08s, opacity 0.15s, background 0.3s, box-shadow 0.3s;
-                position:relative; z-index:1;
+                -webkit-tap-highlight-color:transparent;
+                box-shadow:
+                    0 5px 0 #041018,
+                    0 8px 20px rgba(0,207,255,0.18),
+                    inset 0 1px 0 rgba(0,207,255,0.15);
+                transition:transform 0.07s, box-shadow 0.07s, opacity 0.2s;
+                position:relative; overflow:hidden;
             }
-            .cg-ability-btn:active { transform:scale(0.97); }
+            .cg-ability-btn::after {
+                content:'';
+                position:absolute; top:0; left:0; right:0; height:50%;
+                background:linear-gradient(180deg,rgba(0,207,255,0.1) 0%,transparent 100%);
+                border-radius:16px 16px 0 0;
+                pointer-events:none;
+            }
+            .cg-ability-btn:active {
+                transform:translateY(3px);
+                box-shadow:
+                    0 2px 0 #041018,
+                    0 3px 8px rgba(0,207,255,0.1),
+                    inset 0 1px 0 rgba(0,207,255,0.1);
+            }
             @keyframes cg-ring-pulse {
-                0%,100% { opacity:1; filter:drop-shadow(0 0 5px rgba(0,207,255,0.9)); }
-                50% { opacity:0.65; filter:drop-shadow(0 0 10px rgba(0,207,255,1)); }
+                0%,100% { opacity:1; }
+                50% { opacity:0.55; }
             }
-            .cg-ring-full { animation: cg-ring-pulse 1.2s ease-in-out infinite; }
+            .cg-ring-full { animation: cg-ring-pulse 1s ease-in-out infinite; }
         </style>
+
         <div class="cg-dpad">
-            <button class="cg-btn" ontouchstart="cgMove('left')" onmousedown="cgMove('left')">⬅️</button>
-            <button class="cg-btn cg-btn-up" ontouchstart="cgMove('up')" onmousedown="cgMove('up')">⬆️</button>
-            <button class="cg-btn" ontouchstart="cgMove('down')" onmousedown="cgMove('down')">⬇️</button>
-            <button class="cg-btn" ontouchstart="cgMove('right')" onmousedown="cgMove('right')">➡️</button>
+            <!-- ← -->
+            <button class="cg-btn" ontouchstart="cgMove('left')" onmousedown="cgMove('left')" ontouchend="void(0)">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                    <path d="M18 6L10 14L18 22" stroke="rgba(46,204,113,0.9)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <!-- ↑ ГЛАВНАЯ -->
+            <button class="cg-btn cg-btn-up" ontouchstart="cgMove('up')" onmousedown="cgMove('up')" ontouchend="void(0)">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                    <path d="M16 24V10M9 17L16 10L23 17" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <!-- ↓ -->
+            <button class="cg-btn" ontouchstart="cgMove('down')" onmousedown="cgMove('down')" ontouchend="void(0)">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                    <path d="M14 8V20M7 13L14 20L21 13" stroke="rgba(46,204,113,0.9)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <!-- → -->
+            <button class="cg-btn" ontouchstart="cgMove('right')" onmousedown="cgMove('right')" ontouchend="void(0)">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                    <path d="M10 6L18 14L10 22" stroke="rgba(46,204,113,0.9)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
         </div>
+
         <!-- Кнопка способности с кольцевым баром -->
-        <div style="max-width:360px;margin:8px auto 0;position:relative;" id="cg-ability-wrap">
-            <svg id="cg-ability-ring" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;border-radius:14px;" viewBox="0 0 360 46" preserveAspectRatio="none">
-                <!-- Фоновая дорожка -->
-                <rect x="1.5" y="1.5" width="357" height="43" rx="12.5" ry="12.5"
-                    fill="none" stroke="rgba(0,207,255,0.12)" stroke-width="3"/>
-                <!-- Прогресс-бар -->
-                <rect id="cg-ability-progress" x="1.5" y="1.5" width="357" height="43" rx="12.5" ry="12.5"
-                    fill="none"
-                    stroke="#00cfff"
-                    stroke-width="3"
-                    stroke-linecap="round"
-                    stroke-dasharray="800"
-                    stroke-dashoffset="800"
-                    style="transition:stroke-dashoffset 0.55s cubic-bezier(0.4,0,0.2,1), stroke 0.3s;filter:drop-shadow(0 0 4px rgba(0,207,255,0.7))"/>
+        <div class="cg-ability-wrap" id="cg-ability-wrap">
+            <svg id="cg-ability-ring" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;" viewBox="0 0 380 52" preserveAspectRatio="none">
+                <rect x="2" y="2" width="376" height="48" rx="14" ry="14"
+                    fill="none" stroke="rgba(0,207,255,0.10)" stroke-width="3"/>
+                <rect id="cg-ability-progress" x="2" y="2" width="376" height="48" rx="14" ry="14"
+                    fill="none" stroke="#00cfff" stroke-width="3" stroke-linecap="round"
+                    stroke-dasharray="848" stroke-dashoffset="848"
+                    style="transition:stroke-dashoffset 0.5s cubic-bezier(0.4,0,0.2,1);filter:drop-shadow(0 0 4px rgba(0,207,255,0.8))"/>
             </svg>
-            <button id="cg-ability-btn" class="cg-ability-btn" ontouchstart="cgUseAbility()" onmousedown="cgUseAbility()">⚡ Способность (0)</button>
+            <button id="cg-ability-btn" class="cg-ability-btn" ontouchstart="cgUseAbility()" onmousedown="cgUseAbility()" ontouchend="void(0)">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style="flex-shrink:0">
+                    <path d="M10 2L4 10H9L8 16L14 8H9L10 2Z" fill="#00cfff" stroke="#00cfff" stroke-width="0.5" stroke-linejoin="round"/>
+                </svg>
+                <span id="cg-ability-label">Способность (0)</span>
+            </button>
         </div>
     </div>
 </div>
@@ -10853,62 +10927,64 @@ function updateChickenAttemptsBadge() {
 // ═══════════════════════════════════════════════════════════════════
 
 // ─── Персонажи ────────────────────────────────────────────────────
+// debuff: функция вызывается при cgInit для применения стартового дебаффа
 const CG_CHARACTERS = [
     {
         id: 'chicken', emoji: '🐔', name: 'Курица', color: '#f39c12',
         desc: '3 жизни • Классика',
-        ability: 'Кудах-тах!', abilityDesc: 'Отпугивает ближайшие машины',
+        debuff: '⚠️ Ширина хитбокса +20%', debuffDesc: 'Крупная — легче задеть',
+        ability: 'Кудах-тах!', abilityDesc: 'Отпугивает машины в своём ряду',
         lives: 3, abilityCharges: 2,
+        applyDebuff(s) { s.hitboxBonus = 1.2; }, // множитель хитбокса
         useAbility(s) {
-            // Отпугивает машины в текущем ряду
             const row = s.player.row;
-            s.cars.filter(c => c.row === row).forEach(c => {
-                c.stunned = (c.stunned || 0) + 120; // фреймов
-            });
+            s.cars.filter(c => c.row === row).forEach(c => { c.stunned = (c.stunned || 0) + 130; });
             showToast('🐔 Кудах-тах! Машины напуганы!', '#f39c12');
         }
     },
     {
         id: 'frog', emoji: '🐸', name: 'Лягушка', color: '#2ecc71',
         desc: '2 жизни • Прыгает через ряд',
+        debuff: '⚠️ Только 2 жизни', debuffDesc: 'Хрупкая — меньше прощений',
         ability: 'Супер-прыжок', abilityDesc: 'Перепрыгивает 2 ряда сразу',
         lives: 2, abilityCharges: 3,
+        applyDebuff(s) { /* уже в lives:2 */ },
         useAbility(s) {
-            if(s.player.row >= 2) {
-                s.player.row -= 2;
-                showToast('🐸 Супер-прыжок!', '#2ecc71');
-            } else if(s.player.row === 1) {
-                s.player.row = 0;
-                showToast('🐸 Финиш прыжком!', '#2ecc71');
-            }
+            if(s.player.row >= 2) { s.player.row -= 2; showToast('🐸 Супер-прыжок!', '#2ecc71'); }
+            else if(s.player.row === 1) { s.player.row = 0; showToast('🐸 Финиш прыжком!', '#2ecc71'); }
         }
     },
     {
         id: 'cat', emoji: '🐱', name: 'Кот', color: '#9b59b6',
         desc: '4 жизни • Живучий',
-        ability: 'Замедление', abilityDesc: 'Замедляет все машины на 3 сек',
+        debuff: '⚠️ Задержка хода +80мс', debuffDesc: 'Ленивый — чуть медленнее реагирует',
+        ability: 'Матрица', abilityDesc: 'Замедляет все машины на 3 сек',
         lives: 4, abilityCharges: 2,
+        applyDebuff(s) { s.moveDelay = 130; }, // ms задержка между ходами
         useAbility(s) {
-            s.slowMode = 180; // фреймов (≈3 сек)
+            s.slowMode = 180;
             showToast('🐱 Матрица! Время замедлилось...', '#9b59b6');
         }
     },
     {
         id: 'dog', emoji: '🐶', name: 'Собака', color: '#e74c3c',
         desc: '3 жизни • Быстрый',
+        debuff: '⚠️ Нельзя идти назад', debuffDesc: 'Упрямая — только вперёд и вбок',
         ability: 'Рывок', abilityDesc: 'Телепортируется на 3 ряда вперёд',
         lives: 3, abilityCharges: 3,
+        applyDebuff(s) { s.noBackward = true; },
         useAbility(s) {
-            const target = Math.max(0, s.player.row - 3);
-            s.player.row = target;
+            s.player.row = Math.max(0, s.player.row - 3);
             showToast('🐶 Рывок вперёд!', '#e74c3c');
         }
     },
     {
         id: 'robot', emoji: '🤖', name: 'Робот', color: '#00cfff',
         desc: '3 жизни • Щит',
-        ability: 'Щит', abilityDesc: 'Неуязвим на 2 секунды',
+        debuff: '⚠️ Скорость игрока −30%', debuffDesc: 'Тяжёлый — задержка хода 200мс',
+        ability: 'Щит', abilityDesc: 'Полная неуязвимость на 2 сек',
         lives: 3, abilityCharges: 2,
+        applyDebuff(s) { s.moveDelay = 200; },
         useAbility(s) {
             s.shieldFrames = 120;
             showToast('🤖 Щит активирован!', '#00cfff');
@@ -10916,9 +10992,11 @@ const CG_CHARACTERS = [
     },
     {
         id: 'ghost', emoji: '👻', name: 'Призрак', color: '#bdc3c7',
-        desc: '2 жизни • Проходит сквозь 1 машину',
+        desc: '2 жизни • Призрачный',
+        debuff: '⚠️ Монеты не видны', debuffDesc: 'Нематериальный — сквозь монеты',
         ability: 'Невидимость', abilityDesc: 'Следующее столкновение игнорируется',
         lives: 2, abilityCharges: 4,
+        applyDebuff(s) { s.noCoins = true; },
         useAbility(s) {
             s.ghostMode = true;
             showToast('👻 Призрак! Следующий удар не считается', '#bdc3c7');
@@ -10936,13 +11014,18 @@ function cgOpenCharSelect() {
     if(startBtn) { startBtn.disabled = true; startBtn.style.opacity = '0.5'; }
     grid.innerHTML = CG_CHARACTERS.map(ch => `
         <div id="cgchar-${ch.id}" onclick="cgSelectChar('${ch.id}')"
-            style="background:rgba(255,255,255,0.05);border:2px solid rgba(255,255,255,0.1);border-radius:16px;padding:14px 12px;cursor:pointer;transition:all 0.18s;text-align:left;">
-            <div style="font-size:30px;margin-bottom:6px;">${ch.emoji}</div>
+            style="background:rgba(255,255,255,0.04);border:2px solid rgba(255,255,255,0.09);border-radius:18px;padding:14px 12px;cursor:pointer;transition:all 0.18s;text-align:left;position:relative;overflow:hidden;">
+            <div style="position:absolute;right:10px;top:10px;font-size:28px;opacity:0.08;">${ch.emoji}</div>
+            <div style="font-size:32px;margin-bottom:5px;line-height:1;">${ch.emoji}</div>
             <div style="font-size:14px;font-weight:900;color:${ch.color};margin-bottom:2px;">${ch.name}</div>
-            <div style="font-size:10px;color:rgba(255,255,255,0.45);margin-bottom:6px;">${ch.desc}</div>
-            <div style="font-size:10px;background:rgba(255,255,255,0.06);border-radius:8px;padding:5px 7px;color:rgba(255,255,255,0.7);">
-                ⚡ <b style="color:${ch.color};">${ch.ability}</b> (${ch.abilityCharges}x)<br>
-                <span style="color:rgba(255,255,255,0.4);">${ch.abilityDesc}</span>
+            <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:8px;">${ch.desc}</div>
+            <div style="font-size:10px;background:rgba(0,207,255,0.07);border:1px solid rgba(0,207,255,0.15);border-radius:8px;padding:5px 7px;color:rgba(255,255,255,0.75);margin-bottom:5px;">
+                ⚡ <b style="color:${ch.color};">${ch.ability}</b><br>
+                <span style="color:rgba(255,255,255,0.38);">${ch.abilityDesc}</span>
+            </div>
+            <div style="font-size:10px;background:rgba(231,76,60,0.08);border:1px solid rgba(231,76,60,0.2);border-radius:8px;padding:5px 7px;">
+                ${ch.debuff}<br>
+                <span style="color:rgba(255,255,255,0.35);">${ch.debuffDesc}</span>
             </div>
         </div>`).join('');
     document.getElementById('cg-char-select').style.display = 'flex';
@@ -11033,7 +11116,14 @@ function cgInit() {
         shieldFrames: 0,
         ghostMode: false,
         stunTimer: 0,
+        hitboxBonus: 1.0,
+        moveDelay: 60,   // ms между ходами (дефолт)
+        noBackward: false,
+        noCoins: false,
+        _lastMoveTime: 0,
     };
+    // Применяем дебафф персонажа
+    if(char.applyDebuff) char.applyDebuff(_cgState);
 
     cgUpdateAbilityBtn();
     cgSpawnCars();
@@ -11109,6 +11199,7 @@ function cgSpawnCoins() {
 function cgUpdateAbilityBtn() {
     const s = _cgState;
     const btn = document.getElementById('cg-ability-btn');
+    const labelEl = document.getElementById('cg-ability-label');
     const bar = document.getElementById('cg-ability-bar');
     const progress = document.getElementById('cg-ability-progress');
     if(!s) return;
@@ -11116,40 +11207,38 @@ function cgUpdateAbilityBtn() {
     const charges = s.abilityCharges;
     const maxCharges = ch.abilityCharges;
 
-    // Текст кнопки
-    const label = charges > 0 ? `⚡ ${ch.ability} (${charges})` : `💤 Заряжается...`;
+    const labelText = charges > 0 ? `${ch.ability} (${charges})` : `Заряжается...`;
+    if(labelEl) labelEl.textContent = labelText;
     if(btn) {
-        btn.textContent = label;
         btn.style.opacity = charges > 0 ? '1' : '0.55';
-        btn.style.borderColor = charges > 0 ? 'rgba(0,207,255,0.0)' : 'rgba(255,255,255,0.0)'; // border скрыт — рисует SVG
-        btn.style.color = charges > 0 ? '#00cfff' : 'rgba(255,255,255,0.45)';
-        btn.style.boxShadow = charges > 0 ? '0 4px 14px rgba(0,207,255,0.22)' : 'none';
+        btn.style.color = charges > 0 ? '#00cfff' : 'rgba(255,255,255,0.4)';
         btn.style.background = charges > 0
-            ? 'linear-gradient(135deg,rgba(0,207,255,0.18),rgba(0,160,220,0.1))'
-            : 'linear-gradient(135deg,rgba(255,255,255,0.04),rgba(255,255,255,0.02))';
+            ? 'linear-gradient(160deg,#0e2a35 0%,#081a22 100%)'
+            : 'linear-gradient(160deg,#161616 0%,#0e0e0e 100%)';
+        btn.style.boxShadow = charges > 0
+            ? '0 5px 0 #041018, 0 8px 20px rgba(0,207,255,0.18), inset 0 1px 0 rgba(0,207,255,0.15)'
+            : '0 5px 0 #111, 0 8px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)';
     }
     if(bar) bar.textContent = charges > 0 ? `${charges}x` : '0x';
 
-    // SVG прогресс-бар: периметр прямоугольника ~800
     if(progress) {
-        // Дробный прогресс: если заряд 0 — идёт заполнение
-        // progress = charges/maxCharges (полные заряды)
         const pct = maxCharges > 0 ? charges / maxCharges : 0;
-        const totalLen = 800;
+        const totalLen = 848;
         const offset = totalLen - totalLen * pct;
+        progress.setAttribute('stroke-dasharray', totalLen);
         progress.style.strokeDashoffset = offset;
 
-        // Цвет: заряжен — голубой, пусто — тусклый
         if(charges >= maxCharges) {
             progress.style.stroke = '#00cfff';
-            progress.style.filter = 'none';
+            progress.style.filter = 'drop-shadow(0 0 5px rgba(0,207,255,0.9))';
             progress.classList.add('cg-ring-full');
         } else if(charges > 0) {
             progress.classList.remove('cg-ring-full');
             progress.style.stroke = '#00cfff';
             progress.style.filter = 'drop-shadow(0 0 3px rgba(0,207,255,0.5))';
         } else {
-            progress.style.stroke = 'rgba(0,207,255,0.3)';
+            progress.classList.remove('cg-ring-full');
+            progress.style.stroke = 'rgba(0,207,255,0.25)';
             progress.style.filter = 'none';
         }
     }
@@ -11296,8 +11385,10 @@ function cgLoop() {
 
     // Проверка столкновений
     if(!s.gameOver) {
-        const pL = s.player.col * s.cellW + s.cellW*0.15;
-        const pR = pL + s.cellW * 0.7;
+        const hb = s.hitboxBonus || 1.0;
+        const hPad = (1 - 0.7*hb) * 0.5;
+        const pL = s.player.col * s.cellW + s.cellW * Math.max(0.05, 0.15/hb);
+        const pR = pL + s.cellW * 0.7 * hb;
         const pT = s.player.row * s.cellH + s.cellH*0.15;
         const pB = pT + s.cellH * 0.75;
 
@@ -11319,15 +11410,17 @@ function cgLoop() {
             }
         }
 
-        // Монетки
-        for(const coin of s.coins) {
-            if(coin.collected) continue;
-            if(coin.row === s.player.row && coin.col === s.player.col) {
-                coin.collected = true;
-                s.coinsEarned += 10;
-                s.score += 5;
-                document.getElementById('cg-score').textContent = s.score;
-                showToast('💰 +10 монет!', '#ffd700');
+        // Монетки (призрак не может подбирать)
+        if(!s.noCoins) {
+            for(const coin of s.coins) {
+                if(coin.collected) continue;
+                if(coin.row === s.player.row && coin.col === s.player.col) {
+                    coin.collected = true;
+                    s.coinsEarned += 10;
+                    s.score += 5;
+                    document.getElementById('cg-score').textContent = s.score;
+                    showToast('💰 +10 монет!', '#ffd700');
+                }
             }
         }
 
@@ -11456,6 +11549,16 @@ async function cgGameOver() {
 window.cgMove = (dir) => {
     if(!_cgRunning || !_cgState || _cgState.moving || _cgState.gameOver) return;
     const s = _cgState;
+    // Дебаунс — защита от случайных двойных нажатий
+    const now = Date.now();
+    const delay = s.moveDelay || 60;
+    if(now - s._lastMoveTime < delay) return;
+    s._lastMoveTime = now;
+    // Дебафф собаки — нельзя идти назад
+    if(s.noBackward && dir === 'down') {
+        showToast('🐶 Назад нельзя!', '#e74c3c');
+        return;
+    }
     if(dir==='up'    && s.player.row > 0)        s.player.row--;
     if(dir==='down'  && s.player.row < s.ROWS-1) s.player.row++;
     if(dir==='left'  && s.player.col > 0)        s.player.col--;
