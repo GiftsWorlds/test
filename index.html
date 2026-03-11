@@ -7,6 +7,9 @@
     <title>Gifts World Pro</title>
     <link rel="manifest" href="manifest.json">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <meta name="theme-color" content="#070d14">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -745,16 +748,19 @@
         @keyframes balanceFlash { 0% { color: var(--accent); transform: scale(1); } 35% { color: #2ecc71; transform: scale(1.3); } 100% { color: var(--accent); transform: scale(1); } }
 
         /* ===== DUEL & TRADE ANIMATIONS ===== */
-        @keyframes duelShakeL { 0%,100%{transform:translateX(0) rotate(0deg)} 20%{transform:translateX(-18px) rotate(-8deg)} 40%{transform:translateX(12px) rotate(5deg)} 60%{transform:translateX(-8px) rotate(-4deg)} 80%{transform:translateX(5px) rotate(2deg)} }
-        @keyframes duelShakeR { 0%,100%{transform:translateX(0) rotate(0deg)} 20%{transform:translateX(18px) rotate(8deg)} 40%{transform:translateX(-12px) rotate(-5deg)} 60%{transform:translateX(8px) rotate(4deg)} 80%{transform:translateX(-5px) rotate(-2deg)} }
-        @keyframes duelClash { 0%{transform:translate(-50%,-50%) scale(1) rotate(0deg);opacity:1} 25%{transform:translate(-50%,-50%) scale(2.5) rotate(15deg);opacity:1} 50%{transform:translate(-50%,-50%) scale(3.2) rotate(-10deg);opacity:0.9} 75%{transform:translate(-50%,-50%) scale(2) rotate(5deg);opacity:0.5} 100%{transform:translate(-50%,-50%) scale(0) rotate(0deg);opacity:0} }
-        @keyframes duelWinner { 0%{transform:translateY(0) scale(1)} 30%{transform:translateY(-22px) scale(1.35)} 60%{transform:translateY(-12px) scale(1.25)} 100%{transform:translateY(-6px) scale(1.2)} }
-        @keyframes duelLoser { 0%{transform:scale(1);opacity:1;filter:none} 100%{transform:scale(0.4) translateY(25px);opacity:0.15;filter:grayscale(1) blur(2px)} }
-        @keyframes duelFlash { 0%,100%{background:rgba(0,0,0,0.88)} 30%{background:rgba(255,80,0,0.3)} 60%{background:rgba(255,30,0,0.4)} }
+        @keyframes duelShakeL { 0%{transform:translateX(0) rotate(0)} 10%{transform:translateX(-28px) rotate(-12deg) scale(1.15)} 25%{transform:translateX(18px) rotate(8deg) scale(1.08)} 40%{transform:translateX(-14px) rotate(-6deg)} 60%{transform:translateX(8px) rotate(4deg)} 80%{transform:translateX(-4px) rotate(-2deg)} 100%{transform:translateX(0) rotate(0)} }
+        @keyframes duelShakeR { 0%{transform:translateX(0) rotate(0)} 10%{transform:translateX(28px) rotate(12deg) scale(1.15)} 25%{transform:translateX(-18px) rotate(-8deg) scale(1.08)} 40%{transform:translateX(14px) rotate(6deg)} 60%{transform:translateX(-8px) rotate(-4deg)} 80%{transform:translateX(4px) rotate(2deg)} 100%{transform:translateX(0) rotate(0)} }
+        @keyframes duelClash { 0%{transform:translate(-50%,-50%) scale(0.3) rotate(-30deg);opacity:0} 15%{opacity:1} 35%{transform:translate(-50%,-50%) scale(3.5) rotate(8deg);opacity:1} 65%{transform:translate(-50%,-50%) scale(4) rotate(-4deg);opacity:0.9} 85%{transform:translate(-50%,-50%) scale(2) rotate(2deg);opacity:0.4} 100%{transform:translate(-50%,-50%) scale(0.2) rotate(0);opacity:0} }
+        @keyframes duelWinner { 0%{transform:scale(1);filter:none} 25%{transform:scale(1.5) translateY(-12px);filter:drop-shadow(0 0 18px gold) brightness(1.2)} 55%{transform:scale(1.45) translateY(-16px);filter:drop-shadow(0 0 28px gold) brightness(1.35)} 100%{transform:scale(1.3) translateY(-10px);filter:drop-shadow(0 0 14px gold) brightness(1.2)} }
+        @keyframes duelLoser { 0%{transform:scale(1);opacity:1;filter:none} 20%{transform:scale(0.85) rotate(-8deg);opacity:0.7} 60%{transform:scale(0.5) rotate(-15deg) translateY(20px);opacity:0.3;filter:grayscale(0.8)} 100%{transform:scale(0.25) rotate(-22deg) translateY(38px);opacity:0;filter:grayscale(1) blur(3px)} }
+        @keyframes duelFlash { 0%,100%{background:rgba(0,0,0,0.92)} 20%{background:rgba(255,120,0,0.55)} 45%{background:rgba(220,0,0,0.65)} 70%{background:rgba(255,160,0,0.45)} }
+        @keyframes duelVsFloat { 0%,100%{transform:scale(1) rotate(-3deg)} 50%{transform:scale(1.25) rotate(3deg)} }
+        @keyframes duelResultPop { 0%{transform:scale(0.2) translateY(20px);opacity:0} 55%{transform:scale(1.08) translateY(-4px)} 80%{transform:scale(0.97) translateY(2px)} 100%{transform:scale(1) translateY(0);opacity:1} }
+        @keyframes duelGlow { 0%,100%{box-shadow:0 0 15px rgba(255,215,0,0.3),inset 0 0 15px rgba(255,215,0,0.05)} 50%{box-shadow:0 0 40px rgba(255,215,0,0.7),inset 0 0 25px rgba(255,215,0,0.12)} }
         @keyframes swordSpin { 0%{transform:translate(-50%,-50%) rotate(0deg) scale(1)} 50%{transform:translate(-50%,-50%) rotate(200deg) scale(2)} 100%{transform:translate(-50%,-50%) rotate(360deg) scale(1)} }
         @keyframes tradeArrow { 0%,100%{transform:translateX(0);opacity:1} 50%{transform:translateX(6px);opacity:0.6} }
         @keyframes tradeGlow { 0%,100%{box-shadow:0 0 0 0 rgba(46,204,113,0)} 50%{box-shadow:0 0 0 8px rgba(46,204,113,0.15)} }
-        .duel-clash-emoji { position:fixed; top:50%; left:50%; font-size:64px; pointer-events:none; z-index:9999; animation: duelClash 0.85s ease forwards; }
+        .duel-clash-emoji { position:fixed; top:50%; left:50%; font-size:82px; pointer-events:none; z-index:9999; animation: duelClash 1s cubic-bezier(0.22,1,0.36,1) forwards; }
         .duel-sword-spin { position:fixed; top:50%; left:50%; font-size:52px; pointer-events:none; z-index:9999; animation: swordSpin 0.6s ease-in-out; }
 
 
@@ -1461,7 +1467,10 @@
         <div style="padding:15px 16px 12px;background:linear-gradient(135deg,rgba(231,76,60,0.12),rgba(255,107,107,0.06));border-bottom:1px solid rgba(255,107,107,0.2);position:sticky;top:0;z-index:10;backdrop-filter:blur(20px);">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
                 <div style="font-size:20px;font-weight:900;background:linear-gradient(90deg,#ff6b6b,#ffd700);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">⚔️ Дуэли</div>
-                <div id="duel-wins-badge" style="background:rgba(255,107,107,0.15);border:1px solid rgba(255,107,107,0.3);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:bold;color:#ff6b6b;">0 побед</div>
+                <div style="display:flex;gap:6px;align-items:center;">
+                    <div id="duel-wins-badge" style="background:rgba(46,204,113,0.15);border:1px solid rgba(46,204,113,0.35);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:bold;color:#2ecc71;">⚔️ 0 побед</div>
+                    <div id="duel-losses-badge" style="background:rgba(231,76,60,0.15);border:1px solid rgba(231,76,60,0.35);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:bold;color:#e74c3c;">💀 0 пор.</div>
+                </div>
             </div>
             <div style="position:relative;">
                 <input type="text" id="duel-search-input" placeholder="🔍 Найти игрока для дуэли..."
@@ -2096,10 +2105,10 @@
           <i>👥</i>
           <span>Друзья</span>
         </button>
-        <button class="nav-btn" id="duel-nav-btn" onclick="tab('duel',this)" style="position:relative;">
+        <button class="nav-btn" id="games-nav-btn" onclick="openGamesMenu(this)" style="position:relative;">
           <div id="badge-duel" class="badge" style="right:8px;display:none;">0</div>
-          <i>⚔️</i>
-          <span>Дуэль</span>
+          <i>🎮</i>
+          <span>Игры</span>
         </button>
         <button class="nav-btn" onclick="tab('profile',this)">
           <i>👤</i>
@@ -2133,13 +2142,13 @@
     import { getDatabase, ref, set, get, onValue, push, remove, update, onDisconnect, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const config = {
-        apiKey: "AIzaSyDkKqqEKpB3KHpmf9umilK1mkMdHRrSNiA",
-        authDomain: "gift-f97e9.firebaseapp.com",
-        projectId: "gift-f97e9",
-        databaseURL: "https://gift-f97e9-default-rtdb.firebaseio.com",
-        storageBucket: "gift-f97e9.firebasestorage.app",
-        messagingSenderId: "83318447783",
-        appId: "1:83318447783:web:8e0d7408c77e900fa50582"
+        apiKey: "AIzaSyADefAiKMM-lWJJfLthYcPvchguJq32p14",
+        authDomain: "oidlat.firebaseapp.com",
+        projectId: "oidlat",
+        databaseURL: "https://oidlat-default-rtdb.europe-west1.firebasedatabase.app",
+        storageBucket: "oidlat.firebasestorage.app",
+        messagingSenderId: "1085208482031",
+        appId: "1:1085208482031:web:7dcbcc785a6a5f55e8cb1a"
     };
     const fb = initializeApp(config);
     const db = getDatabase(fb);
@@ -2170,7 +2179,7 @@
         {id:22,n:"Клевер",   i:"🍀", img:"images/clover.png"},
         {id:23,n:"Кубок",    i:"🏆", img:"images/trophy.png"},
         {id:24,n:"Джойстик", i:"🎮", img:"images/video-game.png"},
-        {id:25,n:"Пепе",      i:"🐸", img:"images/pepe.png"},
+        {id:25,n:"Пепе",      i:"🐸", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f438.png"},
         {id:26,n:"Кости",    i:"🎲", img:"images/game-die.png"},
         {id:27,n:"Фишки",    i:"🪙", img:"images/coin.png"},
         {id:28,n:"Золотой слиток", i:"🏅", img:"images/gold_bar.png"},
@@ -2208,8 +2217,8 @@
     ];
 
     const ADMIN_IDS = new Set(['ckovoroda','kukumbr']);
-    const MOD_IDS = new Set(['batlukov','nowkie']);
-    const MOD_PREFIXES = { batlukov: '🎨 Художник', nowkie: '🧪 Тестировщик' };
+    const MOD_IDS = new Set(['nowkie']);
+    const MOD_PREFIXES = { nowkie: '🧪 Тестировщик' };
 
     // Нормализация cloudInv: Firebase может вернуть объект вместо массива
     function toArr(v) { return Array.isArray(v) ? v : (v && typeof v === 'object' ? Object.values(v) : []); }
@@ -2470,7 +2479,7 @@
         if (!delta || !userId) return;
         const r = ref(db, 'users/' + userId);
         await runTransaction(r, (current) => {
-            if (!current) return;
+            if (!current) return undefined;  // ABORT — не удалять профиль!
             const curXp = current.xp || 0;
             const newXp = Math.max(0, curXp + delta);
             return { ...current, xp: newXp };
@@ -2540,6 +2549,7 @@
 
 
         const CATALOG_IMG_OVERRIDE = {22:'images/clover.png'};
+
         function resolveImg(x) {
             const xid = x && (x.id !== undefined && x.id !== null) ? Number(x.id) : null;
             if(xid !== null && CATALOG_IMG_OVERRIDE[xid]) return CATALOG_IMG_OVERRIDE[xid];
@@ -3229,7 +3239,7 @@
 
 
     function startApp(name,id) {
-        user={name,id,isAdm:(id==='ckovoroda'||id==='kukumbr'),isMod:MOD_IDS.has(id)};
+        user={name,id,isAdm:(id==='ckovoroda'||id==='kukumbr'),isMod:MOD_IDS.has(id),pic:''};
         window.user = user; // expose for maintenance system
         document.getElementById('auth-screen').style.display='none'; document.getElementById('auth-screen').style.minHeight='0';
         document.getElementById('app').style.display='block';
@@ -3275,7 +3285,19 @@
             const d=s.val(); if(!d) return;
             document.getElementById('header-name').innerHTML=buildUsername(d);
             document.getElementById('u-bal').innerText=d.balance;
+            if(window.user) window.user.pic = d.pic||d.avatar||'';
             renderFriends(d); renderMyProfile(d); _invDirty = true; // инвентарь мог измениться
+            // Обновляем лёгкий профиль для дуэлей (без инвентаря)
+            update(ref(db,'duelProfiles/'+id), {
+                username: d.username||d.name||id,
+                pic: d.pic||'',
+                xp: d.xp||0,
+                duelWins: d.duelWins||0,
+                activeCosmetic: d.activeCosmetic||{},
+                cosmetics: d.cosmetics||[],
+                lastSeen: Date.now(),
+                privacy: d.privacy||{}
+            }).catch(()=>{});
             // ⭐ XP за привязку TG (один раз)
             if(d.tgChatId && !d.xpTgLinked && !user.isAdm) {
                 update(ref(db,'users/'+id),{xpTgLinked:true});
@@ -3286,6 +3308,12 @@
             if(user.isAdm && (d.xp || 0) < xpForLevel(XP_MAX_LEVEL)) {
                 update(ref(db,'users/'+id),{xp: xpForLevel(XP_MAX_LEVEL)});
             }
+            // ⚔️ Обновляем бейджи побед/поражений в дуэлях в реальном времени
+            const winsEl = document.getElementById('duel-wins-badge');
+            const lossesEl = document.getElementById('duel-losses-badge');
+            if(winsEl) winsEl.textContent = `⚔️ ${d.duelWins||0} побед`;
+            if(lossesEl) lossesEl.textContent = `💀 ${d.duelLosses||0} пор.`;
+
             // 🔴 Unseen gifts badge
             const inv=toArr(d.cloudInv);
             const unseen=inv.filter(x=>!x.seen).length;
@@ -3293,12 +3321,30 @@
             bInv.innerText=unseen; bInv.style.display=unseen>0?'flex':'none';
 
         });
-        renderShop().then(()=>{ renderShopCards(); }); listenMarket(); giveNftToCkovoroda(); listenTradeOffers(); listenDuelChallenges();
-        setTimeout(() => { if (window.loadLeaderboard) loadLeaderboard(); }, 1500);
-        // Запускаем realtime listener цен — обновляет у всех мгновенно
+        // 🎮 Прогреваем данные игры
+        updateChickenAttemptsBadge().catch(()=>{});
+        // 🚀 Запускаем слушатели и кеши немедленно
+        listenMarket(); giveNftToCkovoroda(); listenTradeOffers(); listenDuelChallenges(); listenDuelResults();
         startShopPricesListener();
-        // Загружаем кастомный каталог для всех пользователей (картинки кастомных подарков)
         loadCustomCatalog();
+
+        // 🚀 Параллельно прогреваем ВСЕ вкладки сразу — чтобы при переходе было мгновенно
+        Promise.all([
+            // Магазин
+            window.renderShop ? window.renderShop().then(()=>{ if(window.renderShopCards) renderShopCards(); }) : Promise.resolve(),
+            // Инвентарь
+            new Promise(res => { try { if(window.renderInv) renderInv(); } catch(e){} res(); }),
+            // Профиль
+            get(ref(db,'users/'+id)).then(s=>{ if(s.exists() && window.renderMyProfile) renderMyProfile(s.val()); }).catch(()=>{}),
+            // Рейтинг
+            new Promise(res => setTimeout(()=>{ if(window.loadLeaderboard) loadLeaderboard(); res(); }, 800)),
+            // Дуэли — кеш игроков
+            get(ref(db,'users')).then(snap => {
+                if(snap.exists()) {
+                    _duelAllUsersCache = { data: snap.val(), ts: Date.now() };
+                }
+            }).catch(()=>{}),
+        ]).catch(()=>{});
     }
 
 
@@ -4976,7 +5022,9 @@ ${rarObj.icon} <b>${itm.n}</b> ${itm.i||''}
                 <div style="display:flex;align-items:center;gap:12px;flex:1;cursor:pointer;" onclick="openUserProfile('${id}')">
                     <div style="position:relative;flex-shrink:0;">
                         ${frAvatars[id]
-                            ? `<img src="${frAvatars[id]}" style="width:46px;height:46px;border-radius:50%;object-fit:cover;border:2px solid ${isOnline?'var(--green)':'rgba(255,255,255,0.1)'};display:block;" onerror="this.outerHTML='<div style=\\'width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#1a5fa8);display:flex;align-items:center;justify-content:center;font-size:22px;\\'>👤</div>'">`
+                            ? (frAvatars[id].startsWith('emoji:')
+                                ? `<div style="width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#1a5fa8);display:flex;align-items:center;justify-content:center;font-size:22px;border:2px solid ${isOnline?'var(--green)':'rgba(255,255,255,0.1)'};">${frAvatars[id].replace('emoji:','')}</div>`
+                                : `<img src="${frAvatars[id]}" style="width:46px;height:46px;border-radius:50%;object-fit:cover;border:2px solid ${isOnline?'var(--green)':'rgba(255,255,255,0.1)'};display:block;" onerror="this.outerHTML='<div style=\\'width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#1a5fa8);display:flex;align-items:center;justify-content:center;font-size:22px;\\'>👤</div>'">`)
                             : `<div style="width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#1a5fa8);display:flex;align-items:center;justify-content:center;font-size:22px;">👤</div>`}
                         <div style="position:absolute;bottom:1px;right:1px;width:13px;height:13px;border-radius:50%;background:${dotColor};border:2px solid #070d14;box-shadow:${dotGlow};${isOnline?'animation:pulse 2s infinite;':''}"></div>
                     </div>
@@ -5231,32 +5279,50 @@ ${rarObj.icon} <b>${itm.n}</b> ${itm.i||''}
     // ===== FULL DUEL PAGE =====
     let _duelSearchTimeout = null;
     let _duelCache = null; // { all, friendIds, recentIds }
+    let _duelAllUsersCache = null; // { data, ts } — кеш всех юзеров на 60 сек
 
     window.renderDuelPage = async () => {
         if(!user || !user.id) return;
         const inp = document.getElementById('duel-search-input');
         if(inp) inp.value = '';
 
-        // Show loading immediately
+        // Если кеш уже есть — показываем мгновенно, иначе показываем загрузку
         const section = document.getElementById('duel-players-section');
-        if(section) section.innerHTML = '<div style="text-align:center;padding:40px 20px;"><div style="font-size:32px;margin-bottom:10px;">⚔️</div><div style="color:var(--secondary);font-size:13px;">Загрузка игроков...</div></div>';
+        if(_duelAllUsersCache) {
+            // Быстрый рендер из кеша пока грузим свежие данные юзера
+            _duelCache = _duelCache || { all:[], friendIds:new Set(), recentIds:[] };
+            _duelRenderDefault();
+        } else {
+            if(section) section.innerHTML = '<div style="text-align:center;padding:40px 20px;"><div style="font-size:32px;margin-bottom:10px;">⚔️</div><div style="color:var(--secondary);font-size:13px;">Загрузка игроков...</div></div>';
+        }
 
         try {
-            const s = await get(ref(db,'users/'+user.id));
-            const d = s.val() || {};
-            const winsEl = document.getElementById('duel-wins-badge');
-            if(winsEl) winsEl.textContent = `⚔️ ${d.duelWins||0} побед`;
+            const _now = Date.now();
 
+            // Параллельно грузим данные текущего юзера и всех игроков (если кеш устарел)
+            const userPromise = get(ref(db,'users/'+user.id));
+            const allPromise = (_duelAllUsersCache && (_now - _duelAllUsersCache.ts) < 300000)
+                ? Promise.resolve(null)
+                : get(ref(db,'users'));  // полный список юзеров
+
+            const [s, snapOrNull] = await Promise.all([userPromise, allPromise]);
+            const d = s.val() || {};
             const friendIds = new Set(Object.keys(d.friends||{}));
             // Recent opponents from user profile field (fast, no heavy activity fetch)
             const recentIds = (d.duelRecentOpponents || []).slice(0,3);
 
-            const snap = await get(ref(db,'users'));
-            const all = snap.val()||{};
+            // Кеш всех юзеров на 5 минут
+            let all = {};
+            if(snapOrNull) {
+                all = snapOrNull.val()||{};
+                _duelAllUsersCache = { data: all, ts: _now };
+            } else {
+                all = _duelAllUsersCache.data;
+            }
 
             const toPlayer = ([id,u]) => ({
-                id, name:u.username||u.name||id, level:u.level||1,
-                duelWins:u.duelWins||0, avatar:u.avatar||u.pic||'',
+                id, name:u.username||u.name||id, level:getLevelFromXp(u.xp||0),
+                duelWins:u.duelWins||0, duelLosses:u.duelLosses||0, avatar:u.avatar||u.pic||'',
                 cosmetics:u.cosmetics||[],
                 online: u.lastSeen && (Date.now()-u.lastSeen<5*60*1000)
             });
@@ -5329,12 +5395,18 @@ ${rarObj.icon} <b>${itm.n}</b> ${itm.i||''}
             onmouseover="this.style.background='${hoverBg}';this.style.borderColor='${hoverBorder}'"
             onmouseout="this.style.background='${bgCol}';this.style.borderColor='${borderCol}'">
             <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#1a2a3a,#0a1520);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;border:2px solid ${type==='friend'?'rgba(124,77,255,0.4)':type==='recent'?'rgba(255,152,0,0.4)':'rgba(255,107,107,0.2)'};position:relative;">
-                ${p.avatar?`<img src="${p.avatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" onerror="this.style.display='none'">`:'👤'}
+                ${p.avatar && !p.avatar.startsWith('emoji:')?`<img src="${p.avatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" onerror="this.style.display='none'">`:p.avatar&&p.avatar.startsWith('emoji:')?`<span style="font-size:22px;">${p.avatar.replace('emoji:','')}</span>`:'👤'}
                 ${p.online?`<div style="position:absolute;bottom:0;right:0;width:9px;height:9px;background:#2ecc71;border-radius:50%;border:2px solid var(--bg);"></div>`:''}
             </div>
             <div style="flex:1;min-width:0;">
                 <div style="font-weight:bold;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.name}</div>
-                <div style="font-size:11px;color:var(--secondary);">⭐ Ур.${p.level} &nbsp;•&nbsp; ⚔️ ${p.duelWins} пб.${badgeInfo?` &nbsp;${badgeInfo.val}`:''}</div>
+                <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:3px;">
+                    <span style="font-size:11px;color:var(--secondary);">⭐ Ур.${p.level}</span>
+                    <span style="font-size:10px;color:var(--secondary);">•</span>
+                    <span style="background:rgba(46,204,113,0.15);border:1px solid rgba(46,204,113,0.35);border-radius:20px;padding:1px 7px;font-size:10px;font-weight:bold;color:#2ecc71;">⚔️ ${p.duelWins} побед</span>
+                    <span style="background:rgba(231,76,60,0.15);border:1px solid rgba(231,76,60,0.35);border-radius:20px;padding:1px 7px;font-size:10px;font-weight:bold;color:#e74c3c;">💀 ${p.duelLosses||0} пор.</span>
+                    ${badgeInfo?`<span style="font-size:11px;">${badgeInfo.val}</span>`:''}
+                </div>
             </div>
             <div style="background:linear-gradient(135deg,#e74c3c,#c0392b);border-radius:10px;padding:7px 12px;font-size:12px;font-weight:bold;color:white;white-space:nowrap;flex-shrink:0;">
                 ⚔️
@@ -5349,38 +5421,75 @@ ${rarObj.icon} <b>${itm.n}</b> ${itm.i||''}
             if(!_duelCache) { renderDuelPage(); } else { _duelRenderDefault(); }
             return;
         }
-        _duelSearchTimeout = setTimeout(()=>duelLoadPlayers(trimmed), 200);
+        _duelSearchTimeout = setTimeout(()=>duelLoadPlayers(trimmed), 150);
     };
 
     window.duelLoadPlayers = async (q) => {
         const section = document.getElementById('duel-players-section');
         if(!section) return;
 
-        // If cache exists, search locally (instant)
-        if(_duelCache && _duelCache.all.length > 0) {
-            const results = _duelCache.all.filter(p=>p.name.toLowerCase().includes(q));
+        // Если кеш игроков есть — ищем мгновенно локально
+        if(_duelCache && _duelCache.all && _duelCache.all.length > 0) {
+            const results = _duelCache.all.filter(p => p.name.toLowerCase().includes(q));
             if(!results.length) {
-                section.innerHTML=`<div style="text-align:center;padding:40px 20px;"><div style="font-size:36px;margin-bottom:10px;">🔍</div><div style="color:var(--secondary);font-size:14px;">Игрок не найден</div></div>`;
+                section.innerHTML = `<div style="text-align:center;padding:40px 20px;"><div style="font-size:36px;margin-bottom:10px;">🔍</div><div style="color:var(--secondary);font-size:14px;">Игрок не найден</div></div>`;
                 return;
             }
-            section.innerHTML = `
-                <div style="font-size:11px;color:var(--secondary);font-weight:bold;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px;">🔍 Результаты (${results.length})</div>
-                <div style="display:flex;flex-direction:column;gap:7px;">${results.map(p=>_duelPlayerCard(p,_duelCache.friendIds.has(p.id)?'friend':_duelCache.recentIds.includes(p.id)?'recent':'')).join('')}</div>`;
+            // Разбиваем результаты по категориям
+            const friendResults = results.filter(p => _duelCache.friendIds.has(p.id));
+            const otherResults = results.filter(p => !_duelCache.friendIds.has(p.id));
+            let html = `<div style="font-size:11px;color:var(--secondary);font-weight:bold;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px;">🔍 Результаты (${results.length})</div>`;
+            if(friendResults.length) {
+                html += `<div style="font-size:11px;color:#7c4dff;font-weight:bold;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px;">👥 Друзья</div>`;
+                html += `<div style="display:flex;flex-direction:column;gap:7px;margin-bottom:12px;">${friendResults.map(p=>_duelPlayerCard(p,'friend')).join('')}</div>`;
+            }
+            if(otherResults.length) {
+                html += `<div style="display:flex;flex-direction:column;gap:7px;">${otherResults.map(p=>_duelPlayerCard(p,_duelCache.recentIds.includes(p.id)?'recent':'')).join('')}</div>`;
+            }
+            section.innerHTML = html;
             return;
         }
 
-        // Fallback: load from DB
-        section.innerHTML=`<div style="text-align:center;padding:30px;color:var(--secondary);font-size:13px;">⏳ Поиск...</div>`;
+        // Fallback: кеша нет — грузим из DB и ищем
+        section.innerHTML = `<div style="text-align:center;padding:30px;color:var(--secondary);font-size:13px;">⏳ Поиск...</div>`;
         try {
-            const snap = await get(ref(db,'users'));
-            const all = snap.val()||{};
-            let players = Object.entries(all)
-                .filter(([id,u])=>id!==user.id && u && u.name)
-                .map(([id,u])=>({id,name:u.username||u.name||id,level:u.level||1,duelWins:u.duelWins||0,avatar:u.avatar||u.pic||'',cosmetics:u.cosmetics||[],online:u.lastSeen&&(Date.now()-u.lastSeen<5*60*1000)}))
-                .filter(p=>p.name.toLowerCase().includes(q));
-            if(!players.length){section.innerHTML=`<div style="text-align:center;padding:40px 20px;"><div style="font-size:36px;margin-bottom:10px;">🔍</div><div style="color:var(--secondary);font-size:14px;">Игрок не найден</div></div>`;return;}
-            section.innerHTML=`<div style="font-size:11px;color:var(--secondary);font-weight:bold;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px;">🔍 Результаты (${players.length})</div><div style="display:flex;flex-direction:column;gap:7px;">${players.map(p=>_duelPlayerCard(p,'')).join('')}</div>`;
-        } catch(e){section.innerHTML=`<div style="text-align:center;padding:30px;color:var(--err);">Ошибка</div>`;}
+            // Если есть сырой кеш пользователей — используем его
+            let allRaw = {};
+            const _now = Date.now();
+            if(_duelAllUsersCache && (_now - _duelAllUsersCache.ts) < 300000) {
+                allRaw = _duelAllUsersCache.data;
+            } else {
+                const snap = await get(ref(db,'users'));
+                allRaw = snap.val() || {};
+                _duelAllUsersCache = { data: allRaw, ts: _now };
+            }
+            const toPlayer = ([id,u]) => ({
+                id, name: u.username||u.name||id, level: getLevelFromXp(u.xp||0),
+                id, name: u.username||u.name||id, level: getLevelFromXp(u.xp||0),
+                duelWins: u.duelWins||0, duelLosses: u.duelLosses||0, avatar: u.avatar||u.pic||'',
+            });
+            const players = Object.entries(allRaw)
+                .filter(([id,u]) => id !== user.id && u && (u.username||u.name))
+                .map(toPlayer)
+                .filter(p => p.name.toLowerCase().includes(q));
+
+            // Заодно обновляем _duelCache если его нет
+            if(!_duelCache || !_duelCache.all.length) {
+                const allPlayers = Object.entries(allRaw)
+                    .filter(([id,u]) => id !== user.id && u && (u.username||u.name))
+                    .map(toPlayer);
+                _duelCache = _duelCache || { all: allPlayers, friendIds: new Set(), recentIds: [] };
+                _duelCache.all = allPlayers;
+            }
+
+            if(!players.length) {
+                section.innerHTML = `<div style="text-align:center;padding:40px 20px;"><div style="font-size:36px;margin-bottom:10px;">🔍</div><div style="color:var(--secondary);font-size:14px;">Игрок не найден</div></div>`;
+                return;
+            }
+            section.innerHTML = `<div style="font-size:11px;color:var(--secondary);font-weight:bold;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px;">🔍 Результаты (${players.length})</div><div style="display:flex;flex-direction:column;gap:7px;">${players.map(p=>_duelPlayerCard(p,'')).join('')}</div>`;
+        } catch(e) {
+            section.innerHTML = `<div style="text-align:center;padding:30px;color:var(--err);">Ошибка поиска</div>`;
+        }
     };
 
     window.duelPickGiftForPlayer = async (targetId, targetName, rowEl) => {
@@ -5422,8 +5531,8 @@ ${rarObj.icon} <b>${itm.n}</b> ${itm.i||''}
     };
 
     window.openDuelFromNav = async () => {
-        const duelBtn = document.getElementById('duel-nav-btn');
-        if(duelBtn) tab('duel', duelBtn);
+        const gamesBtn = document.getElementById('games-nav-btn');
+        if(gamesBtn) openGamesMenu(gamesBtn);
     };
 
     window.openDuelModal = async (inst) => {
@@ -5464,288 +5573,503 @@ ${rarObj.icon} <b>${itm.n}</b> ${itm.i||''}
     };
 
     window.startDuel = async (myInst, friendId, friendName) => {
-        // Проверка конфиденциальности
-        const dPrivSnap=await get(ref(db,'users/'+friendId));
-        const dPriv=(dPrivSnap.val()&&dPrivSnap.val().privacy)||{};
-        if(!user.isAdm && dPriv.allowDuel===false) return showToast(`❌ Вы не можете вызвать ${friendName} на дуэль из-за его настроек конфиденциальности`,'var(--err)');
-        // Send duel challenge
-        const s = await get(ref(db,'users/'+user.id)), d = s.val();
-        const myItem = toArr(d.cloudInv).find(x=>String(x.inst)==String(myInst));
+        const dPrivSnap = await get(ref(db,'users/'+friendId));
+        const dPriv = (dPrivSnap.val()&&dPrivSnap.val().privacy)||{};
+        if(!user.isAdm && dPriv.allowDuel===false)
+            return showToast(`❌ Нельзя вызвать ${friendName} на дуэль — закрыто настройками`,'var(--err)');
+
+        const s = await get(ref(db,'users/'+user.id));
+        const myItem = toArr(s.val().cloudInv).find(x => x.inst == myInst || String(x.inst) === String(myInst));
         if(!myItem) return showToast('Подарок не найден!','var(--err)');
+
         const duelKey = `${user.id}_${Date.now()}`;
-        await set(ref(db,`duelChallenges/${friendId}/${duelKey}`),{
-            fromId:user.id, fromName:user.name,
-            itemInst:myInst, itemName:myItem.n, itemEmoji:myItem.i||'🎁',
-            ts:Date.now(), expiresAt: Date.now() + 15*60*1000
+        const _catItem = catalog.find(c=>c.id==myItem.id)||{};
+        await set(ref(db,`duelChallenges/${friendId}/${duelKey}`), {
+            fromId:    user.id,
+            fromName:  user.name,
+            itemInst:  String(myItem.inst),
+            itemName:  myItem.n,
+            itemEmoji: myItem.i || _catItem.i || '🎁',
+            itemImg:   myItem.img || _catItem.img || '',
+            ts:        Date.now(),
+            expiresAt: Date.now() + 15*60*1000
         });
-        // Автоотмена через 15 минут
-        setTimeout(async () => {
-            try {
-                const snap = await get(ref(db,`duelChallenges/${friendId}/${duelKey}`));
-                if(snap.exists()) await remove(ref(db,`duelChallenges/${friendId}/${duelKey}`));
-            } catch(e){}
+        setTimeout(async()=>{
+            try{const sn=await get(ref(db,`duelChallenges/${friendId}/${duelKey}`));if(sn.exists())await remove(ref(db,`duelChallenges/${friendId}/${duelKey}`));}catch(e){}
         }, 15*60*1000);
-        getTgId(friendId).then(cid=>sendTg(cid,`⚔️ <b>Вызов на дуэль!</b>\n\n<b>${user.name}</b> бросает тебе вызов!\n\n🎯 Его ставка: <b>${myItem.n} ${myItem.i||''}</b>\n🏆 Победитель заберёт оба подарка!\n\n📱 Открой приложение → Друзья → Дуэли`));
-        logActivity('duel_challenge', {user: user.name, userId: user.id, toName: friendName, toId: friendId, item: myItem.n, emoji: myItem.i||'🎁'});
+        getTgId(friendId).then(cid=>sendTg(cid,`⚔️ <b>Вызов на дуэль!</b>\n\n<b>${user.name}</b> бросает тебе вызов!\n\n🎯 Его ставка: <b>${myItem.n} ${myItem.i||''}</b>\n🏆 Победитель заберёт оба подарка!\n\n📱 Открой приложение → Дуэли`));
+        logActivity('duel_challenge',{user:user.name,userId:user.id,toName:friendName,toId:friendId,item:myItem.n});
         closeModal();
         showToast(`⚔️ Вызов отправлен ${friendName}!`,'#ff6b6b','⚔️');
     };
 
-    window.acceptDuelChallenge = async (duelKey, challenge) => {
-        // Show your gifts to pick your stake
-        const s = await get(ref(db,'users/'+user.id)), d = s.val();
-        const myInv = toArr(d.cloudInv);
+    // ─── Глобальное состояние дуэли ───────────────────────────────────────────
+    window._duelChallengesMap = {};   // ключ → данные вызова
+    let _selectedDuelInst = null;     // inst выбранного предмета (число или строка)
+    let _currentDuelKey   = null;     // duelKey текущего открытого вызова
+
+    // ─── Принятие вызова ──────────────────────────────────────────────────────
+    window.acceptDuelChallenge = async (duelKey) => {
+        _currentDuelKey   = duelKey;
+        _selectedDuelInst = null;
+
+        // Читаем СВЕЖИЕ данные из Firebase
+        const snap = await get(ref(db,`duelChallenges/${user.id}/${duelKey}`));
+        if(!snap.exists()) return showToast('Вызов уже отменён','var(--err)');
+        const ch = snap.val();
+
+        // Проверяем что предмет соперника ещё существует перед показом модалки
+        const [s, challSnap] = await Promise.all([
+            get(ref(db,'users/'+user.id)),
+            get(ref(db,'users/'+ch.fromId))
+        ]);
+        const myInv = toArr(s.val().cloudInv);
         if(!myInv.length) return showToast('У тебя нет подарков для дуэли!','var(--err)');
+        const challInv = toArr((challSnap.val()||{}).cloudInv);
+        const challItemExists = challInv.some(x => String(x.inst) === String(ch.itemInst));
+        if(!challItemExists) {
+            // Предмет уже не существует — удаляем протухший вызов
+            await remove(ref(db,`duelChallenges/${user.id}/${duelKey}`)).catch(()=>{});
+            return showToast('⚠️ Предмет соперника уже недоступен — вызов отменён','var(--orange)');
+        }
+
         const makeCard = (x) => {
             const cat = catalog.find(c=>c.id==x.id);
             const img = resolveImg(x);
-            const emoji = x.i||(cat&&cat.i)||'🎁';
-            return `<div onclick="selectDuelGift('${x.inst}',this)" style="cursor:pointer;text-align:center;background:#0a1520;border-radius:14px;padding:10px 8px;border:2px solid rgba(255,255,255,0.06);transition:all 0.2s;" class="duel-my-card">
-                ${img?`<img src="${img}" style="width:40px;height:40px;object-fit:contain;display:block;margin:0 auto 5px;" onerror="this.style.display='none'">`:`<div style="font-size:32px;line-height:1;margin-bottom:5px;">${emoji}</div>`}
-                <div style="font-size:10px;font-weight:bold;color:white;">${(catalogMap.get(+x.id)||x).n}</div>
+            const em  = x.i||(cat&&cat.i)||'🎁';
+            return `<div onclick="selectDuelGift(this,'${x.inst}')" class="duel-my-card"
+                style="cursor:pointer;text-align:center;background:#0a1520;border-radius:14px;
+                       padding:10px 8px;border:2px solid rgba(255,255,255,0.06);transition:all 0.2s;">
+                ${img
+                    ? `<img src="${img}" style="width:40px;height:40px;object-fit:contain;display:block;margin:0 auto 5px;" onerror="this.style.display='none'">`
+                    : `<div style="font-size:32px;line-height:1;margin-bottom:5px;">${em}</div>`}
+                <div style="font-size:10px;font-weight:bold;color:white;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${(catalogMap.get(+x.id)||x).n}</div>
             </div>`;
         };
-        document.getElementById('modal-content').innerHTML=`
+
+        const chEmoji = ch.itemEmoji || '🎁';
+        document.getElementById('modal-content').innerHTML = `
             <div style="padding:5px 0;">
                 <div style="text-align:center;margin-bottom:14px;">
                     <div style="font-size:32px;">⚔️</div>
-                    <h3 style="margin:6px 0 4px;background:linear-gradient(90deg,#ff6b6b,#ffd700);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Дуэль!</h3>
-                    <div style="background:#0a1520;border-radius:12px;padding:10px;display:flex;align-items:center;justify-content:center;gap:10px;margin:10px 0;border:1px solid rgba(255,107,107,0.3);">
-                        <div style="font-size:24px;">${challenge.itemEmoji}</div>
-                        <div><div style="font-size:11px;color:var(--secondary);">СТАВКА ${challenge.fromName.toUpperCase()}</div><div style="font-weight:bold;color:#ff6b6b;">${challenge.itemName}</div></div>
+                    <h3 style="margin:6px 0 4px;background:linear-gradient(90deg,#ff6b6b,#ffd700);
+                       -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Дуэль!</h3>
+                    <div style="background:#0a1520;border-radius:12px;padding:10px;display:flex;
+                       align-items:center;justify-content:center;gap:10px;margin:10px 0;
+                       border:1px solid rgba(255,107,107,0.3);">
+                        <div style="font-size:24px;">${chEmoji}</div>
+                        <div>
+                            <div style="font-size:11px;color:var(--secondary);">СТАВКА ${(ch.fromName||'').toUpperCase()}</div>
+                            <div style="font-weight:bold;color:#ff6b6b;">${ch.itemName||'?'}</div>
+                        </div>
                     </div>
                     <div style="font-size:12px;color:var(--secondary);">Выбери свою ставку:</div>
                 </div>
                 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-height:220px;overflow-y:auto;margin-bottom:14px;">
                     ${myInv.map(makeCard).join('')}
                 </div>
-                <div id="duel-selected-info" style="display:none;background:rgba(255,107,107,0.08);border:1px solid rgba(255,107,107,0.3);border-radius:14px;padding:8px;text-align:center;margin-bottom:12px;">
+                <div id="duel-selected-info" style="display:none;background:rgba(255,107,107,0.08);
+                    border:1px solid rgba(255,107,107,0.3);border-radius:14px;padding:8px;
+                    text-align:center;margin-bottom:12px;">
                     <div style="font-size:11px;color:var(--secondary);">ТВОЯ СТАВКА</div>
                     <div id="duel-selected-name" style="font-weight:bold;color:#ff6b6b;"></div>
                 </div>
-                <button id="duel-fight-btn" class="btn" style="background:linear-gradient(90deg,#e74c3c,#c0392b);display:none;" onclick="fightDuel('${duelKey}','${challenge.fromId}','${challenge.itemInst}','${challenge.fromName}','${challenge.itemEmoji}','${challenge.itemName}')">⚔️ В БОЙ!</button>
-                <button class="btn" style="background:rgba(255,255,255,0.05);color:var(--secondary);margin-top:8px;" onclick="declineDuel('${duelKey}')">🏳️ Отказаться</button>
+                <button id="duel-fight-btn" class="btn"
+                    style="background:linear-gradient(90deg,#e74c3c,#c0392b);display:none;"
+                    onclick="fightDuel()">⚔️ В БОЙ!</button>
+                <button class="btn"
+                    style="background:rgba(255,255,255,0.05);color:var(--secondary);margin-top:8px;"
+                    onclick="declineDuel('${duelKey}')">🏳️ Отказаться</button>
             </div>`;
         openModal();
     };
 
-    let selectedDuelInst = null, selectedDuelEmoji = '🎁', selectedDuelName = '';
-    window.selectDuelGift = (inst, el) => {
-        selectedDuelInst = inst;
-        document.querySelectorAll('.duel-my-card').forEach(c=>{c.style.border='2px solid rgba(255,255,255,0.06)';c.style.background='#0a1520';});
-        el.style.border='2px solid #ff6b6b';el.style.background='rgba(255,107,107,0.1)';
-        const imgEl = el.querySelector('img');
-        selectedDuelEmoji = el.querySelector('div[style*="font-size:32px"]')?.innerText || '🎁';
-        selectedDuelName = el.querySelector('div[style*="font-weight:bold"]')?.innerText||'?';
+    // ─── Выбор предмета ───────────────────────────────────────────────────────
+    window.selectDuelGift = (el, inst) => {
+        _selectedDuelInst = String(inst);   // всегда строка для надёжного сравнения
+        document.querySelectorAll('.duel-my-card').forEach(c=>{
+            c.style.border='2px solid rgba(255,255,255,0.06)';
+            c.style.background='#0a1520';
+        });
+        el.style.border='2px solid #ff6b6b';
+        el.style.background='rgba(255,107,107,0.1)';
+        const nameEl = el.querySelector('div[style*="font-weight:bold"]');
         document.getElementById('duel-selected-info').style.display='block';
-        document.getElementById('duel-selected-name').innerText=selectedDuelName;
+        document.getElementById('duel-selected-name').innerText = nameEl ? nameEl.innerText : '?';
         document.getElementById('duel-fight-btn').style.display='block';
     };
 
-    window.fightDuel = async (duelKey, challengerId, theirInst, challengerName, theirEmoji, theirItemName) => {
-        if(!selectedDuelInst) return showToast('Выбери ставку!','var(--err)');
-        // 🛡️ Rate limit
-        const _rlD = _protection.duel(); if(!_rlD.ok) return showToast(_rlD.msg, '#e74c3c');
+    // ─── В БОЙ! ───────────────────────────────────────────────────────────────
+    window.fightDuel = async () => {
+        if(!_selectedDuelInst) return showToast('Выбери ставку!','var(--err)');
+        if(!_currentDuelKey)   return showToast('Ошибка: нет ключа дуэли','var(--err)');
 
-        // 🛡️ Fetch both inventories для проверки наличия предметов
-        const [mySnap, theirSnap] = await Promise.all([get(ref(db,'users/'+user.id)), get(ref(db,'users/'+challengerId))]);
-        const myD = mySnap.val(), theirD = theirSnap.val();
-        const myInvCheck = toArr(myD.cloudInv), theirInvCheck = toArr(theirD.cloudInv);
-        const myItem = myInvCheck.find(x=>String(x.inst)==String(selectedDuelInst));
-        const theirItem = theirInvCheck.find(x=>String(x.inst)==String(theirInst));
-        if(!myItem||!theirItem) { closeModal(); return showToast('Один из предметов уже недоступен!','var(--err)'); }
+        const _rlD = _protection.duel();
+        if(!_rlD.ok) return showToast(_rlD.msg,'#e74c3c');
 
-        // Determine winner 50/50 (до транзакций, результат фиксирован)
-        const iWin = Math.random() < 0.5;
-        const winnerId = iWin ? user.id : challengerId;
-        const winnerName = iWin ? user.name : challengerName;
-        const myEmoji2 = myItem.i||(catalog.find(c=>c.id==myItem.id)?.i)||'🎁';
-        const _duelTs = Date.now();
+        try {
+        // Читаем СВЕЖИЕ данные из Firebase
+        const freshSnap = await get(ref(db,`duelChallenges/${user.id}/${_currentDuelKey}`));
+        if(!freshSnap.exists()){ closeModal(); return showToast('Вызов уже отменён','var(--err)'); }
+        const ch = freshSnap.val();
 
-        // 🛡️ Атомарное обновление инвентарей обоих участников через runTransaction
-        const [myTx, theirTx] = await Promise.all([
-            runTransaction(ref(db,'users/'+user.id), (current) => {
-                if(!current) return;
-                let inv = toArr(current.cloudInv);
-                if(!inv.some(x=>String(x.inst)==String(selectedDuelInst))) return; // предмет уже ушёл
-                inv = inv.filter(x=>String(x.inst)!=String(selectedDuelInst));
-                if(iWin) {
-                    inv.push({...myItem, from:'⚔️ Дуэль', inst:_duelTs});
-                    inv.push({...theirItem, from:`⚔️ ${challengerName}`, seen:false, inst:_duelTs+1});
-                }
-                const winsUpdate = iWin ? {duelWins:(current.duelWins||0)+1} : {};
-                const ownedSet = new Set(current.cosmetics||[]);
-                if(iWin && (current.duelWins||0)+1 >= 10 && !ownedSet.has('bdg_duelist')) {
-                    winsUpdate.cosmetics = [...(current.cosmetics||[]), 'bdg_duelist'];
-                }
-                // Save recent opponent
-                const myRecent = [challengerId, ...(current.duelRecentOpponents||[]).filter(id=>id!==challengerId)].slice(0,5);
-                return {...current, cloudInv:inv, ...winsUpdate, duelRecentOpponents:myRecent};
-            }),
-            runTransaction(ref(db,'users/'+challengerId), (current) => {
-                if(!current) return;
-                let inv = toArr(current.cloudInv);
-                if(!inv.some(x=>String(x.inst)==String(theirInst))) return; // предмет уже ушёл
-                inv = inv.filter(x=>String(x.inst)!=String(theirInst));
-                if(!iWin) {
-                    inv.push({...myItem, from:`⚔️ ${user.name}`, seen:false, inst:_duelTs});
-                    inv.push({...theirItem, from:'⚔️ Дуэль', inst:_duelTs+1});
-                }
-                // Save recent opponent
-                const theirRecent = [user.id, ...(current.duelRecentOpponents||[]).filter(id=>id!==user.id)].slice(0,5);
-                return {...current, cloudInv:inv, duelRecentOpponents:theirRecent};
-            })
+        const challengerId   = ch.fromId;
+        const challengerName = ch.fromName;
+        const theirInst      = String(ch.itemInst);   // всегда строка для надёжного сравнения
+        const theirEmoji     = ch.itemEmoji || '🎁';
+        const theirItemName  = ch.itemName  || '?';
+        const duelKey        = _currentDuelKey;
+
+        // Загружаем оба инвентаря
+        const [mySnap, theirSnap] = await Promise.all([
+            get(ref(db,'users/'+user.id)),
+            get(ref(db,'users/'+challengerId))
         ]);
-        if(!myTx.committed || !theirTx.committed) {
+        const myD    = mySnap.val();
+        const theirD = theirSnap.val();
+        const myInv    = toArr(myD.cloudInv);
+        const theirInv = toArr(theirD.cloudInv);
+
+        // Ищем предметы — строгое строковое сравнение
+        const myItem    = myInv.find(x => String(x.inst) === String(_selectedDuelInst));
+        const theirItem = theirInv.find(x => String(x.inst) === String(theirInst));
+
+        // Отладка: логируем что ищем и что есть
+        console.log('[DUEL] myInst=', _selectedDuelInst, 'found=', !!myItem, 
+            'myInv insts=', myInv.map(x=>String(x.inst)));
+        console.log('[DUEL] theirInst=', theirInst, 'found=', !!theirItem,
+            'theirInv insts=', theirInv.map(x=>String(x.inst)));
+
+        if(!myItem) {
             closeModal();
-            return showToast('Один из предметов уже был использован!','var(--err)');
+            return showToast('Твой предмет уже недоступен — возможно ты его продал/обменял','var(--err)');
         }
-        await remove(ref(db,`duelChallenges/${user.id}/${duelKey}`));
-        logActivity('duel_result', {winner: winnerName, winnerId, loser: iWin ? challengerName : user.name, loserId: iWin ? challengerId : user.id, item1: myItem.n, item2: theirItem.n});
-        // XP: +50 победителю, -20 проигравшему
+        if(!theirItem) {
+            // Предмет соперника не найден — вызов устарел, удаляем его
+            try { await remove(ref(db,`duelChallenges/${user.id}/${duelKey}`)); } catch(e){}
+            closeModal();
+            return showToast('Предмет соперника уже недоступен — вызов отменён','var(--orange)');
+        }
+
+        // Результат 50/50
+        const iWin       = Math.random() < 0.5;
+        const winnerId   = iWin ? user.id : challengerId;
+        const winnerName = iWin ? user.name : challengerName;
+        const myEmoji2   = myItem.i||(catalog.find(c=>c.id==myItem.id)||{}).i||'🎁';
+        const _ts        = Date.now();
+
+        // ── Транзакции последовательно с компенсацией ──────────────────────────
+        // Сначала транзакция соперника (проверяем его предмет), потом своя.
+        // Если своя упала — откатываем соперника.
+
+        let myTx, theirTx;
+        try {
+            // 1. Транзакция соперника — убираем его предмет
+            theirTx = await runTransaction(ref(db,'users/'+challengerId), cur => {
+                if(!cur) return cur;  // null → Firebase сделает retry с реальными данными
+                let inv = toArr(cur.cloudInv);
+                if(!inv.some(x => String(x.inst) === String(theirInst))) return undefined; // abort
+                inv = inv.filter(x => String(x.inst) !== String(theirInst));
+                if(!iWin){
+                    inv.push({...myItem,   from:`⚔️ ${user.name}`, inst:_ts,   seen:false});
+                    inv.push({...theirItem,from:'⚔️ Дуэль',         inst:_ts+1, seen:false});
+                }
+                // Начисляем победу или поражение challenger-у
+                const challStats = !iWin ? {duelWins:(cur.duelWins||0)+1} : {duelLosses:(cur.duelLosses||0)+1};
+                if(!iWin && (cur.duelWins||0)+1>=10 && !(cur.cosmetics||[]).includes('bdg_duelist'))
+                    challStats.cosmetics=[...(cur.cosmetics||[]),'bdg_duelist'];
+                return {...cur, cloudInv:inv, ...challStats};
+            });
+
+            if(!theirTx.committed){
+                closeModal();
+                return showToast('Предмет соперника уже недоступен — возможно он его продал','var(--err)');
+            }
+
+            // 2. Транзакция своя — убираем свой предмет
+            myTx = await runTransaction(ref(db,'users/'+user.id), cur => {
+                if(!cur) return cur;  // null → Firebase сделает retry с реальными данными
+                let inv = toArr(cur.cloudInv);
+                if(!inv.some(x => String(x.inst) === String(_selectedDuelInst))) return undefined; // abort
+                inv = inv.filter(x => String(x.inst) !== String(_selectedDuelInst));
+                if(iWin){
+                    inv.push({...myItem,   from:'⚔️ Дуэль',            inst:_ts,   seen:false});
+                    inv.push({...theirItem,from:`⚔️ ${challengerName}`, inst:_ts+1, seen:false});
+                }
+                const wins = iWin ? {duelWins:(cur.duelWins||0)+1} : {duelLosses:(cur.duelLosses||0)+1};
+                if(iWin && (cur.duelWins||0)+1>=10 && !(cur.cosmetics||[]).includes('bdg_duelist'))
+                    wins.cosmetics=[...(cur.cosmetics||[]),'bdg_duelist'];
+                return {...cur, cloudInv:inv, ...wins};
+            });
+
+            if(!myTx.committed){
+                // Моя транзакция упала — откатываем соперника (возвращаем его предмет)
+                await runTransaction(ref(db,'users/'+challengerId), cur => {
+                    if(!cur) return cur;
+                    let inv = toArr(cur.cloudInv);
+                    // Возвращаем предмет только если его ещё нет
+                    if(!inv.some(x => String(x.inst) === String(theirInst))) {
+                        inv.push({...theirItem});
+                    }
+                    // Убираем выигрыш если был добавлен
+                    if(!iWin) {
+                        inv = inv.filter(x => x.inst !== _ts && x.inst !== _ts+1);
+                    }
+                    return {...cur, cloudInv:inv};
+                }).catch(()=>{});
+                closeModal();
+                return showToast('Твой предмет уже недоступен — возможно ты его продал','var(--eрr)');
+            }
+
+        } catch(txErr) {
+            const isDisconnect = txErr && (txErr.message === 'disconnect' || txErr.message === 'set');
+            closeModal();
+            return showToast(isDisconnect
+                ? 'Потеряно соединение, попробуй снова'
+                : 'Ошибка дуэли: ' + (txErr.message||'?'),
+                'var(--err)');
+        }
+
+        // Background ops — don't await, show animation immediately
+        remove(ref(db,`duelChallenges/${user.id}/${duelKey}`)).catch(()=>{});
+        logActivity('duel_result',{winner:winnerName,winnerId,loser:iWin?challengerName:user.name,loserId:iWin?challengerId:user.id,item1:myItem.n,item2:theirItem.n});
         awardXp(winnerId, 50);
         awardXp(iWin ? challengerId : user.id, -20);
+        if(iWin){
+            // Я победил — challenger проиграл
+            getTgId(challengerId).then(cid=>sendTg(cid,`⚔️ <b>Дуэль завершена!</b>\n\n🏆 Победитель: <b>${winnerName}</b>\n\n😔 К сожалению, ты проиграл.\n❌ Утеряно: <b>${theirItemName}</b> ${theirEmoji}`));
+            getTgId(user.id).then(cid=>sendTg(cid,`⚔️ <b>Дуэль завершена!</b>\n\n🏆 Победитель: <b>${winnerName}</b>\n\n🎉 Поздравляем, ты победил!\n✅ Получено: <b>${theirItemName}</b> ${theirEmoji}\n✅ Сохранено: <b>${myItem.n}</b> ${myEmoji2}`));
+        } else {
+            // Challenger победил — я проиграл
+            getTgId(challengerId).then(cid=>sendTg(cid,`⚔️ <b>Дуэль завершена!</b>\n\n🏆 Победитель: <b>${winnerName}</b>\n\n🎉 Поздравляем, ты победил!\n✅ Получено: <b>${myItem.n}</b> ${myEmoji2}\n✅ Сохранено: <b>${theirItemName}</b> ${theirEmoji}`));
+            getTgId(user.id).then(cid=>sendTg(cid,`⚔️ <b>Дуэль завершена!</b>\n\n🏆 Победитель: <b>${winnerName}</b>\n\n😔 К сожалению, ты проиграл.\n❌ Утеряно: <b>${myItem.n}</b> ${myEmoji2}`));
+        }
+        // Save result for opponent (they see it when they open the app)
+        set(ref(db,`duelResults/${challengerId}/${Date.now()}`), {
+            winnerId, winnerName, iWon:!iWin,
+            item1:{n:myItem.n,i:myEmoji2}, item2:{n:theirItemName,i:theirEmoji}, ts:Date.now()
+        }).catch(()=>{});
 
-        // DUEL ANIMATION
+        // ── Epic duel animation (plays immediately) ────────────────────────
         const overlay = document.getElementById('modal-overlay');
+        const myImg = resolveImg(myItem);
+        const theirImg = theirItem ? resolveImg(theirItem) : null;
         document.getElementById('modal-content').innerHTML = `
-            <div style="text-align:center;padding:20px 0;" id="duel-anim-wrap">
-                <div style="font-size:13px;color:var(--secondary);margin-bottom:20px;letter-spacing:1px;text-transform:uppercase;">⚔️ Дуэль начинается!</div>
-                <div style="display:flex;align-items:center;justify-content:center;gap:20px;">
-                    <div id="duel-left" style="text-align:center;transition:all 1s ease;">
-                        <div style="font-size:52px;margin-bottom:8px;">${myEmoji2}</div>
-                        <div style="font-size:12px;font-weight:bold;color:#4db4ff;">${user.name}</div>
+            <div style="text-align:center;padding:10px 0 0;" id="duel-anim-wrap">
+                <div style="font-size:10px;color:var(--secondary);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;opacity:0.7;">⚔️ ДУЭЛЬ</div>
+                <div style="display:flex;align-items:center;justify-content:center;">
+                    <div id="duel-left" style="text-align:center;flex:1;padding:0 6px;">
+                        <div style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#1a3a5c,#0d2035);border:3px solid rgba(77,180,255,0.7);display:flex;align-items:center;justify-content:center;margin:0 auto 8px;box-shadow:0 0 20px rgba(77,180,255,0.4);">
+                            ${myImg?`<img src="${myImg}" style="width:42px;height:42px;object-fit:contain;" onerror="this.outerHTML='<span style=font-size:36px>${myEmoji2}</span>'">`:`<span style="font-size:36px;">${myEmoji2}</span>`}
+                        </div>
+                        <div style="font-size:11px;font-weight:bold;color:#4db4ff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:90px;margin:0 auto;">${user.name}</div>
+                        <div style="font-size:9px;color:var(--secondary);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:90px;">${myItem.n}</div>
                     </div>
-                    <div id="duel-vs" style="font-size:32px;font-weight:900;color:#ff6b6b;">VS</div>
-                    <div id="duel-right" style="text-align:center;transition:all 1s ease;">
-                        <div style="font-size:52px;margin-bottom:8px;">${theirEmoji}</div>
-                        <div style="font-size:12px;font-weight:bold;color:#ff6b6b;">${challengerName}</div>
+                    <div id="duel-vs" style="font-size:28px;font-weight:900;background:linear-gradient(135deg,#ff6b6b,#ffd700);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;flex-shrink:0;animation:duelVsFloat 0.9s ease infinite;">VS</div>
+                    <div id="duel-right" style="text-align:center;flex:1;padding:0 6px;">
+                        <div style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#3a1a1a,#200d0d);border:3px solid rgba(255,107,107,0.7);display:flex;align-items:center;justify-content:center;margin:0 auto 8px;box-shadow:0 0 20px rgba(255,107,107,0.4);">
+                            ${theirImg?`<img src="${theirImg}" style="width:42px;height:42px;object-fit:contain;" onerror="this.outerHTML='<span style=font-size:36px>${theirEmoji}</span>'">`:`<span style="font-size:36px;">${theirEmoji}</span>`}
+                        </div>
+                        <div style="font-size:11px;font-weight:bold;color:#ff6b6b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:90px;margin:0 auto;">${challengerName}</div>
+                        <div style="font-size:9px;color:var(--secondary);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:90px;">${theirItemName}</div>
                     </div>
                 </div>
-                <div id="duel-result" style="margin-top:24px;opacity:0;transition:opacity 0.5s;"></div>
+                <div style="margin:14px 8px 0;height:3px;background:rgba(255,255,255,0.07);border-radius:4px;overflow:hidden;">
+                    <div id="duel-progress" style="height:100%;width:0%;background:linear-gradient(90deg,#4db4ff,#ff6b6b,#ffd700);border-radius:4px;transition:width 1.6s linear;"></div>
+                </div>
+                <div id="duel-result" style="margin-top:14px;display:none;"></div>
             </div>`;
 
-        // Phase 1: shake
+        requestAnimationFrame(()=>{ setTimeout(()=>{ const pb=document.getElementById('duel-progress'); if(pb) pb.style.width='100%'; },50); });
+
         setTimeout(()=>{
-            document.getElementById('duel-left').style.animation='duelShakeL 0.4s ease-in-out 4';
-            document.getElementById('duel-right').style.animation='duelShakeR 0.4s ease-in-out 4';
-            overlay.style.animation='duelFlash 0.4s ease 4';
+            const l=document.getElementById('duel-left'),r=document.getElementById('duel-right');
+            if(l) l.style.animation='duelShakeL 0.45s ease-in-out 3';
+            if(r) r.style.animation='duelShakeR 0.45s ease-in-out 3';
+            if(overlay) overlay.style.animation='duelFlash 0.45s ease 3';
         },300);
 
-        // Phase 2: clash emoji
         setTimeout(()=>{
-            const el=document.createElement('div');el.className='duel-clash-emoji';el.innerText='💥';
-            document.body.appendChild(el);setTimeout(()=>el.remove(),900);
-        },900);
+            [['💥',48,48,80],['✨',51,50,60],['⚡',46,52,50]].forEach(([em,t,l,sz],i)=>{
+                setTimeout(()=>{
+                    const el=document.createElement('div');
+                    el.style.cssText=`position:fixed;top:${t}%;left:${l}%;font-size:${sz}px;pointer-events:none;z-index:9999;animation:duelClash 0.9s ease forwards;`;
+                    el.innerText=em; document.body.appendChild(el); setTimeout(()=>el.remove(),900);
+                },i*130);
+            });
+        },700);
 
-        // Phase 3: result
         setTimeout(()=>{
-            overlay.style.animation='';
-            if(iWin){
-                document.getElementById('duel-left').style.animation='duelWinner 0.6s ease forwards';
-                document.getElementById('duel-right').style.animation='duelLoser 0.6s ease forwards';
-            } else {
-                document.getElementById('duel-right').style.animation='duelWinner 0.6s ease forwards';
-                document.getElementById('duel-left').style.animation='duelLoser 0.6s ease forwards';
-            }
-        },1800);
+            if(overlay) overlay.style.animation='';
+            const l=document.getElementById('duel-left'),r=document.getElementById('duel-right');
+            const vs=document.getElementById('duel-vs'); if(vs) vs.style.animation='none';
+            if(iWin){ if(l) l.style.animation='duelWinner 0.7s cubic-bezier(0.34,1.56,0.64,1) forwards'; if(r) r.style.animation='duelLoser 0.7s ease forwards'; }
+            else    { if(r) r.style.animation='duelWinner 0.7s cubic-bezier(0.34,1.56,0.64,1) forwards'; if(l) l.style.animation='duelLoser 0.7s ease forwards'; }
+        },1700);
 
-        // Phase 4: show result text
         setTimeout(()=>{
-            const res=document.getElementById('duel-result');
-            if(!res) return;
-            res.style.opacity='1';
+            const res=document.getElementById('duel-result'); if(!res) return;
+            res.style.display='block'; res.style.animation='duelResultPop 0.5s cubic-bezier(0.34,1.56,0.64,1) both';
+            const newWins=(myD.duelWins||0)+1;
+            const badgeNew=iWin&&newWins>=10&&!(myD.cosmetics||[]).includes('bdg_duelist');
             if(iWin){
-                spawnConfetti(window.innerWidth/2,window.innerHeight/2,60);
-                const newWins2 = (myD.duelWins||0) + 1;
-                const badgeJustUnlocked = newWins2 >= 10 && !new Set(myD.cosmetics||[]).has('bdg_duelist');
-                res.innerHTML=`<div style="font-size:36px;margin-bottom:10px;">🏆</div><div style="font-size:20px;font-weight:900;color:gold;">ТЫ ПОБЕДИЛ!</div><div style="font-size:13px;color:var(--secondary);margin-top:6px;">Ты получил оба подарка</div><div style="font-size:12px;color:#4db4ff;margin-top:8px;">⚔️ Побед: ${newWins2}/10</div>${badgeJustUnlocked?'<div style="margin-top:10px;background:linear-gradient(135deg,rgba(255,107,107,0.15),rgba(255,215,0,0.1));border:1px solid rgba(255,215,0,0.4);border-radius:14px;padding:10px;"><div style="font-size:22px;">⚔️</div><div style="font-weight:bold;color:gold;font-size:13px;">Бейдж «Дуэлянт» разблокирован!</div></div>':''}`;
-                if(badgeJustUnlocked) setTimeout(()=>showToast('⚔️ Бейдж «Дуэлянт» разблокирован!','gold'), 500);
+                spawnConfetti(window.innerWidth/2,window.innerHeight/3,80);
+                res.innerHTML=`
+                    <div style="background:linear-gradient(135deg,rgba(255,215,0,0.12),rgba(255,107,107,0.05));border:2px solid rgba(255,215,0,0.45);border-radius:18px;padding:14px 10px;animation:duelGlow 1.5s ease infinite;">
+                        <div style="font-size:40px;margin-bottom:4px;">🏆</div>
+                        <div style="font-size:21px;font-weight:900;background:linear-gradient(90deg,gold,#ffa500);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">ТЫ ПОБЕДИЛ!</div>
+                        <div style="display:flex;justify-content:center;gap:6px;margin-top:10px;">
+                            <div style="background:rgba(46,204,113,0.12);border:1px solid rgba(46,204,113,0.3);border-radius:10px;padding:5px 8px;font-size:10px;">✅ ${myItem.n}</div>
+                            <div style="background:rgba(46,204,113,0.12);border:1px solid rgba(46,204,113,0.3);border-radius:10px;padding:5px 8px;font-size:10px;">✅ ${theirItemName}</div>
+                        </div>
+                        <div style="font-size:11px;color:#4db4ff;margin-top:8px;">⚔️ Побед: ${newWins}</div>
+                        ${badgeNew?`<div style="margin-top:7px;background:rgba(255,215,0,0.1);border:1px solid gold;border-radius:10px;padding:6px;font-size:11px;color:gold;">⚔️ Бейдж «Дуэлянт» разблокирован!</div>`:''}
+                    </div>`;
+                if(badgeNew) setTimeout(()=>showToast('⚔️ Бейдж «Дуэлянт» разблокирован!','gold'),400);
             } else {
-                res.innerHTML=`<div style="font-size:36px;margin-bottom:10px;">💀</div><div style="font-size:20px;font-weight:900;color:#ff6b6b;">ТЫ ПРОИГРАЛ</div><div style="font-size:13px;color:var(--secondary);margin-top:6px;">${challengerName} забрал оба подарка</div>`;
+                res.innerHTML=`
+                    <div style="background:rgba(255,107,107,0.07);border:2px solid rgba(255,107,107,0.3);border-radius:18px;padding:14px 10px;">
+                        <div style="font-size:40px;margin-bottom:4px;">💀</div>
+                        <div style="font-size:21px;font-weight:900;color:#ff6b6b;">ТЫ ПРОИГРАЛ</div>
+                        <div style="font-size:11px;color:var(--secondary);margin-top:6px;">${challengerName} забрал оба подарка</div>
+                        <div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:5px 8px;font-size:10px;color:var(--secondary);margin-top:8px;display:inline-block;">❌ ${myItem.n}</div>
+                    </div>`;
             }
             setTimeout(()=>{
                 if(!document.getElementById('duel-close-btn')){
-                    const btn=document.createElement('button');btn.className='btn';btn.id='duel-close-btn';btn.style.marginTop='16px';btn.innerText='Закрыть';btn.onclick=closeModal;
+                    const btn=document.createElement('button');
+                    btn.className='btn'; btn.id='duel-close-btn';
+                    btn.style.cssText='margin-top:10px;background:rgba(255,255,255,0.07);border-color:rgba(255,255,255,0.12);font-size:13px;';
+                    btn.innerText='Закрыть'; btn.onclick=closeModal;
                     document.getElementById('duel-result').appendChild(btn);
                 }
             },200);
-        },2600);
+        },2400);
 
-        // Уведомления с правильными предметами
-        if(iWin) {
-            // challenger проиграл свою ставку (theirItem)
-            getTgId(challengerId).then(cid=>sendTg(cid,`⚔️ <b>Дуэль завершена!</b>\n\n🏆 Победитель: <b>${winnerName}</b>\n\n😔 К сожалению, ты проиграл.\n❌ Утеряно: <b>${theirItemName}</b> ${theirEmoji}`));
-        } else {
-            // challenger выиграл оба предмета
-            getTgId(challengerId).then(cid=>sendTg(cid,`⚔️ <b>Дуэль завершена!</b>\n\n🏆 Победитель: <b>${winnerName}</b>\n\n🎉 Поздравляем, ты победил!\n✅ Получено: <b>${theirItemName}</b> ${theirEmoji}\n✅ Сохранено: <b>${myItem.n}</b> ${myEmoji2}`));
+        } catch(err) {
+            closeModal();
+            const msg = err && err.message === 'disconnect'
+                ? 'Потеряно соединение, попробуй снова'
+                : 'Ошибка дуэли: ' + (err&&err.message||'неизвестная ошибка');
+            showToast(msg, 'var(--err)');
+            console.error('[fightDuel error]', err);
         }
     };
 
+    // ─── Отклонить вызов ──────────────────────────────────────────────────────
     window.declineDuel = async (duelKey) => {
         await remove(ref(db,`duelChallenges/${user.id}/${duelKey}`));
         closeModal();
         showToast('Вызов отклонён','var(--secondary)');
     };
 
-    // Listen for duel challenges
-    function listenDuelChallenges() {
-        onValue(ref(db,`duelChallenges/${user.id}`), snap => {
-            const challenges = snap.val()||{};
-            renderDuelChallenges(challenges);
+    // ─── Слушаем входящие вызовы ──────────────────────────────────────────────
+    function listenDuelChallenges(){
+        onValue(ref(db,`duelChallenges/${user.id}`), snap=>{
+            renderDuelChallenges(snap.val()||{});
         });
-        // Обновлять таймеры каждые 30 сек + удалять истёкшие
-        setInterval(async () => {
-            const snap = await get(ref(db,`duelChallenges/${user.id}`));
-            const challenges = snap.val()||{};
+        // Каждую секунду обновляем таймеры в DOM без перерендера
+        setInterval(()=>{
             const now = Date.now();
-            for(const [key, ch] of Object.entries(challenges)) {
-                const expiry = ch.expiresAt || (ch.ts + 15*60*1000);
-                if(now >= expiry) remove(ref(db,`duelChallenges/${user.id}/${key}`)).catch(()=>{});
+            document.querySelectorAll('.duel-timer[data-exp]').forEach(el=>{
+                const exp = parseInt(el.dataset.exp)||0;
+                const diff = Math.max(0, exp - now);
+                const m = Math.floor(diff/60000);
+                const s = Math.floor((diff%60000)/1000);
+                el.textContent = '⏳ ' + m + ':' + String(s).padStart(2,'0');
+                if(diff<=0) el.textContent = '⏳ 0:00';
+            });
+        }, 1000);
+        // Каждые 30 сек удаляем истёкшие и перерисовываем
+        setInterval(async()=>{
+            const snap = await get(ref(db,`duelChallenges/${user.id}`));
+            const all  = snap.val()||{};
+            const now  = Date.now();
+            for(const [key,ch] of Object.entries(all)){
+                const exp = ch.expiresAt||(ch.ts+15*60*1000);
+                if(now>=exp) remove(ref(db,`duelChallenges/${user.id}/${key}`)).catch(()=>{});
             }
-            renderDuelChallenges(challenges);
+            renderDuelChallenges(all);
         }, 30000);
     }
 
-    function renderDuelChallenges(challenges) {
-        const container = document.getElementById('duel-challenges-section');
-        const incomingSection = document.getElementById('duel-incoming-section');
-        const now = Date.now();
-        // Фильтруем истёкшие (на стороне UI)
-        const entries = Object.entries(challenges).filter(([k,ch]) => {
-            const expiry = ch.expiresAt || (ch.ts + 15*60*1000);
-            return now < expiry;
+    // ─── Рендер списка вызовов ────────────────────────────────────────────────
+        // ─── Результаты дуэлей ────────────────────────────────────────────────────
+    function listenDuelResults(){
+        onValue(ref(db,`duelResults/${user.id}`), snap => {
+            if(!snap.exists()) return;
+            Object.entries(snap.val()).forEach(([key,r]) => {
+                if(r.seen) return;
+                update(ref(db,`duelResults/${user.id}/${key}`),{seen:true}).catch(()=>{});
+                setTimeout(()=>showDuelResultNotification(r), 900);
+            });
         });
-        // Обновляем бейдж ⚔️
+    }
+    function showDuelResultNotification(r){
+        const iWon=r.iWon, wn=r.winnerName||'?', i1=r.item1||{}, i2=r.item2||{};
+        const winColor='linear-gradient(135deg,rgba(255,215,0,0.12),rgba(255,107,107,0.05));border:2px solid rgba(255,215,0,0.45)';
+        const loseColor='rgba(255,107,107,0.07);border:2px solid rgba(255,107,107,0.3)';
+        document.getElementById('modal-content').innerHTML=`
+            <div style="text-align:center;padding:10px 0;">
+                <div style="font-size:10px;color:var(--secondary);letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;opacity:0.7;">⚔️ РЕЗУЛЬТАТ ДУЭЛИ</div>
+                <div style="background:${iWon?winColor:loseColor};border-radius:18px;padding:20px 14px;${iWon?'animation:duelGlow 1.5s ease infinite;':''}">
+                    <div style="font-size:48px;margin-bottom:8px;">${iWon?'🏆':'💀'}</div>
+                    <div style="font-size:22px;font-weight:900;${iWon?'background:linear-gradient(90deg,gold,#ffa500);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;':'color:#ff6b6b;'}">${iWon?'ТЫ ПОБЕДИЛ!':'ТЫ ПРОИГРАЛ'}</div>
+                    <div style="font-size:12px;color:var(--secondary);margin-top:8px;">${iWon?'Оба подарка твои':wn+' забрал оба подарка'}</div>
+                    <div style="display:flex;justify-content:center;gap:8px;margin-top:12px;">
+                        <div style="background:${iWon?'rgba(46,204,113,0.12);border:1px solid rgba(46,204,113,0.3)':'rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08)'};border-radius:10px;padding:6px 10px;font-size:11px;">${iWon?'✅':'❌'} ${i1.i||''} ${i1.n||'?'}</div>
+                        <div style="background:${iWon?'rgba(46,204,113,0.12);border:1px solid rgba(46,204,113,0.3)':'rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08)'};border-radius:10px;padding:6px 10px;font-size:11px;">${iWon?'✅':'❌'} ${i2.i||''} ${i2.n||'?'}</div>
+                    </div>
+                </div>
+                <button class="btn" onclick="closeModal()" style="margin-top:14px;background:rgba(255,255,255,0.07);border-color:rgba(255,255,255,0.12);">Закрыть</button>
+            </div>`;
+        openModal();
+        if(iWon) setTimeout(()=>spawnConfetti(window.innerWidth/2,window.innerHeight/3,70),200);
+    }
+
+function renderDuelChallenges(challenges){
+        window._duelChallengesMap = challenges||{};
+        const now  = Date.now();
+        const entries = Object.entries(challenges).filter(([,ch])=>{
+            return now < (ch.expiresAt||(ch.ts+15*60*1000));
+        });
+
         const badge = document.getElementById('badge-duel');
-        if(badge) { badge.style.display = entries.length > 0 ? 'flex' : 'none'; badge.textContent = entries.length; }
+        if(badge){ badge.style.display=entries.length?'flex':'none'; badge.textContent=entries.length; }
 
-        const makeHtml = (forDuelPage) => {
-            if(!entries.length) return '';
-            return `
-                <div style="background:linear-gradient(135deg,rgba(255,107,107,0.1),rgba(255,107,107,0.04));border:1px solid rgba(255,107,107,0.35);border-radius:18px;padding:14px;margin-bottom:12px;">
-                    <div style="font-size:11px;font-weight:bold;color:#ff6b6b;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:10px;">⚔️ Входящие вызовы (${entries.length})</div>
-                    ${entries.map(([key,ch])=>{
-                        const expiry = ch.expiresAt||(ch.ts+15*60*1000);
-                        const mLeft = Math.max(0,Math.floor((expiry-now)/60000));
-                        const sLeft = Math.max(0,Math.floor(((expiry-now)%60000)/1000));
-                        return `<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;background:#0a1520;border-radius:12px;padding:10px 12px;margin-bottom:8px;border:1px solid rgba(255,107,107,0.2);">
-                            <div style="display:flex;align-items:center;gap:10px;flex:1;">
-                                <div style="font-size:28px;">${ch.itemEmoji}</div>
-                                <div>
-                                    <div style="font-weight:bold;font-size:13px;">${ch.itemName}</div>
-                                    <div style="font-size:11px;color:var(--secondary);">от ${ch.fromName}</div>
-                                    <div style="font-size:10px;color:var(--orange);">⏳ ${mLeft}:${String(sLeft).padStart(2,'0')}</div>
-                                </div>
+        const html = entries.length===0 ? '' : `
+            <div style="background:linear-gradient(135deg,rgba(255,107,107,0.08),rgba(255,107,107,0.03));
+                border:1px solid rgba(255,107,107,0.3);border-radius:18px;padding:14px;margin-bottom:12px;">
+                <div style="font-size:11px;font-weight:bold;color:#ff6b6b;letter-spacing:0.5px;
+                    text-transform:uppercase;margin-bottom:10px;">⚔️ Вызовы на дуэль (${entries.length})</div>
+                ${entries.map(([key,ch])=>{
+                    const exp  = ch.expiresAt||(ch.ts+15*60*1000);
+                    const diff = Math.max(0, exp-now);
+                    const m = Math.floor(diff/60000);
+                    const s = Math.floor((diff%60000)/1000);
+                    const imgHtml = ch.itemImg
+                        ? `<img src="${ch.itemImg}" style="width:46px;height:46px;object-fit:contain;border-radius:8px;" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span style="display:none;font-size:30px;">${ch.itemEmoji||'🎁'}</span>`
+                        : `<span style="font-size:30px;">${ch.itemEmoji||'🎁'}</span>`;
+                    return `<div style="display:flex;align-items:center;justify-content:space-between;
+                        gap:10px;background:#0a1520;border-radius:12px;padding:10px 12px;
+                        margin-bottom:8px;border:1px solid rgba(255,107,107,0.2);">
+                        <div style="display:flex;align-items:center;gap:10px;flex:1;">
+                            <div style="width:46px;height:46px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${imgHtml}</div>
+                            <div>
+                                <div style="font-weight:bold;font-size:13px;">${ch.itemName||'?'}</div>
+                                <div style="font-size:11px;color:var(--secondary);">от ${ch.fromName||'?'}</div>
+                                <div class="duel-timer" data-exp="${exp}" style="font-size:10px;color:var(--orange);">⏳ ${m}:${String(s).padStart(2,'0')}</div>
                             </div>
-                            <button class="btn" style="padding:8px 14px;font-size:12px;width:auto;background:linear-gradient(90deg,#e74c3c,#c0392b);" onclick='acceptDuelChallenge("${key}",${JSON.stringify(ch)})'>⚔️ Принять</button>
-                        </div>`;
-                    }).join('')}
-                </div>`;
-        };
+                        </div>
+                        <button class="btn" style="padding:8px 14px;font-size:12px;width:auto;
+                            background:linear-gradient(90deg,#e74c3c,#c0392b);"
+                            onclick="acceptDuelChallenge('${key}')">⚔️ Принять</button>
+                    </div>`;
+                }).join('')}
+            </div>`;
 
-        if(container) { if(!entries.length){container.innerHTML='';} else {container.innerHTML=makeHtml(false);} }
-        if(incomingSection) { incomingSection.innerHTML = makeHtml(true); }
+        const c = document.getElementById('duel-incoming-section');
+        if(c) c.innerHTML = html;
     }
 
     window.giftOpen = async (inst) => {
@@ -6856,9 +7180,11 @@ ${rarObj.icon} <b>${itm.n}</b> ${itm.i||''}
                                 return `<div class="avatar-ring-item ring-nft" style="left:${x3}px;top:${y3}px;width:24px;height:24px;">${mg2?'<img src="'+mg2+'" style="width:16px;height:16px;" onerror="this.style.display=\'none\'">':'<span style="font-size:12px;">'+em3+'</span>'}</div>`;
                             }).join('') + '</div>';
                         })()}
-                        <img src="${d.pic || 'images/avatar_default.png'}"
+                        ${d.pic && d.pic.startsWith('emoji:')
+                            ? `<div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#1a5fa8);display:flex;align-items:center;justify-content:center;font-size:40px;border:3px solid var(--accent);position:relative;z-index:2;">${d.pic.replace('emoji:','')}</div>`
+                            : `<img src="${d.pic || 'images/avatar_default.png'}"
                              style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--accent);background:#0e1824;position:relative;z-index:2;"
-                             onerror="this.src='images/avatar_default.png'">
+                             onerror="this.src='images/avatar_default.png'">`}
                     </div>
                     <h3 style="margin:0 0 4px;">${buildUsername(d)}</h3>
                     ${d.bio ? `<p style="color:var(--secondary);font-size:13px;margin:0 0 10px;">${escHtml(d.bio)}</p>` : ''}
@@ -7711,15 +8037,21 @@ ${rarObj.icon} <b>${itm.n}</b> ${itm.i||''}
         document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
         document.querySelectorAll('.nav-btn').forEach(n=>n.classList.remove('active'));
         document.getElementById(id).classList.add('active');b.classList.add('active');
-        // 🚀 OPT: не перерисовываем если та же вкладка и данные не изменились
+        // 🚀 OPT: минимальный рендер при переключении — всё уже прогрето при логине
         const sameTab = (id === _lastTabId);
         _lastTabId = id;
+        // Инвентарь — только если изменился
         if(id==='inv') { if(_invDirty || !sameTab) { renderInv(); _invDirty = false; } }
+        // Магазин — только если первый раз (уже загружен при логине)
         if(id==='shop') { if(!sameTab) renderShop().then(()=>renderShopCards()); }
-        if(id==='market') listenMarket();
-        if(id==='profile') { get(ref(db,'users/'+user.id)).then(s=>{ if(s.val()) renderMyProfile(s.val()); }); }
-        if(id==='leaderboard') { if(!sameTab) loadLeaderboard(); }
+        // Рынок — realtime, всегда актуален через listenMarket
+        // Профиль — уже в onValue, не нужен повторный get
+        if(id==='profile' && !sameTab) { get(ref(db,'users/'+user.id)).then(s=>{ if(s.val()) renderMyProfile(s.val()); }); }
+        // Рейтинг — только если первый раз
+        if(id==='leaderboard' && !sameTab) loadLeaderboard();
+        // Дуэли — кеш уже прогрет, renderDuelPage использует его мгновенно
         if(id==='duel') { renderDuelPage(); }
+        if(id==='games') { /* handled by openGamesMenu overlay */ }
     };
     // ===== TELEGRAM INTEGRATION =====
     const TG_BOT_TOKEN = '8080771405:AAGsN_dudAoaiNmqLdgWsol8iL7ZDwqu-Ho';
@@ -9114,7 +9446,7 @@ ${curXp.toLocaleString()} → ${newXp.toLocaleString()} XP (⭐ ${newLvl} ур.)
         const ok = await showConfirm('Задать счётчик', `Установить счётчик в ${val}?
 Следующий выданный подарок получит #${val+1}`, '🔢', 'var(--orange)', 'Установить');
         if (!ok) return;
-        await set(ref(db, 'nft_counter'), val);
+        await runTransaction(ref(db, 'nft_counter'), () => val);
         showToast(`✅ Счётчик установлен в ${val}`, 'var(--orange)');
         if (inp) inp.value = '';
         window.loadSerialCounter();
@@ -9124,7 +9456,7 @@ ${curXp.toLocaleString()} → ${newXp.toLocaleString()} XP (⭐ ${newLvl} ур.)
         if (!user || !user.isAdm) return showToast('❌ Только для администратора', 'var(--err)');
         const ok = await showConfirm('Сброс счётчика', 'Сбросить счётчик в 0? Следующий подарок получит #1. Существующие номера не изменятся.', '🔄', 'var(--err)', 'Сбросить');
         if (!ok) return;
-        await set(ref(db, 'nft_counter'), 0);
+        await runTransaction(ref(db, 'nft_counter'), () => 0);
         showToast('✅ Счётчик сброшен. Следующий подарок получит #1', 'var(--green)');
         window.loadSerialCounter();
     };
@@ -9193,7 +9525,7 @@ ${curXp.toLocaleString()} → ${newXp.toLocaleString()} XP (⭐ ${newLvl} ур.)
                 // Обновляем счётчик если введённый номер больше текущего
                 const counterSnap = await get(ref(db, 'nft_counter'));
                 if (serial > (counterSnap.val() || 0)) {
-                    await set(ref(db, 'nft_counter'), serial);
+                    await runTransaction(ref(db, 'nft_counter'), () => serial);
                 }
             } else {
                 serial = await getNextNftSerial();
@@ -9249,6 +9581,11 @@ ${curXp.toLocaleString()} → ${newXp.toLocaleString()} XP (⭐ ${newLvl} ур.)
     // 🛡️ Обработчик необработанных ошибок (скрываем стектрейсы от пользователя)
     window.addEventListener('unhandledrejection', e => {
         const msg = e.reason?.message || String(e.reason);
+        if (msg === 'disconnect' || msg.includes('disconnect') || msg === 'set' || msg === 'cancel') {
+            // Firebase внутренние ошибки транзакций — подавляем
+            e.preventDefault();
+            return;
+        }
         if (msg.includes('Слишком много') || msg.includes('PERMISSION_DENIED') || msg.includes('blocked')) {
             showToast('🛡️ ' + msg, '#e74c3c');
             e.preventDefault();
@@ -9275,7 +9612,25 @@ ${curXp.toLocaleString()} → ${newXp.toLocaleString()} XP (⭐ ${newLvl} ур.)
 
     // ── PWA: Service Worker Registration ──────────────────────
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js').catch(() => {});
+        navigator.serviceWorker.register('sw.js').then(reg => {
+            // Проверяем обновление SW каждый раз при загрузке
+            reg.update();
+            // Если найдено обновление — активируем сразу без ожидания
+            reg.addEventListener('updatefound', () => {
+                const newSW = reg.installing;
+                if (!newSW) return;
+                newSW.addEventListener('statechange', () => {
+                    if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+                        // Новый SW готов — говорим ему активироваться немедленно
+                        newSW.postMessage({ type: 'SKIP_WAITING' });
+                    }
+                });
+            });
+        }).catch(() => {});
+        // При активации нового SW — перезагружаем страницу чтобы подхватить новые файлы
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            window.location.reload();
+        });
     }
 
     // ── PWA: Install Prompt ────────────────────────────────────
@@ -9996,13 +10351,13 @@ import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.8.
 
 const _fbApps = getApps();
 const _fbApp = _fbApps.length ? _fbApps[0] : initializeApp({
-    apiKey: "AIzaSyDkKqqEKpB3KHpmf9umilK1mkMdHRrSNiA",
-    authDomain: "gift-f97e9.firebaseapp.com",
-    databaseURL: "https://gift-f97e9-default-rtdb.firebaseio.com",
-    projectId: "gift-f97e9",
-    storageBucket: "gift-f97e9.firebasestorage.app",
-    messagingSenderId: "83318447783",
-    appId: "1:83318447783:web:8e0d7408c77e900fa50582"
+    apiKey: "AIzaSyADefAiKMM-lWJJfLthYcPvchguJq32p14",
+    authDomain: "oidlat.firebaseapp.com",
+    databaseURL: "https://oidlat-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "oidlat",
+    storageBucket: "oidlat.firebasestorage.app",
+    messagingSenderId: "1085208482031",
+    appId: "1:1085208482031:web:7dcbcc785a6a5f55e8cb1a"
 });
 const _mdb = getDatabase(_fbApp);
 const _mRef = ref(_mdb, 'maintenance');
@@ -10245,5 +10600,473 @@ window.addEventListener('popstate', () => {
     if (el && el.classList.contains('open')) { closeProfileMore(); }
 });
 </script>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- ══                  МЕНЮ ИГР (ОВЕРЛЕЙ)                      ══ -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div id="games-menu-overlay" style="display:none;position:fixed;inset:0;z-index:2000;background:var(--bg);overflow-y:auto;animation:fadeInUp 0.25s ease both;">
+    <div style="padding:20px 16px 100px;">
+        <!-- Хедер -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+            <div style="font-size:22px;font-weight:900;background:linear-gradient(90deg,#a855f7,#ec4899,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">🎮 Игры</div>
+            <button onclick="closeGamesMenu()" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:50%;width:36px;height:36px;color:var(--text);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
+        </div>
+
+        <!-- Карточка: Дуэли -->
+        <div onclick="closeGamesMenu();openDuelFromGames();"
+            style="background:linear-gradient(135deg,rgba(231,76,60,0.15),rgba(255,107,107,0.05));border:1px solid rgba(231,76,60,0.35);border-radius:20px;padding:18px;margin-bottom:14px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;"
+            onmouseover="this.style.borderColor='rgba(231,76,60,0.7)'" onmouseout="this.style.borderColor='rgba(231,76,60,0.35)'">
+            <div style="position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:52px;opacity:0.15;">⚔️</div>
+            <div style="font-size:20px;margin-bottom:4px;">⚔️</div>
+            <div style="font-size:17px;font-weight:900;color:#ff6b6b;margin-bottom:4px;">Дуэли</div>
+            <div style="font-size:12px;color:var(--secondary);">Вызови игрока на дуэль подарками. Победитель забирает оба!</div>
+            <div id="duel-menu-badge" style="display:inline-block;margin-top:8px;background:rgba(231,76,60,0.2);border:1px solid rgba(231,76,60,0.4);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:bold;color:#ff6b6b;">⚔️ Открыть</div>
+        </div>
+
+        <!-- Карточка: Дорожный Безумец -->
+        <div id="chicken-game-card" onclick="openChickenGame()"
+            style="background:linear-gradient(135deg,rgba(46,204,113,0.12),rgba(39,174,96,0.05));border:1px solid rgba(46,204,113,0.3);border-radius:20px;padding:18px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;"
+            onmouseover="this.style.borderColor='rgba(46,204,113,0.6)'" onmouseout="this.style.borderColor='rgba(46,204,113,0.3)'">
+            <div style="position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:52px;opacity:0.15;">🐔</div>
+            <div style="font-size:20px;margin-bottom:4px;">🐔</div>
+            <div style="font-size:17px;font-weight:900;color:#2ecc71;margin-bottom:4px;">Дорожный Безумец</div>
+            <div style="font-size:12px;color:var(--secondary);">Перейди дорогу не попав под машину. За каждый переход — монеты и XP!</div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap;">
+                <div style="background:rgba(46,204,113,0.15);border:1px solid rgba(46,204,113,0.3);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:bold;color:#2ecc71;">🏆 +10-50 монет</div>
+                <div style="background:rgba(255,200,0,0.15);border:1px solid rgba(255,200,0,0.3);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:bold;color:#ffd700;">⭐ +5-20 XP</div>
+                <div id="chicken-attempts-badge" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:bold;color:var(--text);">🎮 10/10 попыток</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- ══              ИГРА: ДОРОЖНЫЙ БЕЗУМЕЦ                      ══ -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div id="chicken-game-overlay" style="display:none;position:fixed;inset:0;z-index:2100;background:#0a1a0a;flex-direction:column;align-items:center;">
+    <!-- Хедер игры -->
+    <div style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(0,0,0,0.4);box-sizing:border-box;flex-shrink:0;">
+        <button onclick="closeChickenGame()" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:50%;width:36px;height:36px;color:white;font-size:18px;cursor:pointer;">✕</button>
+        <div style="font-size:15px;font-weight:bold;color:#2ecc71;">🐔 Дорожный Безумец</div>
+        <div id="cg-attempts" style="background:rgba(46,204,113,0.2);border:1px solid rgba(46,204,113,0.4);border-radius:20px;padding:4px 10px;font-size:12px;font-weight:bold;color:#2ecc71;">10/10</div>
+    </div>
+    <!-- Счёт -->
+    <div style="display:flex;gap:16px;padding:8px 16px;width:100%;box-sizing:border-box;justify-content:center;flex-shrink:0;">
+        <div style="text-align:center;"><div id="cg-score" style="font-size:22px;font-weight:900;color:#ffd700;">0</div><div style="font-size:10px;color:rgba(255,255,255,0.5);">ОЧКИ</div></div>
+        <div style="text-align:center;"><div id="cg-level" style="font-size:22px;font-weight:900;color:#a855f7;">1</div><div style="font-size:10px;color:rgba(255,255,255,0.5);">УРОВЕНЬ</div></div>
+        <div style="text-align:center;"><div id="cg-lives" style="font-size:22px;">❤️❤️❤️</div><div style="font-size:10px;color:rgba(255,255,255,0.5);">ЖИЗНИ</div></div>
+    </div>
+    <!-- Канвас -->
+    <canvas id="chicken-canvas" style="display:block;touch-action:none;flex:1;max-height:calc(100vh - 180px);"></canvas>
+    <!-- Кнопки управления -->
+    <div style="padding:12px 16px 24px;width:100%;box-sizing:border-box;flex-shrink:0;">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;max-width:320px;margin:0 auto;">
+            <div></div>
+            <button id="cg-btn-up" ontouchstart="cgMove('up')" onmousedown="cgMove('up')"
+                style="background:rgba(46,204,113,0.2);border:2px solid rgba(46,204,113,0.5);border-radius:16px;padding:18px;font-size:24px;color:white;cursor:pointer;user-select:none;-webkit-user-select:none;active:opacity:0.7;">⬆️</button>
+            <div></div>
+            <button id="cg-btn-left" ontouchstart="cgMove('left')" onmousedown="cgMove('left')"
+                style="background:rgba(46,204,113,0.2);border:2px solid rgba(46,204,113,0.5);border-radius:16px;padding:18px;font-size:24px;color:white;cursor:pointer;user-select:none;-webkit-user-select:none;">⬅️</button>
+            <button id="cg-btn-down" ontouchstart="cgMove('down')" onmousedown="cgMove('down')"
+                style="background:rgba(46,204,113,0.2);border:2px solid rgba(46,204,113,0.5);border-radius:16px;padding:18px;font-size:24px;color:white;cursor:pointer;user-select:none;-webkit-user-select:none;">⬇️</button>
+            <button id="cg-btn-right" ontouchstart="cgMove('right')" onmousedown="cgMove('right')"
+                style="background:rgba(46,204,113,0.2);border:2px solid rgba(46,204,113,0.5);border-radius:16px;padding:18px;font-size:24px;color:white;cursor:pointer;user-select:none;-webkit-user-select:none;">➡️</button>
+        </div>
+    </div>
+</div>
+
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+// ══                  СИСТЕМА ИГР                                 ══
+// ═══════════════════════════════════════════════════════════════════
+
+// ─── Меню игр ────────────────────────────────────────────────────
+window.openGamesMenu = (btn) => {
+    // Снимаем активность со всех nav кнопок
+    document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active'));
+    if(btn) btn.classList.add('active');
+    const overlay = document.getElementById('games-menu-overlay');
+    overlay.style.display = 'block';
+    updateChickenAttemptsBadge();
+};
+window.closeGamesMenu = () => {
+    document.getElementById('games-menu-overlay').style.display = 'none';
+    // Возвращаем активность текущей вкладке
+    const lastBtn = document.querySelector(`.nav-btn[onclick*="${window._lastTabId || 'shop'}"]`);
+    if(lastBtn) lastBtn.classList.add('active');
+};
+window.openDuelFromGames = () => {
+    // Открываем страницу дуэлей
+    const duelPage = document.getElementById('duel');
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    duelPage.classList.add('active');
+    renderDuelPage();
+};
+
+// ─── Система попыток (Firebase) ──────────────────────────────────
+const CG_MAX_ATTEMPTS = 10;
+const CG_REFILL_MS    = 60 * 60 * 1000; // 1 час
+
+async function getCGData() {
+    if(!window.user) return null;
+    const snap = await get(ref(db, 'gameData/' + user.id + '/chicken'));
+    return snap.val() || { attempts: CG_MAX_ATTEMPTS, lastRefill: Date.now() };
+}
+async function saveCGData(data) {
+    if(!window.user) return;
+    await update(ref(db, 'gameData/' + user.id + '/chicken'), data);
+}
+async function getAvailableAttempts() {
+    const data = await getCGData();
+    if(!data) return 0;
+    const now = Date.now();
+    const elapsed = now - (data.lastRefill || 0);
+    if(elapsed >= CG_REFILL_MS) {
+        // Пополняем
+        const newData = { attempts: CG_MAX_ATTEMPTS, lastRefill: now };
+        await saveCGData(newData);
+        return CG_MAX_ATTEMPTS;
+    }
+    return Math.max(0, data.attempts || 0);
+}
+async function spendAttempt() {
+    const data = await getCGData();
+    if(!data) return false;
+    const now = Date.now();
+    const elapsed = now - (data.lastRefill || 0);
+    if(elapsed >= CG_REFILL_MS) {
+        await saveCGData({ attempts: CG_MAX_ATTEMPTS - 1, lastRefill: now });
+        return true;
+    }
+    if((data.attempts || 0) <= 0) return false;
+    await saveCGData({ attempts: (data.attempts || 0) - 1, lastRefill: data.lastRefill || now });
+    return true;
+}
+async function updateChickenAttemptsBadge() {
+    const data = await getCGData();
+    if(!data) return;
+    const now = Date.now();
+    const elapsed = now - (data.lastRefill || 0);
+    const current = elapsed >= CG_REFILL_MS ? CG_MAX_ATTEMPTS : Math.max(0, data.attempts || 0);
+    const badge = document.getElementById('chicken-attempts-badge');
+    const cgBadge = document.getElementById('cg-attempts');
+    const timeLeft = elapsed >= CG_REFILL_MS ? 0 : Math.ceil((CG_REFILL_MS - elapsed) / 60000);
+    const txt = current > 0 
+        ? `🎮 ${current}/${CG_MAX_ATTEMPTS} попыток`
+        : `⏳ Через ${timeLeft} мин`;
+    if(badge) { badge.textContent = txt; badge.style.color = current > 0 ? 'var(--text)' : '#e74c3c'; }
+    if(cgBadge) cgBadge.textContent = `${current}/${CG_MAX_ATTEMPTS}`;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// ══              ИГРА: ДОРОЖНЫЙ БЕЗУМЕЦ 🐔                       ══
+// ═══════════════════════════════════════════════════════════════════
+let _cgRunning = false;
+let _cgAnimId  = null;
+let _cgState   = null;
+
+window.openChickenGame = async () => {
+    const attempts = await getAvailableAttempts();
+    if(attempts <= 0) {
+        const data = await getCGData();
+        const timeLeft = Math.ceil((CG_REFILL_MS - (Date.now() - data.lastRefill)) / 60000);
+        showToast(`⏳ Попытки закончились! Новые через ${timeLeft} мин`, '#f39c12');
+        return;
+    }
+    const overlay = document.getElementById('chicken-game-overlay');
+    overlay.style.display = 'flex';
+    updateChickenAttemptsBadge();
+    cgInit();
+};
+window.closeChickenGame = () => {
+    _cgRunning = false;
+    if(_cgAnimId) cancelAnimationFrame(_cgAnimId);
+    document.getElementById('chicken-game-overlay').style.display = 'none';
+    updateChickenAttemptsBadge();
+};
+
+function cgInit() {
+    const canvas = document.getElementById('chicken-canvas');
+    const rect = canvas.parentElement.getBoundingClientRect();
+    const navH = document.querySelector('.nav')?.offsetHeight || 0;
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight - 180;
+
+    const COLS = 9, ROWS = 11;
+    const cellW = Math.floor(canvas.width  / COLS);
+    const cellH = Math.floor(canvas.height / ROWS);
+
+    // Получаем аватар игрока
+    const playerEmoji = (window.user && window.user.pic && window.user.pic.startsWith('emoji:'))
+        ? window.user.pic.replace('emoji:','') : '🐔';
+
+    _cgState = {
+        canvas, cellW, cellH, COLS, ROWS,
+        playerEmoji,
+        player: { col: Math.floor(COLS/2), row: ROWS-1 },
+        cars: [],
+        score: 0,
+        level: 1,
+        lives: 3,
+        crossings: 0, // сколько раз перешли
+        moving: false,
+        gameOver: false,
+        lastCrossing: 0,
+        coins: 0,
+        xpGained: 0,
+    };
+
+    cgSpawnCars();
+    _cgRunning = true;
+    document.getElementById('cg-score').textContent = '0';
+    document.getElementById('cg-level').textContent = '1';
+    document.getElementById('cg-lives').textContent = '❤️❤️❤️';
+    cgLoop();
+}
+
+function cgSpawnCars() {
+    const s = _cgState;
+    s.cars = [];
+    // Ряды дороги: 1..ROWS-2 (0 — финиш, ROWS-1 — старт)
+    const roadRows = s.ROWS - 2;
+    for(let r = 1; r < s.ROWS-1; r++) {
+        const speed = (0.8 + Math.random() * 0.7 + s.level * 0.15);
+        const dir   = r % 2 === 0 ? 1 : -1;
+        const count = 2 + Math.floor(Math.random() * 2);
+        for(let i = 0; i < count; i++) {
+            const emoji = ['🚗','🚕','🚙','🏎️','🚓','🚑'][Math.floor(Math.random()*6)];
+            s.cars.push({
+                row: r,
+                x: dir > 0 ? -i * (s.cellW * 3) : s.canvas.width + i * (s.cellW * 3),
+                w: s.cellW * 1.4,
+                speed: speed * dir * (s.cellW / 16),
+                emoji,
+            });
+        }
+    }
+}
+
+function cgLoop() {
+    if(!_cgRunning) return;
+    _cgAnimId = requestAnimationFrame(cgLoop);
+    const s = _cgState;
+    const ctx = s.canvas.getContext('2d');
+    ctx.clearRect(0,0,s.canvas.width,s.canvas.height);
+
+    // Фон — трава
+    ctx.fillStyle = '#1a3a1a';
+    ctx.fillRect(0,0,s.canvas.width,s.canvas.height);
+
+    // Финишная зона (ряд 0)
+    ctx.fillStyle = '#2d5a1b';
+    ctx.fillRect(0, 0, s.canvas.width, s.cellH);
+    ctx.fillStyle = 'rgba(46,204,113,0.3)';
+    ctx.fillRect(0, 0, s.canvas.width, s.cellH);
+    ctx.font = `${s.cellH * 0.55}px serif`;
+    ctx.textAlign = 'center';
+    for(let c=0;c<s.COLS;c++) ctx.fillText('🌳', c*s.cellW + s.cellW/2, s.cellH*0.75);
+
+    // Дорога
+    for(let r=1; r<s.ROWS-1; r++) {
+        const y = r * s.cellH;
+        ctx.fillStyle = r % 2 === 0 ? '#2a2a2a' : '#333';
+        ctx.fillRect(0, y, s.canvas.width, s.cellH);
+        // Разметка
+        ctx.strokeStyle = 'rgba(255,255,0,0.15)';
+        ctx.setLineDash([s.cellW*0.3, s.cellW*0.3]);
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(0, y + s.cellH/2);
+        ctx.lineTo(s.canvas.width, y + s.cellH/2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+    }
+
+    // Стартовая зона (ROWS-1)
+    ctx.fillStyle = '#1a3a1a';
+    ctx.fillRect(0, (s.ROWS-1)*s.cellH, s.canvas.width, s.cellH);
+
+    // Машины
+    const now = performance.now();
+    for(const car of s.cars) {
+        car.x += car.speed;
+        if(car.speed > 0 && car.x > s.canvas.width + s.cellW*2) car.x = -s.cellW*2;
+        if(car.speed < 0 && car.x < -s.cellW*2) car.x = s.canvas.width + s.cellW*2;
+        ctx.font = `${s.cellH * 0.7}px serif`;
+        ctx.textAlign = 'left';
+        ctx.fillText(car.emoji, car.x, car.row*s.cellH + s.cellH*0.75);
+    }
+
+    // Игрок
+    const px = s.player.col * s.cellW + s.cellW/2;
+    const py = s.player.row * s.cellH + s.cellH*0.75;
+    ctx.font = `${s.cellH * 0.75}px serif`;
+    ctx.textAlign = 'center';
+    ctx.fillText(s.playerEmoji, px, py);
+
+    // Проверка столкновений
+    if(!s.gameOver) {
+        const pLeft  = s.player.col * s.cellW + s.cellW*0.1;
+        const pRight = pLeft + s.cellW * 0.8;
+        const pTop   = s.player.row * s.cellH + s.cellH*0.1;
+        const pBot   = pTop + s.cellH * 0.8;
+        for(const car of s.cars) {
+            const cLeft  = car.x + s.cellW*0.05;
+            const cRight = car.x + car.w - s.cellW*0.05;
+            const cTop   = car.row * s.cellH + s.cellH*0.1;
+            const cBot   = cTop + s.cellH * 0.8;
+            if(pLeft<cRight && pRight>cLeft && pTop<cBot && pBot>cTop) {
+                cgHit();
+                break;
+            }
+        }
+        // Достиг финиша
+        if(s.player.row === 0) {
+            cgCrossed();
+        }
+    }
+}
+
+function cgHit() {
+    const s = _cgState;
+    if(s.moving) return;
+    s.lives--;
+    const hearts = ['','❤️','❤️❤️','❤️❤️❤️'];
+    document.getElementById('cg-lives').textContent = hearts[Math.max(0,s.lives)] || '💔';
+
+    // Эффект мигания
+    const canvas = s.canvas;
+    canvas.style.filter = 'brightness(3) saturate(0)';
+    setTimeout(()=>{ canvas.style.filter=''; }, 150);
+
+    // Возвращаем игрока на старт
+    s.player.col = Math.floor(s.COLS/2);
+    s.player.row = s.ROWS-1;
+    s.moving = true;
+    setTimeout(()=>{ s.moving = false; }, 400);
+
+    if(s.lives <= 0) {
+        cgGameOver();
+    }
+}
+
+async function cgCrossed() {
+    const s = _cgState;
+    if(s.moving) return;
+    s.moving = true;
+
+    s.crossings++;
+    const scoreGain = 10 + s.level * 5;
+    const coinsGain = 30 + s.level * 15;
+    const xpGain    = 5  + s.level * 2;
+    s.score   += scoreGain;
+    s.coins   += coinsGain;
+    s.xpGained+= xpGain;
+
+    document.getElementById('cg-score').textContent = s.score;
+
+    // Каждые 3 перехода — новый уровень
+    if(s.crossings % 3 === 0) {
+        s.level++;
+        document.getElementById('cg-level').textContent = s.level;
+        showToast(`🆙 Уровень ${s.level}! Машины быстрее!`, '#a855f7');
+        cgSpawnCars();
+    }
+
+    // Возвращаем на старт
+    s.player.col = Math.floor(s.COLS/2);
+    s.player.row = s.ROWS-1;
+    setTimeout(()=>{ s.moving = false; }, 300);
+}
+
+async function cgGameOver() {
+    _cgRunning = false;
+    if(_cgAnimId) cancelAnimationFrame(_cgAnimId);
+    const s = _cgState;
+
+    // Тратим попытку
+    const ok = await spendAttempt();
+
+    // Начисляем награды
+    if(s.coins > 0 || s.xpGained > 0) {
+        const r = ref(db,'users/'+user.id);
+        await runTransaction(r, cur => {
+            if(!cur) return cur;
+            return {...cur,
+                balance: (cur.balance||0) + s.coins,
+            };
+        }).catch(()=>{});
+        if(s.xpGained > 0) awardXp(user.id, s.xpGained);
+    }
+
+    updateChickenAttemptsBadge();
+
+    // Показываем результат поверх канваса
+    const canvas = s.canvas;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = 'rgba(0,0,0,0.75)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    // Показываем красивый модал результата
+    document.getElementById('modal-content').innerHTML = `
+        <div style="text-align:center;padding:10px 0;">
+            <div style="font-size:48px;margin-bottom:8px;">💀</div>
+            <div style="font-size:20px;font-weight:900;color:#ff6b6b;margin-bottom:4px;">Игра окончена!</div>
+            <div style="font-size:13px;color:var(--secondary);margin-bottom:16px;">Дорожный Безумец</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;">
+                <div style="background:rgba(255,255,255,0.06);border-radius:12px;padding:10px;">
+                    <div style="font-size:20px;font-weight:900;color:#ffd700;">${s.score}</div>
+                    <div style="font-size:10px;color:var(--secondary);">ОЧКИ</div>
+                </div>
+                <div style="background:rgba(46,204,113,0.1);border-radius:12px;padding:10px;">
+                    <div style="font-size:20px;font-weight:900;color:#2ecc71;">+${s.coins}</div>
+                    <div style="font-size:10px;color:var(--secondary);">МОНЕТ</div>
+                </div>
+                <div style="background:rgba(255,200,0,0.1);border-radius:12px;padding:10px;">
+                    <div style="font-size:20px;font-weight:900;color:#ffd700;">+${s.xpGained}</div>
+                    <div style="font-size:10px;color:var(--secondary);">XP</div>
+                </div>
+            </div>
+            <div id="cg-next-info" style="background:rgba(255,255,255,0.04);border-radius:10px;padding:8px;font-size:11px;color:var(--secondary);margin-bottom:14px;"></div>
+            <div style="display:flex;gap:8px;">
+                <button class="btn" style="flex:1;background:linear-gradient(90deg,#2ecc71,#27ae60);" onclick="closeModal();closeChickenGame();openChickenGame();">🔄 Ещё раз</button>
+                <button class="btn" style="flex:1;background:rgba(255,255,255,0.07);border-color:rgba(255,255,255,0.12);" onclick="closeModal();closeChickenGame();">✕ Выйти</button>
+            </div>
+        </div>`;
+    closeChickenGame();
+    openModal();
+
+    // Обновляем инфо о попытках в модале
+    const data = await getCGData();
+    const timeLeft = data.attempts > 0 ? null : Math.ceil((CG_REFILL_MS - (Date.now() - data.lastRefill)) / 60000);
+    const infoEl = document.getElementById('cg-next-info');
+    if(infoEl) {
+        infoEl.textContent = data.attempts > 0
+            ? `🎮 Осталось попыток: ${data.attempts}/${CG_MAX_ATTEMPTS}`
+            : `⏳ Следующие попытки через ${timeLeft} мин`;
+    }
+}
+
+window.cgMove = (dir) => {
+    if(!_cgRunning || !_cgState || _cgState.moving || _cgState.gameOver) return;
+    const s = _cgState;
+    const prev = { col: s.player.col, row: s.player.row };
+    if(dir==='up'    && s.player.row > 0)        s.player.row--;
+    if(dir==='down'  && s.player.row < s.ROWS-1) s.player.row++;
+    if(dir==='left'  && s.player.col > 0)        s.player.col--;
+    if(dir==='right' && s.player.col < s.COLS-1) s.player.col++;
+};
+
+// Клавиатура
+document.addEventListener('keydown', e => {
+    if(!_cgRunning) return;
+    if(e.key==='ArrowUp')    { e.preventDefault(); cgMove('up'); }
+    if(e.key==='ArrowDown')  { e.preventDefault(); cgMove('down'); }
+    if(e.key==='ArrowLeft')  { e.preventDefault(); cgMove('left'); }
+    if(e.key==='ArrowRight') { e.preventDefault(); cgMove('right'); }
+});
+</script>
+
 </body>
 </html>
