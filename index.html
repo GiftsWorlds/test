@@ -10643,34 +10643,109 @@ window.addEventListener('popstate', () => {
 <!-- ═══════════════════════════════════════════════════════════════ -->
 <!-- ══              ИГРА: ДОРОЖНЫЙ БЕЗУМЕЦ                      ══ -->
 <!-- ═══════════════════════════════════════════════════════════════ -->
+
+<!-- Экран выбора персонажа -->
+<div id="cg-char-select" style="display:none;position:fixed;inset:0;z-index:2100;background:linear-gradient(180deg,#071a07 0%,#0a1a0a 100%);flex-direction:column;align-items:center;justify-content:center;">
+    <div style="width:100%;max-width:420px;padding:24px 20px;box-sizing:border-box;">
+        <div style="text-align:center;margin-bottom:6px;font-size:28px;">🏁</div>
+        <div style="text-align:center;font-size:20px;font-weight:900;color:#2ecc71;margin-bottom:4px;">Выбери персонажа</div>
+        <div style="text-align:center;font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:24px;">Каждый со своей суперспособностью</div>
+        <div id="cg-chars-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;"></div>
+        <div style="display:flex;gap:10px;">
+            <button onclick="cgCloseCharSelect()" style="flex:1;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:14px;font-size:14px;color:rgba(255,255,255,0.6);cursor:pointer;">✕ Отмена</button>
+            <button id="cg-start-btn" onclick="cgStartWithChar()" style="flex:2;background:linear-gradient(90deg,#2ecc71,#27ae60);border:none;border-radius:14px;padding:14px;font-size:15px;font-weight:900;color:white;cursor:pointer;opacity:0.5;" disabled>▶ Начать игру</button>
+        </div>
+    </div>
+</div>
+
+<!-- Основной оверлей игры -->
 <div id="chicken-game-overlay" style="display:none;position:fixed;inset:0;z-index:2100;background:#0a1a0a;flex-direction:column;align-items:center;">
     <!-- Хедер игры -->
-    <div style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(0,0,0,0.4);box-sizing:border-box;flex-shrink:0;">
-        <button onclick="closeChickenGame()" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:50%;width:36px;height:36px;color:white;font-size:18px;cursor:pointer;">✕</button>
-        <div style="font-size:15px;font-weight:bold;color:#2ecc71;">🐔 Дорожный Безумец</div>
+    <div style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:rgba(0,0,0,0.5);box-sizing:border-box;flex-shrink:0;">
+        <button onclick="closeChickenGame()" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:50%;width:34px;height:34px;color:white;font-size:16px;cursor:pointer;">✕</button>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <span id="cg-char-icon" style="font-size:18px;">🐔</span>
+            <span style="font-size:13px;font-weight:bold;color:#2ecc71;">Дорожный Безумец</span>
+        </div>
         <div id="cg-attempts" style="background:rgba(46,204,113,0.2);border:1px solid rgba(46,204,113,0.4);border-radius:20px;padding:4px 10px;font-size:12px;font-weight:bold;color:#2ecc71;">10/10</div>
     </div>
     <!-- Счёт -->
-    <div style="display:flex;gap:16px;padding:8px 16px;width:100%;box-sizing:border-box;justify-content:center;flex-shrink:0;">
-        <div style="text-align:center;"><div id="cg-score" style="font-size:22px;font-weight:900;color:#ffd700;">0</div><div style="font-size:10px;color:rgba(255,255,255,0.5);">ОЧКИ</div></div>
-        <div style="text-align:center;"><div id="cg-level" style="font-size:22px;font-weight:900;color:#a855f7;">1</div><div style="font-size:10px;color:rgba(255,255,255,0.5);">УРОВЕНЬ</div></div>
-        <div style="text-align:center;"><div id="cg-lives" style="font-size:22px;">❤️❤️❤️</div><div style="font-size:10px;color:rgba(255,255,255,0.5);">ЖИЗНИ</div></div>
+    <div style="display:flex;gap:12px;padding:6px 16px;width:100%;box-sizing:border-box;justify-content:center;flex-shrink:0;background:rgba(0,0,0,0.2);">
+        <div style="text-align:center;"><div id="cg-score" style="font-size:20px;font-weight:900;color:#ffd700;">0</div><div style="font-size:9px;color:rgba(255,255,255,0.4);">ОЧКИ</div></div>
+        <div style="text-align:center;"><div id="cg-level" style="font-size:20px;font-weight:900;color:#a855f7;">1</div><div style="font-size:9px;color:rgba(255,255,255,0.4);">УРОВЕНЬ</div></div>
+        <div style="text-align:center;"><div id="cg-lives" style="font-size:20px;">❤️❤️❤️</div><div style="font-size:9px;color:rgba(255,255,255,0.4);">ЖИЗНИ</div></div>
+        <div style="text-align:center;"><div id="cg-ability-bar" style="font-size:13px;font-weight:bold;color:#00cfff;min-width:40px;">—</div><div style="font-size:9px;color:rgba(255,255,255,0.4);">СПОСОБНОСТЬ</div></div>
     </div>
     <!-- Канвас -->
-    <canvas id="chicken-canvas" style="display:block;touch-action:none;flex:1;max-height:calc(100vh - 180px);"></canvas>
+    <canvas id="chicken-canvas" style="display:block;touch-action:none;flex:1;max-height:calc(100vh - 188px);"></canvas>
     <!-- Кнопки управления -->
-    <div style="padding:12px 16px 24px;width:100%;box-sizing:border-box;flex-shrink:0;">
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;max-width:320px;margin:0 auto;">
-            <div></div>
-            <button id="cg-btn-up" ontouchstart="cgMove('up')" onmousedown="cgMove('up')"
-                style="background:rgba(46,204,113,0.2);border:2px solid rgba(46,204,113,0.5);border-radius:16px;padding:18px;font-size:24px;color:white;cursor:pointer;user-select:none;-webkit-user-select:none;active:opacity:0.7;">⬆️</button>
-            <div></div>
-            <button id="cg-btn-left" ontouchstart="cgMove('left')" onmousedown="cgMove('left')"
-                style="background:rgba(46,204,113,0.2);border:2px solid rgba(46,204,113,0.5);border-radius:16px;padding:18px;font-size:24px;color:white;cursor:pointer;user-select:none;-webkit-user-select:none;">⬅️</button>
-            <button id="cg-btn-down" ontouchstart="cgMove('down')" onmousedown="cgMove('down')"
-                style="background:rgba(46,204,113,0.2);border:2px solid rgba(46,204,113,0.5);border-radius:16px;padding:18px;font-size:24px;color:white;cursor:pointer;user-select:none;-webkit-user-select:none;">⬇️</button>
-            <button id="cg-btn-right" ontouchstart="cgMove('right')" onmousedown="cgMove('right')"
-                style="background:rgba(46,204,113,0.2);border:2px solid rgba(46,204,113,0.5);border-radius:16px;padding:18px;font-size:24px;color:white;cursor:pointer;user-select:none;-webkit-user-select:none;">➡️</button>
+    <div style="padding:8px 16px 18px;width:100%;box-sizing:border-box;flex-shrink:0;">
+        <style>
+            .cg-dpad { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:8px; max-width:360px; margin:0 auto; }
+            .cg-btn {
+                position:relative; overflow:hidden;
+                background:linear-gradient(145deg,rgba(46,204,113,0.22),rgba(39,174,96,0.12));
+                border:2px solid rgba(46,204,113,0.5);
+                border-radius:16px; padding:0;
+                font-size:22px; color:white; cursor:pointer;
+                user-select:none; -webkit-user-select:none;
+                height:56px;
+                box-shadow:0 4px 12px rgba(46,204,113,0.15), inset 0 1px 0 rgba(255,255,255,0.08);
+                transition:transform 0.08s, box-shadow 0.08s;
+                display:flex; align-items:center; justify-content:center;
+            }
+            .cg-btn:active { transform:scale(0.92); box-shadow:0 2px 6px rgba(46,204,113,0.1); background:linear-gradient(145deg,rgba(46,204,113,0.35),rgba(39,174,96,0.22)); }
+            .cg-btn-up {
+                background:linear-gradient(145deg,rgba(46,204,113,0.35),rgba(39,174,96,0.18)) !important;
+                border-color:rgba(46,204,113,0.85) !important;
+                box-shadow:0 4px 18px rgba(46,204,113,0.35), 0 0 0 1px rgba(46,204,113,0.2), inset 0 1px 0 rgba(255,255,255,0.15) !important;
+                font-size:26px !important;
+            }
+            .cg-btn-up::before {
+                content:''; position:absolute; inset:0;
+                background:linear-gradient(180deg,rgba(255,255,255,0.12) 0%,transparent 60%);
+                border-radius:14px; pointer-events:none;
+            }
+            .cg-ability-btn {
+                width:100%; display:block;
+                background:linear-gradient(135deg,rgba(0,207,255,0.18),rgba(0,160,220,0.1));
+                border:3px solid transparent;
+                border-radius:14px; padding:11px 0;
+                font-size:13px; font-weight:bold; color:#00cfff;
+                cursor:pointer; user-select:none; -webkit-user-select:none;
+                transition:transform 0.08s, opacity 0.15s, background 0.3s, box-shadow 0.3s;
+                position:relative; z-index:1;
+            }
+            .cg-ability-btn:active { transform:scale(0.97); }
+            @keyframes cg-ring-pulse {
+                0%,100% { opacity:1; filter:drop-shadow(0 0 5px rgba(0,207,255,0.9)); }
+                50% { opacity:0.65; filter:drop-shadow(0 0 10px rgba(0,207,255,1)); }
+            }
+            .cg-ring-full { animation: cg-ring-pulse 1.2s ease-in-out infinite; }
+        </style>
+        <div class="cg-dpad">
+            <button class="cg-btn" ontouchstart="cgMove('left')" onmousedown="cgMove('left')">⬅️</button>
+            <button class="cg-btn cg-btn-up" ontouchstart="cgMove('up')" onmousedown="cgMove('up')">⬆️</button>
+            <button class="cg-btn" ontouchstart="cgMove('down')" onmousedown="cgMove('down')">⬇️</button>
+            <button class="cg-btn" ontouchstart="cgMove('right')" onmousedown="cgMove('right')">➡️</button>
+        </div>
+        <!-- Кнопка способности с кольцевым баром -->
+        <div style="max-width:360px;margin:8px auto 0;position:relative;" id="cg-ability-wrap">
+            <svg id="cg-ability-ring" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;border-radius:14px;" viewBox="0 0 360 46" preserveAspectRatio="none">
+                <!-- Фоновая дорожка -->
+                <rect x="1.5" y="1.5" width="357" height="43" rx="12.5" ry="12.5"
+                    fill="none" stroke="rgba(0,207,255,0.12)" stroke-width="3"/>
+                <!-- Прогресс-бар -->
+                <rect id="cg-ability-progress" x="1.5" y="1.5" width="357" height="43" rx="12.5" ry="12.5"
+                    fill="none"
+                    stroke="#00cfff"
+                    stroke-width="3"
+                    stroke-linecap="round"
+                    stroke-dasharray="800"
+                    stroke-dashoffset="800"
+                    style="transition:stroke-dashoffset 0.55s cubic-bezier(0.4,0,0.2,1), stroke 0.3s;filter:drop-shadow(0 0 4px rgba(0,207,255,0.7))"/>
+            </svg>
+            <button id="cg-ability-btn" class="cg-ability-btn" ontouchstart="cgUseAbility()" onmousedown="cgUseAbility()">⚡ Способность (0)</button>
         </div>
     </div>
 </div>
@@ -10733,7 +10808,11 @@ async function cgSaveData() {
         await update(ref(db, 'gameData/' + user.id + '/chicken'), { attempts: _cgAttempts, lastRefill: _cgLastRefill });
     } catch(e) {}
 }
+function cgIsAdmin() {
+    try { return typeof ADMIN_IDS !== 'undefined' && window.user && ADMIN_IDS.has(window.user.id); } catch(e) { return false; }
+}
 function cgGetCurrent() {
+    if(cgIsAdmin()) return 999;
     const elapsed = Date.now() - _cgLastRefill;
     if(elapsed >= CG_REFILL_MS) {
         _cgAttempts = CG_MAX_ATTEMPTS;
@@ -10746,6 +10825,7 @@ function getAvailableAttempts() {
     return cgGetCurrent();
 }
 function spendAttempt() {
+    if(cgIsAdmin()) return true; // Админы не тратят попытки
     const cur = cgGetCurrent();
     if(cur <= 0) return false;
     _cgAttempts = cur - 1;
@@ -10753,21 +10833,149 @@ function spendAttempt() {
     return true;
 }
 function updateChickenAttemptsBadge() {
+    const isAdm = cgIsAdmin();
     const current = cgGetCurrent();
     const badge = document.getElementById('chicken-attempts-badge');
     const cgBadge = document.getElementById('cg-attempts');
     const elapsed = Date.now() - _cgLastRefill;
     const timeLeft = Math.ceil((CG_REFILL_MS - elapsed) / 60000);
-    const txt = current > 0
-        ? `🎮 ${current}/${CG_MAX_ATTEMPTS} попыток`
-        : `⏳ Через ${timeLeft} мин`;
-    if(badge) { badge.textContent = txt; badge.style.color = current > 0 ? 'var(--text)' : '#e74c3c'; }
-    if(cgBadge) cgBadge.textContent = `${current}/${CG_MAX_ATTEMPTS}`;
+    const txt = isAdm
+        ? `👑 ∞ попыток`
+        : current > 0
+            ? `🎮 ${current}/${CG_MAX_ATTEMPTS} попыток`
+            : `⏳ Через ${timeLeft} мин`;
+    if(badge) { badge.textContent = txt; badge.style.color = isAdm ? '#ffd700' : current > 0 ? 'var(--text)' : '#e74c3c'; }
+    if(cgBadge) cgBadge.textContent = isAdm ? '∞' : `${current}/${CG_MAX_ATTEMPTS}`;
 }
 
 // ═══════════════════════════════════════════════════════════════════
 // ══              ИГРА: ДОРОЖНЫЙ БЕЗУМЕЦ 🐔                       ══
 // ═══════════════════════════════════════════════════════════════════
+
+// ─── Персонажи ────────────────────────────────────────────────────
+const CG_CHARACTERS = [
+    {
+        id: 'chicken', emoji: '🐔', name: 'Курица', color: '#f39c12',
+        desc: '3 жизни • Классика',
+        ability: 'Кудах-тах!', abilityDesc: 'Отпугивает ближайшие машины',
+        lives: 3, abilityCharges: 2,
+        useAbility(s) {
+            // Отпугивает машины в текущем ряду
+            const row = s.player.row;
+            s.cars.filter(c => c.row === row).forEach(c => {
+                c.stunned = (c.stunned || 0) + 120; // фреймов
+            });
+            showToast('🐔 Кудах-тах! Машины напуганы!', '#f39c12');
+        }
+    },
+    {
+        id: 'frog', emoji: '🐸', name: 'Лягушка', color: '#2ecc71',
+        desc: '2 жизни • Прыгает через ряд',
+        ability: 'Супер-прыжок', abilityDesc: 'Перепрыгивает 2 ряда сразу',
+        lives: 2, abilityCharges: 3,
+        useAbility(s) {
+            if(s.player.row >= 2) {
+                s.player.row -= 2;
+                showToast('🐸 Супер-прыжок!', '#2ecc71');
+            } else if(s.player.row === 1) {
+                s.player.row = 0;
+                showToast('🐸 Финиш прыжком!', '#2ecc71');
+            }
+        }
+    },
+    {
+        id: 'cat', emoji: '🐱', name: 'Кот', color: '#9b59b6',
+        desc: '4 жизни • Живучий',
+        ability: 'Замедление', abilityDesc: 'Замедляет все машины на 3 сек',
+        lives: 4, abilityCharges: 2,
+        useAbility(s) {
+            s.slowMode = 180; // фреймов (≈3 сек)
+            showToast('🐱 Матрица! Время замедлилось...', '#9b59b6');
+        }
+    },
+    {
+        id: 'dog', emoji: '🐶', name: 'Собака', color: '#e74c3c',
+        desc: '3 жизни • Быстрый',
+        ability: 'Рывок', abilityDesc: 'Телепортируется на 3 ряда вперёд',
+        lives: 3, abilityCharges: 3,
+        useAbility(s) {
+            const target = Math.max(0, s.player.row - 3);
+            s.player.row = target;
+            showToast('🐶 Рывок вперёд!', '#e74c3c');
+        }
+    },
+    {
+        id: 'robot', emoji: '🤖', name: 'Робот', color: '#00cfff',
+        desc: '3 жизни • Щит',
+        ability: 'Щит', abilityDesc: 'Неуязвим на 2 секунды',
+        lives: 3, abilityCharges: 2,
+        useAbility(s) {
+            s.shieldFrames = 120;
+            showToast('🤖 Щит активирован!', '#00cfff');
+        }
+    },
+    {
+        id: 'ghost', emoji: '👻', name: 'Призрак', color: '#bdc3c7',
+        desc: '2 жизни • Проходит сквозь 1 машину',
+        ability: 'Невидимость', abilityDesc: 'Следующее столкновение игнорируется',
+        lives: 2, abilityCharges: 4,
+        useAbility(s) {
+            s.ghostMode = true;
+            showToast('👻 Призрак! Следующий удар не считается', '#bdc3c7');
+        }
+    },
+];
+
+let _cgSelectedChar = null;
+
+// ─── Выбор персонажа ────────────────────────────────────────────
+function cgOpenCharSelect() {
+    const grid = document.getElementById('cg-chars-grid');
+    _cgSelectedChar = null;
+    const startBtn = document.getElementById('cg-start-btn');
+    if(startBtn) { startBtn.disabled = true; startBtn.style.opacity = '0.5'; }
+    grid.innerHTML = CG_CHARACTERS.map(ch => `
+        <div id="cgchar-${ch.id}" onclick="cgSelectChar('${ch.id}')"
+            style="background:rgba(255,255,255,0.05);border:2px solid rgba(255,255,255,0.1);border-radius:16px;padding:14px 12px;cursor:pointer;transition:all 0.18s;text-align:left;">
+            <div style="font-size:30px;margin-bottom:6px;">${ch.emoji}</div>
+            <div style="font-size:14px;font-weight:900;color:${ch.color};margin-bottom:2px;">${ch.name}</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.45);margin-bottom:6px;">${ch.desc}</div>
+            <div style="font-size:10px;background:rgba(255,255,255,0.06);border-radius:8px;padding:5px 7px;color:rgba(255,255,255,0.7);">
+                ⚡ <b style="color:${ch.color};">${ch.ability}</b> (${ch.abilityCharges}x)<br>
+                <span style="color:rgba(255,255,255,0.4);">${ch.abilityDesc}</span>
+            </div>
+        </div>`).join('');
+    document.getElementById('cg-char-select').style.display = 'flex';
+}
+window.cgSelectChar = (id) => {
+    _cgSelectedChar = CG_CHARACTERS.find(c => c.id === id);
+    document.querySelectorAll('[id^="cgchar-"]').forEach(el => {
+        el.style.borderColor = 'rgba(255,255,255,0.1)';
+        el.style.background = 'rgba(255,255,255,0.05)';
+        el.style.transform = '';
+    });
+    const el = document.getElementById('cgchar-' + id);
+    if(el) {
+        el.style.borderColor = _cgSelectedChar.color;
+        el.style.background = `rgba(255,255,255,0.1)`;
+        el.style.transform = 'scale(1.03)';
+    }
+    const startBtn = document.getElementById('cg-start-btn');
+    if(startBtn) { startBtn.disabled = false; startBtn.style.opacity = '1'; }
+};
+window.cgCloseCharSelect = () => {
+    document.getElementById('cg-char-select').style.display = 'none';
+};
+window.cgStartWithChar = () => {
+    if(!_cgSelectedChar) return;
+    document.getElementById('cg-char-select').style.display = 'none';
+    const overlay = document.getElementById('chicken-game-overlay');
+    overlay.style.display = 'flex';
+    updateChickenAttemptsBadge();
+    cgInit();
+};
+
+// ─── Основная логика ──────────────────────────────────────────────
 let _cgRunning = false;
 let _cgAnimId  = null;
 let _cgState   = null;
@@ -10780,79 +10988,201 @@ window.openChickenGame = () => {
         showToast(`⏳ Попытки закончились! Новые через ${timeLeft} мин`, '#f39c12');
         return;
     }
-    const overlay = document.getElementById('chicken-game-overlay');
-    overlay.style.display = 'flex';
-    updateChickenAttemptsBadge();
-    cgInit();
+    cgOpenCharSelect();
 };
 window.closeChickenGame = () => {
     _cgRunning = false;
     if(_cgAnimId) cancelAnimationFrame(_cgAnimId);
     document.getElementById('chicken-game-overlay').style.display = 'none';
+    document.getElementById('cg-char-select').style.display = 'none';
     updateChickenAttemptsBadge();
 };
 
 function cgInit() {
+    const char = _cgSelectedChar || CG_CHARACTERS[0];
     const canvas = document.getElementById('chicken-canvas');
-    const rect = canvas.parentElement.getBoundingClientRect();
-    const navH = document.querySelector('.nav')?.offsetHeight || 0;
     canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight - 180;
+    canvas.height = window.innerHeight - 188;
 
     const COLS = 9, ROWS = 11;
     const cellW = Math.floor(canvas.width  / COLS);
     const cellH = Math.floor(canvas.height / ROWS);
 
-    // Получаем аватар игрока
-    const playerEmoji = (window.user && window.user.pic && window.user.pic.startsWith('emoji:'))
-        ? window.user.pic.replace('emoji:','') : '🐔';
+    // Иконка в хедере
+    const charIcon = document.getElementById('cg-char-icon');
+    if(charIcon) charIcon.textContent = char.emoji;
 
     _cgState = {
         canvas, cellW, cellH, COLS, ROWS,
-        playerEmoji,
+        char,
+        playerEmoji: char.emoji,
         player: { col: Math.floor(COLS/2), row: ROWS-1 },
         cars: [],
+        coins: [],       // монетки на дороге
         score: 0,
         level: 1,
-        lives: 3,
-        crossings: 0, // сколько раз перешли
+        lives: char.lives,
+        crossings: 0,
         moving: false,
         gameOver: false,
         lastCrossing: 0,
-        coins: 0,
+        coinsEarned: 0,
         xpGained: 0,
+        abilityCharges: char.abilityCharges,
+        slowMode: 0,
+        shieldFrames: 0,
+        ghostMode: false,
+        stunTimer: 0,
     };
 
+    cgUpdateAbilityBtn();
     cgSpawnCars();
+    cgSpawnCoins();
     _cgRunning = true;
+    const heartsArr = ['','❤️','❤️❤️','❤️❤️❤️','❤️❤️❤️❤️'];
     document.getElementById('cg-score').textContent = '0';
     document.getElementById('cg-level').textContent = '1';
-    document.getElementById('cg-lives').textContent = '❤️❤️❤️';
+    document.getElementById('cg-lives').textContent = heartsArr[Math.min(char.lives, 4)] || '❤️'.repeat(char.lives);
     cgLoop();
 }
+
+// ─── Машины ───────────────────────────────────────────────────────
+// Типы машин: обычные едут вправо, спецмашины - влево
+const CG_CAR_TYPES = [
+    { emoji: '🚗', facing: 'right' },
+    { emoji: '🚕', facing: 'right' },
+    { emoji: '🚙', facing: 'right' },
+    { emoji: '🏎️', facing: 'right' },
+    { emoji: '🚓', facing: 'left'  },
+    { emoji: '🚑', facing: 'left'  },
+    { emoji: '🚒', facing: 'left'  },
+    { emoji: '🚌', facing: 'left'  },
+    { emoji: '🚛', facing: 'left'  },
+];
 
 function cgSpawnCars() {
     const s = _cgState;
     s.cars = [];
-    // Ряды дороги: 1..ROWS-2 (0 — финиш, ROWS-1 — старт)
-    const roadRows = s.ROWS - 2;
     for(let r = 1; r < s.ROWS-1; r++) {
-        const speed = (0.8 + Math.random() * 0.7 + s.level * 0.15);
-        const dir   = r % 2 === 0 ? 1 : -1;
+        // Базовая скорость значительно снижена, прирост с уровнем плавный
+        const baseSpeed = 0.4 + Math.random() * 0.35;
+        const levelBonus = (s.level - 1) * 0.08;
+        const spd = baseSpeed + levelBonus;
+        // Направление ряда
+        const dir = r % 2 === 0 ? 1 : -1;
+        // Выбираем машины соответствующего направления (или случайные)
+        const pool = CG_CAR_TYPES.filter(t => (dir > 0 ? t.facing === 'right' : t.facing === 'left'));
         const count = 2 + Math.floor(Math.random() * 2);
+        const gap = s.cellW * (2.8 + Math.random());
         for(let i = 0; i < count; i++) {
-            const emoji = ['🚗','🚕','🚙','🏎️','🚓','🚑'][Math.floor(Math.random()*6)];
+            const type = pool[Math.floor(Math.random() * pool.length)];
             s.cars.push({
                 row: r,
-                x: dir > 0 ? -i * (s.cellW * 3) : s.canvas.width + i * (s.cellW * 3),
-                w: s.cellW * 1.4,
-                speed: speed * dir * (s.cellW / 16),
-                emoji,
+                x: dir > 0 ? -i * gap : s.canvas.width + i * gap,
+                w: s.cellW * 1.35,
+                speed: spd * dir * (s.cellW / 16),
+                emoji: type.emoji,
+                facingRight: dir > 0,
+                stunned: 0,
             });
         }
     }
 }
 
+// ─── Монетки ──────────────────────────────────────────────────────
+function cgSpawnCoins() {
+    const s = _cgState;
+    s.coins = [];
+    // Монетки случайно на дорожных рядах
+    for(let r = 1; r < s.ROWS-1; r++) {
+        if(Math.random() < 0.5) {
+            s.coins.push({
+                row: r,
+                col: 1 + Math.floor(Math.random() * (s.COLS - 2)),
+                collected: false,
+            });
+        }
+    }
+}
+
+// ─── Способность ─────────────────────────────────────────────────
+function cgUpdateAbilityBtn() {
+    const s = _cgState;
+    const btn = document.getElementById('cg-ability-btn');
+    const bar = document.getElementById('cg-ability-bar');
+    const progress = document.getElementById('cg-ability-progress');
+    if(!s) return;
+    const ch = s.char;
+    const charges = s.abilityCharges;
+    const maxCharges = ch.abilityCharges;
+
+    // Текст кнопки
+    const label = charges > 0 ? `⚡ ${ch.ability} (${charges})` : `💤 Заряжается...`;
+    if(btn) {
+        btn.textContent = label;
+        btn.style.opacity = charges > 0 ? '1' : '0.55';
+        btn.style.borderColor = charges > 0 ? 'rgba(0,207,255,0.0)' : 'rgba(255,255,255,0.0)'; // border скрыт — рисует SVG
+        btn.style.color = charges > 0 ? '#00cfff' : 'rgba(255,255,255,0.45)';
+        btn.style.boxShadow = charges > 0 ? '0 4px 14px rgba(0,207,255,0.22)' : 'none';
+        btn.style.background = charges > 0
+            ? 'linear-gradient(135deg,rgba(0,207,255,0.18),rgba(0,160,220,0.1))'
+            : 'linear-gradient(135deg,rgba(255,255,255,0.04),rgba(255,255,255,0.02))';
+    }
+    if(bar) bar.textContent = charges > 0 ? `${charges}x` : '0x';
+
+    // SVG прогресс-бар: периметр прямоугольника ~800
+    if(progress) {
+        // Дробный прогресс: если заряд 0 — идёт заполнение
+        // progress = charges/maxCharges (полные заряды)
+        const pct = maxCharges > 0 ? charges / maxCharges : 0;
+        const totalLen = 800;
+        const offset = totalLen - totalLen * pct;
+        progress.style.strokeDashoffset = offset;
+
+        // Цвет: заряжен — голубой, пусто — тусклый
+        if(charges >= maxCharges) {
+            progress.style.stroke = '#00cfff';
+            progress.style.filter = 'none';
+            progress.classList.add('cg-ring-full');
+        } else if(charges > 0) {
+            progress.classList.remove('cg-ring-full');
+            progress.style.stroke = '#00cfff';
+            progress.style.filter = 'drop-shadow(0 0 3px rgba(0,207,255,0.5))';
+        } else {
+            progress.style.stroke = 'rgba(0,207,255,0.3)';
+            progress.style.filter = 'none';
+        }
+    }
+}
+
+// Анимация частичного накопления в реальном времени (между переходами)
+function cgAnimateAbilityRefill() {
+    const s = _cgState;
+    if(!s) return;
+    const progress = document.getElementById('cg-ability-progress');
+    if(!progress) return;
+    const charges = s.abilityCharges;
+    const maxCharges = s.char.abilityCharges;
+    if(charges >= maxCharges) return;
+    // Показываем прогресс накопления следующего заряда (каждые 2 перехода)
+    const subProgress = (s.crossings % 2) / 2; // 0 или 0.5
+    const basePct = charges / maxCharges;
+    const totalPct = basePct + (1/maxCharges) * subProgress;
+    const totalLen = 800;
+    const offset = totalLen - totalLen * Math.min(totalPct, 1);
+    progress.style.strokeDashoffset = offset;
+}
+
+window.cgUseAbility = () => {
+    const s = _cgState;
+    if(!s || !_cgRunning || s.gameOver) return;
+    if(s.abilityCharges <= 0) { showToast('💤 Способность исчерпана', '#888'); return; }
+    s.abilityCharges--;
+    s.char.useAbility(s);
+    cgUpdateAbilityBtn();
+};
+
+// ─── Главный цикл ────────────────────────────────────────────────
 function cgLoop() {
     if(!_cgRunning) return;
     _cgAnimId = requestAnimationFrame(cgLoop);
@@ -10860,178 +11190,247 @@ function cgLoop() {
     const ctx = s.canvas.getContext('2d');
     ctx.clearRect(0,0,s.canvas.width,s.canvas.height);
 
+    // Таймеры
+    if(s.slowMode > 0) s.slowMode--;
+    if(s.shieldFrames > 0) s.shieldFrames--;
+    const slowFactor = s.slowMode > 0 ? 0.25 : 1;
+    // Обновляем бар способности (раз в 6 фреймов)
+    if(!s._abFrame) s._abFrame = 0;
+    if(++s._abFrame % 6 === 0) cgAnimateAbilityRefill();
+
     // Фон — трава
-    ctx.fillStyle = '#1a3a1a';
+    ctx.fillStyle = '#152b15';
     ctx.fillRect(0,0,s.canvas.width,s.canvas.height);
 
     // Финишная зона (ряд 0)
-    ctx.fillStyle = '#2d5a1b';
+    ctx.fillStyle = '#1e4a1e';
     ctx.fillRect(0, 0, s.canvas.width, s.cellH);
-    ctx.fillStyle = 'rgba(46,204,113,0.3)';
+    // Мерцающий финиш
+    const finishAlpha = 0.2 + 0.15 * Math.sin(Date.now() / 300);
+    ctx.fillStyle = `rgba(46,204,113,${finishAlpha})`;
     ctx.fillRect(0, 0, s.canvas.width, s.cellH);
     ctx.font = `${s.cellH * 0.55}px serif`;
     ctx.textAlign = 'center';
-    for(let c=0;c<s.COLS;c++) ctx.fillText('🌳', c*s.cellW + s.cellW/2, s.cellH*0.75);
+    for(let c=0;c<s.COLS;c++) ctx.fillText('🌳', c*s.cellW + s.cellW/2, s.cellH*0.78);
 
-    // Дорога
+    // Дорога + направление стрелки
     for(let r=1; r<s.ROWS-1; r++) {
         const y = r * s.cellH;
-        ctx.fillStyle = r % 2 === 0 ? '#2a2a2a' : '#333';
+        ctx.fillStyle = r % 2 === 0 ? '#262626' : '#2e2e2e';
         ctx.fillRect(0, y, s.canvas.width, s.cellH);
         // Разметка
-        ctx.strokeStyle = 'rgba(255,255,0,0.15)';
-        ctx.setLineDash([s.cellW*0.3, s.cellW*0.3]);
-        ctx.lineWidth = 1;
+        ctx.strokeStyle = 'rgba(255,255,0,0.12)';
+        ctx.setLineDash([s.cellW*0.25, s.cellW*0.35]);
+        ctx.lineWidth = 1.5;
         ctx.beginPath();
         ctx.moveTo(0, y + s.cellH/2);
         ctx.lineTo(s.canvas.width, y + s.cellH/2);
         ctx.stroke();
         ctx.setLineDash([]);
+        // Маленькая стрелка направления
+        const dir = r % 2 === 0 ? 1 : -1;
+        ctx.fillStyle = 'rgba(255,255,255,0.08)';
+        ctx.font = `${s.cellH * 0.3}px serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText(dir > 0 ? '→' : '←', s.canvas.width/2, y + s.cellH*0.35);
     }
 
-    // Стартовая зона (ROWS-1)
-    ctx.fillStyle = '#1a3a1a';
+    // Стартовая зона
+    ctx.fillStyle = '#152b15';
     ctx.fillRect(0, (s.ROWS-1)*s.cellH, s.canvas.width, s.cellH);
 
-    // Машины
-    const now = performance.now();
+    // Монетки
+    for(const coin of s.coins) {
+        if(coin.collected) continue;
+        ctx.font = `${s.cellH * 0.5}px serif`;
+        ctx.textAlign = 'center';
+        const cx = coin.col * s.cellW + s.cellW/2;
+        const cy = coin.row * s.cellH + s.cellH*0.72;
+        ctx.fillText('💰', cx, cy);
+    }
+
+    // Машины — зеркалим если едут влево
     for(const car of s.cars) {
-        car.x += car.speed;
+        // Stunned (остановка)
+        if(car.stunned > 0) { car.stunned--; }
+        else {
+            car.x += car.speed * slowFactor;
+        }
+        // Wrapping
         if(car.speed > 0 && car.x > s.canvas.width + s.cellW*2) car.x = -s.cellW*2;
-        if(car.speed < 0 && car.x < -s.cellW*2) car.x = s.canvas.width + s.cellW*2;
-        ctx.font = `${s.cellH * 0.7}px serif`;
-        ctx.textAlign = 'left';
-        ctx.fillText(car.emoji, car.x, car.row*s.cellH + s.cellH*0.75);
+        if(car.speed < 0 && car.x < -s.cellW*3) car.x = s.canvas.width + s.cellW*2;
+
+        ctx.save();
+        const cx = car.x + car.w/2;
+        const cy = car.row * s.cellH + s.cellH*0.78;
+        ctx.translate(cx, cy);
+        // Если машина едет влево — зеркалим по горизонтали
+        if(!car.facingRight) ctx.scale(-1, 1);
+        ctx.font = `${s.cellH * 0.72}px serif`;
+        ctx.textAlign = 'center';
+        // Если оглушена — мигает
+        if(car.stunned > 0 && Math.floor(car.stunned/8)%2===0) ctx.globalAlpha = 0.4;
+        ctx.fillText(car.emoji, 0, 0);
+        ctx.restore();
+        ctx.globalAlpha = 1;
     }
 
     // Игрок
     const px = s.player.col * s.cellW + s.cellW/2;
-    const py = s.player.row * s.cellH + s.cellH*0.75;
-    ctx.font = `${s.cellH * 0.75}px serif`;
+    const py = s.player.row * s.cellH + s.cellH*0.82;
+    // Щит — ореол
+    if(s.shieldFrames > 0) {
+        ctx.beginPath();
+        ctx.arc(px, py - s.cellH*0.3, s.cellH*0.5, 0, Math.PI*2);
+        const shieldAlpha = 0.3 + 0.2 * Math.sin(Date.now()/100);
+        ctx.strokeStyle = `rgba(0,207,255,${shieldAlpha})`;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+    }
+    // Призрак — полупрозрачный
+    if(s.ghostMode) ctx.globalAlpha = 0.55;
+    ctx.font = `${s.cellH * 0.78}px serif`;
     ctx.textAlign = 'center';
     ctx.fillText(s.playerEmoji, px, py);
+    ctx.globalAlpha = 1;
 
     // Проверка столкновений
     if(!s.gameOver) {
-        const pLeft  = s.player.col * s.cellW + s.cellW*0.1;
-        const pRight = pLeft + s.cellW * 0.8;
-        const pTop   = s.player.row * s.cellH + s.cellH*0.1;
-        const pBot   = pTop + s.cellH * 0.8;
+        const pL = s.player.col * s.cellW + s.cellW*0.15;
+        const pR = pL + s.cellW * 0.7;
+        const pT = s.player.row * s.cellH + s.cellH*0.15;
+        const pB = pT + s.cellH * 0.75;
+
         for(const car of s.cars) {
-            const cLeft  = car.x + s.cellW*0.05;
-            const cRight = car.x + car.w - s.cellW*0.05;
-            const cTop   = car.row * s.cellH + s.cellH*0.1;
-            const cBot   = cTop + s.cellH * 0.8;
-            if(pLeft<cRight && pRight>cLeft && pTop<cBot && pBot>cTop) {
-                cgHit();
+            if(car.stunned > 0) continue;
+            const cL = car.x + s.cellW*0.08;
+            const cR = car.x + car.w - s.cellW*0.08;
+            const cT = car.row * s.cellH + s.cellH*0.15;
+            const cB = cT + s.cellH * 0.75;
+            if(pL<cR && pR>cL && pT<cB && pB>cT) {
+                if(s.ghostMode) {
+                    s.ghostMode = false; // поглощает 1 удар
+                } else if(s.shieldFrames > 0) {
+                    s.shieldFrames = 0;
+                } else {
+                    cgHit();
+                }
                 break;
             }
         }
-        // Достиг финиша
-        if(s.player.row === 0) {
-            cgCrossed();
+
+        // Монетки
+        for(const coin of s.coins) {
+            if(coin.collected) continue;
+            if(coin.row === s.player.row && coin.col === s.player.col) {
+                coin.collected = true;
+                s.coinsEarned += 10;
+                s.score += 5;
+                document.getElementById('cg-score').textContent = s.score;
+                showToast('💰 +10 монет!', '#ffd700');
+            }
         }
+
+        // Финиш
+        if(s.player.row === 0) cgCrossed();
     }
 }
 
+// ─── Получение урона ─────────────────────────────────────────────
 function cgHit() {
     const s = _cgState;
     if(s.moving) return;
     s.lives--;
-    const hearts = ['','❤️','❤️❤️','❤️❤️❤️'];
-    document.getElementById('cg-lives').textContent = hearts[Math.max(0,s.lives)] || '💔';
+    const hearts = (n) => n <= 0 ? '💔' : '❤️'.repeat(Math.min(n,5));
+    document.getElementById('cg-lives').textContent = hearts(s.lives);
 
-    // Эффект мигания
     const canvas = s.canvas;
     canvas.style.filter = 'brightness(3) saturate(0)';
     setTimeout(()=>{ canvas.style.filter=''; }, 150);
 
-    // Возвращаем игрока на старт
     s.player.col = Math.floor(s.COLS/2);
     s.player.row = s.ROWS-1;
     s.moving = true;
-    setTimeout(()=>{ s.moving = false; }, 400);
+    setTimeout(()=>{ s.moving = false; }, 350);
 
-    if(s.lives <= 0) {
-        cgGameOver();
-    }
+    if(s.lives <= 0) cgGameOver();
 }
 
+// ─── Пересечение ─────────────────────────────────────────────────
 async function cgCrossed() {
     const s = _cgState;
     if(s.moving) return;
     s.moving = true;
 
     s.crossings++;
-    const scoreGain = 10 + s.level * 5;
-    const coinsGain = 30 + s.level * 15;
-    const xpGain    = 5  + s.level * 2;
-    s.score   += scoreGain;
-    s.coins   += coinsGain;
-    s.xpGained+= xpGain;
+    const scoreGain = 10 + s.level * 4;
+    const coinsGain = 20 + s.level * 10;
+    const xpGain    = 4  + s.level * 2;
+    s.score      += scoreGain;
+    s.coinsEarned += coinsGain;
+    s.xpGained   += xpGain;
 
     document.getElementById('cg-score').textContent = s.score;
+    showToast(`✅ Переход! +${coinsGain} монет +${xpGain} XP`, '#2ecc71');
 
-    // Каждые 3 перехода — новый уровень
     if(s.crossings % 3 === 0) {
         s.level++;
         document.getElementById('cg-level').textContent = s.level;
-        showToast(`🆙 Уровень ${s.level}! Машины быстрее!`, '#a855f7');
+        showToast(`🆙 Уровень ${s.level}! Осторожнее!`, '#a855f7');
         cgSpawnCars();
     }
 
-    // Возвращаем на старт
+    // Перезаряд способности каждые 2 перехода
+    if(s.crossings % 2 === 0 && s.abilityCharges < s.char.abilityCharges) {
+        s.abilityCharges++;
+        cgUpdateAbilityBtn();
+        showToast(`⚡ Способность перезаряжена!`, '#00cfff');
+    }
+
+    cgSpawnCoins();
     s.player.col = Math.floor(s.COLS/2);
     s.player.row = s.ROWS-1;
-    setTimeout(()=>{ s.moving = false; }, 300);
+    setTimeout(()=>{ s.moving = false; }, 250);
 }
 
+// ─── Конец игры ───────────────────────────────────────────────────
 async function cgGameOver() {
     _cgRunning = false;
     if(_cgAnimId) cancelAnimationFrame(_cgAnimId);
     const s = _cgState;
 
-    // Тратим попытку
     spendAttempt();
 
-    // Начисляем награды
-    if(s.coins > 0 || s.xpGained > 0) {
-        const r = ref(db,'users/'+user.id);
-        await runTransaction(r, cur => {
-            if(!cur) return cur;
-            return {...cur,
-                balance: (cur.balance||0) + s.coins,
-            };
-        }).catch(()=>{});
-        if(s.xpGained > 0) awardXp(user.id, s.xpGained);
+    if(s.coinsEarned > 0 || s.xpGained > 0) {
+        try {
+            const r = ref(db,'users/'+user.id);
+            await runTransaction(r, cur => {
+                if(!cur) return cur;
+                return {...cur, balance: (cur.balance||0) + s.coinsEarned };
+            }).catch(()=>{});
+            if(s.xpGained > 0) awardXp(user.id, s.xpGained);
+        } catch(e) {}
     }
 
     updateChickenAttemptsBadge();
 
-    // Показываем результат поверх канваса
-    const canvas = s.canvas;
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = 'rgba(0,0,0,0.75)';
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-
-    // Показываем красивый модал результата
     document.getElementById('modal-content').innerHTML = `
         <div style="text-align:center;padding:10px 0;">
-            <div style="font-size:48px;margin-bottom:8px;">💀</div>
-            <div style="font-size:20px;font-weight:900;color:#ff6b6b;margin-bottom:4px;">Игра окончена!</div>
-            <div style="font-size:13px;color:var(--secondary);margin-bottom:16px;">Дорожный Безумец</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;">
+            <div style="font-size:44px;margin-bottom:6px;">${s.char.emoji}</div>
+            <div style="font-size:18px;font-weight:900;color:#ff6b6b;margin-bottom:2px;">Игра окончена!</div>
+            <div style="font-size:12px;color:var(--secondary);margin-bottom:14px;">Дорожный Безумец — ${s.char.name}</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">
                 <div style="background:rgba(255,255,255,0.06);border-radius:12px;padding:10px;">
-                    <div style="font-size:20px;font-weight:900;color:#ffd700;">${s.score}</div>
-                    <div style="font-size:10px;color:var(--secondary);">ОЧКИ</div>
+                    <div style="font-size:18px;font-weight:900;color:#ffd700;">${s.score}</div>
+                    <div style="font-size:9px;color:var(--secondary);">ОЧКИ</div>
                 </div>
                 <div style="background:rgba(46,204,113,0.1);border-radius:12px;padding:10px;">
-                    <div style="font-size:20px;font-weight:900;color:#2ecc71;">+${s.coins}</div>
-                    <div style="font-size:10px;color:var(--secondary);">МОНЕТ</div>
+                    <div style="font-size:18px;font-weight:900;color:#2ecc71;">+${s.coinsEarned}</div>
+                    <div style="font-size:9px;color:var(--secondary);">МОНЕТ</div>
                 </div>
                 <div style="background:rgba(255,200,0,0.1);border-radius:12px;padding:10px;">
-                    <div style="font-size:20px;font-weight:900;color:#ffd700;">+${s.xpGained}</div>
-                    <div style="font-size:10px;color:var(--secondary);">XP</div>
+                    <div style="font-size:18px;font-weight:900;color:#ffd700;">+${s.xpGained}</div>
+                    <div style="font-size:9px;color:var(--secondary);">XP</div>
                 </div>
             </div>
             <div id="cg-next-info" style="background:rgba(255,255,255,0.04);border-radius:10px;padding:8px;font-size:11px;color:var(--secondary);margin-bottom:14px;"></div>
@@ -11043,7 +11442,6 @@ async function cgGameOver() {
     closeChickenGame();
     openModal();
 
-    // Обновляем инфо о попытках в модале
     const _remaining = cgGetCurrent();
     const _elapsed2 = Date.now() - _cgLastRefill;
     const _timeLeft2 = Math.ceil((CG_REFILL_MS - _elapsed2) / 60000);
@@ -11058,7 +11456,6 @@ async function cgGameOver() {
 window.cgMove = (dir) => {
     if(!_cgRunning || !_cgState || _cgState.moving || _cgState.gameOver) return;
     const s = _cgState;
-    const prev = { col: s.player.col, row: s.player.row };
     if(dir==='up'    && s.player.row > 0)        s.player.row--;
     if(dir==='down'  && s.player.row < s.ROWS-1) s.player.row++;
     if(dir==='left'  && s.player.col > 0)        s.player.col--;
@@ -11072,6 +11469,7 @@ document.addEventListener('keydown', e => {
     if(e.key==='ArrowDown')  { e.preventDefault(); cgMove('down'); }
     if(e.key==='ArrowLeft')  { e.preventDefault(); cgMove('left'); }
     if(e.key==='ArrowRight') { e.preventDefault(); cgMove('right'); }
+    if(e.key===' ')          { e.preventDefault(); cgUseAbility(); }
 });
 </script>
 
