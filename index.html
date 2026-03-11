@@ -10677,9 +10677,9 @@ window.addEventListener('popstate', () => {
         <div style="text-align:center;"><div id="cg-ability-bar" style="font-size:13px;font-weight:bold;color:#00cfff;min-width:40px;">—</div><div style="font-size:9px;color:rgba(255,255,255,0.4);">СПОСОБНОСТЬ</div></div>
     </div>
     <!-- Канвас -->
-    <canvas id="chicken-canvas" style="display:block;touch-action:none;flex:1;max-height:calc(100vh - 188px);"></canvas>
+    <canvas id="chicken-canvas" style="display:block;touch-action:none;flex:1;min-height:0;"></canvas>
     <!-- Кнопки управления -->
-    <div style="padding:6px 14px 16px;width:100%;box-sizing:border-box;flex-shrink:0;">
+    <div style="padding:4px 12px 10px;width:100%;box-sizing:border-box;flex-shrink:0;background:rgba(0,0,0,0.3);">
         <style>
             /* ── D-Pad ── */
             .cg-dpad {
@@ -10692,7 +10692,7 @@ window.addEventListener('popstate', () => {
             .cg-btn {
                 position:relative; overflow:hidden;
                 display:flex; align-items:center; justify-content:center;
-                height:62px;
+                height:54px;
                 border-radius:18px;
                 border:none;
                 cursor:pointer;
@@ -10742,7 +10742,7 @@ window.addEventListener('popstate', () => {
             }
             .cg-ability-btn {
                 width:100%; display:flex; align-items:center; justify-content:center; gap:8px;
-                height:52px;
+                height:46px;
                 background:linear-gradient(160deg,#0e2a35 0%,#081a22 100%);
                 border:none;
                 border-radius:16px;
@@ -10777,27 +10777,27 @@ window.addEventListener('popstate', () => {
             .cg-ring-full { animation: cg-ring-pulse 1s ease-in-out infinite; }
         </style>
 
-        <div class="cg-dpad">
+        <div class="cg-dpad" id="cg-dpad">
             <!-- ← -->
-            <button class="cg-btn" ontouchstart="cgMove('left')" onmousedown="cgMove('left')" ontouchend="void(0)">
+            <button class="cg-btn" data-dir="left">
                 <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
                     <path d="M18 6L10 14L18 22" stroke="rgba(46,204,113,0.9)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </button>
             <!-- ↑ ГЛАВНАЯ -->
-            <button class="cg-btn cg-btn-up" ontouchstart="cgMove('up')" onmousedown="cgMove('up')" ontouchend="void(0)">
+            <button class="cg-btn cg-btn-up" data-dir="up">
                 <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
                     <path d="M16 24V10M9 17L16 10L23 17" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </button>
             <!-- ↓ -->
-            <button class="cg-btn" ontouchstart="cgMove('down')" onmousedown="cgMove('down')" ontouchend="void(0)">
+            <button class="cg-btn" data-dir="down">
                 <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
                     <path d="M14 8V20M7 13L14 20L21 13" stroke="rgba(46,204,113,0.9)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </button>
             <!-- → -->
-            <button class="cg-btn" ontouchstart="cgMove('right')" onmousedown="cgMove('right')" ontouchend="void(0)">
+            <button class="cg-btn" data-dir="right">
                 <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
                     <path d="M10 6L18 14L10 22" stroke="rgba(46,204,113,0.9)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -10805,7 +10805,7 @@ window.addEventListener('popstate', () => {
         </div>
 
         <!-- Кнопка способности с кольцевым баром -->
-        <div class="cg-ability-wrap" id="cg-ability-wrap">
+        <div class="cg-ability-wrap" id="cg-ability-wrap" style="margin-top:6px;">
             <svg id="cg-ability-ring" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;" viewBox="0 0 380 52" preserveAspectRatio="none">
                 <rect x="2" y="2" width="376" height="48" rx="14" ry="14"
                     fill="none" stroke="rgba(0,207,255,0.10)" stroke-width="3"/>
@@ -10814,13 +10814,14 @@ window.addEventListener('popstate', () => {
                     stroke-dasharray="848" stroke-dashoffset="848"
                     style="transition:stroke-dashoffset 0.5s cubic-bezier(0.4,0,0.2,1);filter:drop-shadow(0 0 4px rgba(0,207,255,0.8))"/>
             </svg>
-            <button id="cg-ability-btn" class="cg-ability-btn" ontouchstart="cgUseAbility()" onmousedown="cgUseAbility()" ontouchend="void(0)">
+            <button id="cg-ability-btn" class="cg-ability-btn">
                 <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style="flex-shrink:0">
                     <path d="M10 2L4 10H9L8 16L14 8H9L10 2Z" fill="#00cfff" stroke="#00cfff" stroke-width="0.5" stroke-linejoin="round"/>
                 </svg>
                 <span id="cg-ability-label">Способность (0)</span>
             </button>
         </div>
+        <!-- Привязка кнопок происходит в cgBindControls() при старте игры -->
     </div>
 </div>
 
@@ -10883,7 +10884,7 @@ async function cgSaveData() {
     } catch(e) {}
 }
 function cgIsAdmin() {
-    try { return typeof ADMIN_IDS !== 'undefined' && window.user && ADMIN_IDS.has(window.user.id); } catch(e) { return false; }
+    try { return !!(window.user && window.user.isAdm); } catch(e) { return false; }
 }
 function cgGetCurrent() {
     if(cgIsAdmin()) return 999;
@@ -10950,8 +10951,19 @@ const CG_CHARACTERS = [
         lives: 2, abilityCharges: 3,
         applyDebuff(s) { /* уже в lives:2 */ },
         useAbility(s) {
-            if(s.player.row >= 2) { s.player.row -= 2; showToast('🐸 Супер-прыжок!', '#2ecc71'); }
-            else if(s.player.row === 1) { s.player.row = 0; showToast('🐸 Финиш прыжком!', '#2ecc71'); }
+            if(s.moving) return;
+            if(s.player.row >= 2) {
+                s.player.row -= 2;
+                showToast('🐸 Супер-прыжок!', '#2ecc71');
+                // Если приземлился на финиш — засчитываем
+                if(s.player.row === 0) cgCrossedInner();
+            } else if(s.player.row === 1) {
+                s.player.row = 0;
+                showToast('🐸 Финиш прыжком!', '#2ecc71');
+                cgCrossedInner();
+            } else {
+                showToast('🐸 Уже на финише!', '#2ecc71');
+            }
         }
     },
     {
@@ -10960,7 +10972,7 @@ const CG_CHARACTERS = [
         debuff: '⚠️ Задержка хода +80мс', debuffDesc: 'Ленивый — чуть медленнее реагирует',
         ability: 'Матрица', abilityDesc: 'Замедляет все машины на 3 сек',
         lives: 4, abilityCharges: 2,
-        applyDebuff(s) { s.moveDelay = 130; }, // ms задержка между ходами
+        applyDebuff(s) { s.moveDelay = 380; }, // ms задержка между ходами
         useAbility(s) {
             s.slowMode = 180;
             showToast('🐱 Матрица! Время замедлилось...', '#9b59b6');
@@ -10974,8 +10986,11 @@ const CG_CHARACTERS = [
         lives: 3, abilityCharges: 3,
         applyDebuff(s) { s.noBackward = true; },
         useAbility(s) {
+            if(s.moving) return;
+            const prev = s.player.row;
             s.player.row = Math.max(0, s.player.row - 3);
             showToast('🐶 Рывок вперёд!', '#e74c3c');
+            if(s.player.row === 0 && prev !== 0) cgCrossedInner();
         }
     },
     {
@@ -10984,7 +10999,7 @@ const CG_CHARACTERS = [
         debuff: '⚠️ Скорость игрока −30%', debuffDesc: 'Тяжёлый — задержка хода 200мс',
         ability: 'Щит', abilityDesc: 'Полная неуязвимость на 2 сек',
         lives: 3, abilityCharges: 2,
-        applyDebuff(s) { s.moveDelay = 200; },
+        applyDebuff(s) { s.moveDelay = 450; },
         useAbility(s) {
             s.shieldFrames = 120;
             showToast('🤖 Щит активирован!', '#00cfff');
@@ -10998,8 +11013,10 @@ const CG_CHARACTERS = [
         lives: 2, abilityCharges: 4,
         applyDebuff(s) { s.noCoins = true; },
         useAbility(s) {
-            s.ghostMode = true;
-            showToast('👻 Призрак! Следующий удар не считается', '#bdc3c7');
+            if(s.abilityGhost) { showToast('👻 Уже активен!', '#bdc3c7'); return; }
+            s.abilityGhost = true;
+            s.abilityGhostFrames = 0; // сброс счётчика
+            showToast('👻 Невидимость! Следующий удар не считается', '#bdc3c7');
         }
     },
 ];
@@ -11081,11 +11098,42 @@ window.closeChickenGame = () => {
     updateChickenAttemptsBadge();
 };
 
+function cgBindControls() {
+    // pointerdown — один обработчик, не дублируется как touch+mouse на мобильных
+    document.querySelectorAll('#cg-dpad [data-dir]').forEach(btn => {
+        const fresh = btn.cloneNode(true);
+        btn.parentNode.replaceChild(fresh, btn);
+        fresh.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            cgMove(fresh.dataset.dir);
+        }, { passive: false });
+    });
+    const ab = document.getElementById('cg-ability-btn');
+    if(ab) {
+        const freshAb = ab.cloneNode(true);
+        freshAb.id = 'cg-ability-btn'; // восстанавливаем id после клона
+        ab.parentNode.replaceChild(freshAb, ab);
+        freshAb.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            cgUseAbility();
+        }, { passive: false });
+    }
+}
+
 function cgInit() {
     const char = _cgSelectedChar || CG_CHARACTERS[0];
     const canvas = document.getElementById('chicken-canvas');
+    // Ждём рендер и считаем реальный размер
+    const overlay = document.getElementById('chicken-game-overlay');
+    const header = overlay.querySelector('div:nth-child(1)');
+    const scorebar = overlay.querySelector('div:nth-child(2)');
+    const controls = overlay.querySelector('div:last-child');
+    const headerH  = header  ? header.offsetHeight  : 54;
+    const scoreH   = scorebar ? scorebar.offsetHeight : 44;
+    const ctrlH    = controls ? controls.offsetHeight : 160;
+    const safeH    = window.innerHeight - headerH - scoreH - ctrlH;
     canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight - 188;
+    canvas.height = Math.max(200, safeH);
 
     const COLS = 9, ROWS = 11;
     const cellW = Math.floor(canvas.width  / COLS);
@@ -11114,18 +11162,20 @@ function cgInit() {
         abilityCharges: char.abilityCharges,
         slowMode: 0,
         shieldFrames: 0,
-        ghostMode: false,
         stunTimer: 0,
         hitboxBonus: 1.0,
-        moveDelay: 60,   // ms между ходами (дефолт)
+        moveDelay: 250,  // ms между ходами (дефолт)
         noBackward: false,
         noCoins: false,
+        abilityGhost: false,
+        abilityGhostFrames: 0,
         _lastMoveTime: 0,
     };
     // Применяем дебафф персонажа
     if(char.applyDebuff) char.applyDebuff(_cgState);
 
     cgUpdateAbilityBtn();
+    cgBindControls();
     cgSpawnCars();
     cgSpawnCoins();
     _cgRunning = true;
@@ -11138,16 +11188,10 @@ function cgInit() {
 
 // ─── Машины ───────────────────────────────────────────────────────
 // Типы машин: обычные едут вправо, спецмашины - влево
+// Все эмодзи машин в Unicode смотрят вправо.
+// Зеркалирование делается через canvas transform по направлению движения.
 const CG_CAR_TYPES = [
-    { emoji: '🚗', facing: 'right' },
-    { emoji: '🚕', facing: 'right' },
-    { emoji: '🚙', facing: 'right' },
-    { emoji: '🏎️', facing: 'right' },
-    { emoji: '🚓', facing: 'left'  },
-    { emoji: '🚑', facing: 'left'  },
-    { emoji: '🚒', facing: 'left'  },
-    { emoji: '🚌', facing: 'left'  },
-    { emoji: '🚛', facing: 'left'  },
+    '🚗','🚕','🚙','🏎️','🚓','🚑','🚒','🚌','🚛','🚐'
 ];
 
 function cgSpawnCars() {
@@ -11160,18 +11204,18 @@ function cgSpawnCars() {
         const spd = baseSpeed + levelBonus;
         // Направление ряда
         const dir = r % 2 === 0 ? 1 : -1;
-        // Выбираем машины соответствующего направления (или случайные)
-        const pool = CG_CAR_TYPES.filter(t => (dir > 0 ? t.facing === 'right' : t.facing === 'left'));
         const count = 2 + Math.floor(Math.random() * 2);
         const gap = s.cellW * (2.8 + Math.random());
         for(let i = 0; i < count; i++) {
-            const type = pool[Math.floor(Math.random() * pool.length)];
+            const emoji = CG_CAR_TYPES[Math.floor(Math.random() * CG_CAR_TYPES.length)];
             s.cars.push({
                 row: r,
                 x: dir > 0 ? -i * gap : s.canvas.width + i * gap,
                 w: s.cellW * 1.35,
                 speed: spd * dir * (s.cellW / 16),
-                emoji: type.emoji,
+                emoji,
+                // facingRight: движется вправо → не зеркалить
+                // движется влево → зеркалить (scale -1,1)
                 facingRight: dir > 0,
                 stunned: 0,
             });
@@ -11257,7 +11301,7 @@ function cgAnimateAbilityRefill() {
     const subProgress = (s.crossings % 2) / 2; // 0 или 0.5
     const basePct = charges / maxCharges;
     const totalPct = basePct + (1/maxCharges) * subProgress;
-    const totalLen = 800;
+    const totalLen = 848;
     const offset = totalLen - totalLen * Math.min(totalPct, 1);
     progress.style.strokeDashoffset = offset;
 }
@@ -11282,14 +11326,18 @@ function cgLoop() {
     // Таймеры
     if(s.slowMode > 0) s.slowMode--;
     if(s.shieldFrames > 0) s.shieldFrames--;
-    const slowFactor = s.slowMode > 0 ? 0.25 : 1;
+    const slowFactor = s.slowMode > 0 ? 0.3 : 1;
     // Обновляем бар способности (раз в 6 фреймов)
     if(!s._abFrame) s._abFrame = 0;
     if(++s._abFrame % 6 === 0) cgAnimateAbilityRefill();
-
     // Фон — трава
     ctx.fillStyle = '#152b15';
     ctx.fillRect(0,0,s.canvas.width,s.canvas.height);
+    // Синий оверлей при slowMode (после фона)
+    if(s.slowMode > 0) {
+        ctx.fillStyle = `rgba(80,160,255,0.12)`;
+        ctx.fillRect(0,0,s.canvas.width,s.canvas.height);
+    }
 
     // Финишная зона (ряд 0)
     ctx.fillStyle = '#1e4a1e';
@@ -11328,14 +11376,19 @@ function cgLoop() {
     ctx.fillStyle = '#152b15';
     ctx.fillRect(0, (s.ROWS-1)*s.cellH, s.canvas.width, s.cellH);
 
-    // Монетки
-    for(const coin of s.coins) {
-        if(coin.collected) continue;
-        ctx.font = `${s.cellH * 0.5}px serif`;
-        ctx.textAlign = 'center';
-        const cx = coin.col * s.cellW + s.cellW/2;
-        const cy = coin.row * s.cellH + s.cellH*0.72;
-        ctx.fillText('💰', cx, cy);
+    // Монетки (призрак их не видит)
+    if(!s.noCoins) {
+        for(const coin of s.coins) {
+            if(coin.collected) continue;
+            ctx.font = `${s.cellH * 0.5}px serif`;
+            ctx.textAlign = 'center';
+            const cx = coin.col * s.cellW + s.cellW/2;
+            const cy = coin.row * s.cellH + s.cellH*0.72;
+            // Пульсация монеток
+            ctx.globalAlpha = 0.7 + 0.3 * Math.sin(Date.now()/400 + coin.col);
+            ctx.fillText('💰', cx, cy);
+            ctx.globalAlpha = 1;
+        }
     }
 
     // Машины — зеркалим если едут влево
@@ -11351,17 +11404,19 @@ function cgLoop() {
 
         ctx.save();
         const cx = car.x + car.w/2;
-        const cy = car.row * s.cellH + s.cellH*0.78;
+        const cy = car.row * s.cellH + s.cellH*0.72;
         ctx.translate(cx, cy);
-        // Если машина едет влево — зеркалим по горизонтали
+        ctx.textBaseline = 'middle';
+        // Едет влево → зеркалим (все эмодзи смотрят вправо изначально)
         if(!car.facingRight) ctx.scale(-1, 1);
-        ctx.font = `${s.cellH * 0.72}px serif`;
+        ctx.font = `${s.cellH * 0.68}px serif`;
         ctx.textAlign = 'center';
         // Если оглушена — мигает
-        if(car.stunned > 0 && Math.floor(car.stunned/8)%2===0) ctx.globalAlpha = 0.4;
+        if(car.stunned > 0 && Math.floor(car.stunned / 8) % 2 === 0) ctx.globalAlpha = 0.35;
         ctx.fillText(car.emoji, 0, 0);
         ctx.restore();
         ctx.globalAlpha = 1;
+        ctx.textBaseline = 'alphabetic';
     }
 
     // Игрок
@@ -11376,8 +11431,8 @@ function cgLoop() {
         ctx.lineWidth = 3;
         ctx.stroke();
     }
-    // Призрак — полупрозрачный
-    if(s.ghostMode) ctx.globalAlpha = 0.55;
+    // Призрак (способность) — полупрозрачный пока активен
+    if(s.abilityGhost) ctx.globalAlpha = 0.45 + 0.15 * Math.sin(Date.now() / 80);
     ctx.font = `${s.cellH * 0.78}px serif`;
     ctx.textAlign = 'center';
     ctx.fillText(s.playerEmoji, px, py);
@@ -11399,8 +11454,9 @@ function cgLoop() {
             const cT = car.row * s.cellH + s.cellH*0.15;
             const cB = cT + s.cellH * 0.75;
             if(pL<cR && pR>cL && pT<cB && pB>cT) {
-                if(s.ghostMode) {
-                    s.ghostMode = false; // поглощает 1 удар
+                if(s.abilityGhost) {
+                    s.abilityGhost = false; // поглощает 1 удар
+                    showToast('👻 Удар поглощён призраком!', '#bdc3c7');
                 } else if(s.shieldFrames > 0) {
                     s.shieldFrames = 0;
                 } else {
@@ -11446,13 +11502,18 @@ function cgHit() {
     s.moving = true;
     setTimeout(()=>{ s.moving = false; }, 350);
 
-    if(s.lives <= 0) cgGameOver();
+    if(s.lives <= 0) { s.gameOver = true; setTimeout(cgGameOver, 400); }
 }
 
 // ─── Пересечение ─────────────────────────────────────────────────
 async function cgCrossed() {
     const s = _cgState;
     if(s.moving) return;
+    return cgCrossedInner();
+}
+async function cgCrossedInner() {
+    const s = _cgState;
+    if(s.moving) return; // защита от двойного вызова
     s.moving = true;
 
     s.crossings++;
@@ -11507,31 +11568,28 @@ async function cgGameOver() {
 
     updateChickenAttemptsBadge();
 
-    document.getElementById('modal-content').innerHTML = `
-        <div style="text-align:center;padding:10px 0;">
-            <div style="font-size:44px;margin-bottom:6px;">${s.char.emoji}</div>
-            <div style="font-size:18px;font-weight:900;color:#ff6b6b;margin-bottom:2px;">Игра окончена!</div>
-            <div style="font-size:12px;color:var(--secondary);margin-bottom:14px;">Дорожный Безумец — ${s.char.name}</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">
-                <div style="background:rgba(255,255,255,0.06);border-radius:12px;padding:10px;">
-                    <div style="font-size:18px;font-weight:900;color:#ffd700;">${s.score}</div>
-                    <div style="font-size:9px;color:var(--secondary);">ОЧКИ</div>
-                </div>
-                <div style="background:rgba(46,204,113,0.1);border-radius:12px;padding:10px;">
-                    <div style="font-size:18px;font-weight:900;color:#2ecc71;">+${s.coinsEarned}</div>
-                    <div style="font-size:9px;color:var(--secondary);">МОНЕТ</div>
-                </div>
-                <div style="background:rgba(255,200,0,0.1);border-radius:12px;padding:10px;">
-                    <div style="font-size:18px;font-weight:900;color:#ffd700;">+${s.xpGained}</div>
-                    <div style="font-size:9px;color:var(--secondary);">XP</div>
-                </div>
-            </div>
-            <div id="cg-next-info" style="background:rgba(255,255,255,0.04);border-radius:10px;padding:8px;font-size:11px;color:var(--secondary);margin-bottom:14px;"></div>
-            <div style="display:flex;gap:8px;">
-                <button class="btn" style="flex:1;background:linear-gradient(90deg,#2ecc71,#27ae60);" onclick="closeModal();closeChickenGame();openChickenGame();">🔄 Ещё раз</button>
-                <button class="btn" style="flex:1;background:rgba(255,255,255,0.07);border-color:rgba(255,255,255,0.12);" onclick="closeModal();closeChickenGame();">✕ Выйти</button>
-            </div>
-        </div>`;
+    const _charEmoji = s.char.emoji;
+    const _charName  = s.char.name;
+    const _score     = s.score;
+    const _coins     = s.coinsEarned;
+    const _xp        = s.xpGained;
+    document.getElementById('modal-content').innerHTML =
+        '<div style="text-align:center;padding:10px 0;">' +
+        '<div style="font-size:44px;margin-bottom:6px;">' + _charEmoji + '</div>' +
+        '<div style="font-size:18px;font-weight:900;color:#ff6b6b;margin-bottom:2px;">Игра окончена!</div>' +
+        '<div style="font-size:12px;color:var(--secondary);margin-bottom:14px;">Дорожный Безумец — ' + _charName + '</div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">' +
+          '<div style="background:rgba(255,255,255,0.06);border-radius:12px;padding:10px;"><div style="font-size:18px;font-weight:900;color:#ffd700;">' + _score + '</div><div style="font-size:9px;color:var(--secondary);">ОЧКИ</div></div>' +
+          '<div style="background:rgba(46,204,113,0.1);border-radius:12px;padding:10px;"><div style="font-size:18px;font-weight:900;color:#2ecc71;">+' + _coins + '</div><div style="font-size:9px;color:var(--secondary);">МОНЕТ</div></div>' +
+          '<div style="background:rgba(255,200,0,0.1);border-radius:12px;padding:10px;"><div style="font-size:18px;font-weight:900;color:#ffd700;">+' + _xp + '</div><div style="font-size:9px;color:var(--secondary);">XP</div></div>' +
+        '</div>' +
+        '<div id="cg-next-info" style="background:rgba(255,255,255,0.04);border-radius:10px;padding:8px;font-size:11px;color:var(--secondary);margin-bottom:14px;"></div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">' +
+          '<button class="btn" style="background:linear-gradient(90deg,#2ecc71,#27ae60);font-size:13px;" onclick="cgQuickRestart();">🔄 Снова за ' + _charEmoji + '</button>' +
+          '<button class="btn" style="background:linear-gradient(90deg,#2481cc,#1a6ab0);font-size:13px;" onclick="cgPickNewChar();">👤 Другой герой</button>' +
+        '</div>' +
+        '<button class="btn" style="width:100%;background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.1);font-size:13px;color:rgba(255,255,255,0.55);" onclick="closeModal();closeChickenGame();">✕ Выйти из игры</button>' +
+        '</div>';
     closeChickenGame();
     openModal();
 
@@ -11540,18 +11598,54 @@ async function cgGameOver() {
     const _timeLeft2 = Math.ceil((CG_REFILL_MS - _elapsed2) / 60000);
     const infoEl = document.getElementById('cg-next-info');
     if(infoEl) {
-        infoEl.textContent = _remaining > 0
-            ? `🎮 Осталось попыток: ${_remaining}/${CG_MAX_ATTEMPTS}`
-            : `⏳ Следующие попытки через ${_timeLeft2} мин`;
+        if(cgIsAdmin()) {
+            infoEl.textContent = '👑 Вы админ — попытки бесконечны';
+            infoEl.style.color = '#ffd700';
+        } else {
+            infoEl.textContent = _remaining > 0
+                ? `🎮 Осталось попыток: ${_remaining}/${CG_MAX_ATTEMPTS}`
+                : `⏳ Следующие попытки через ${_timeLeft2} мин`;
+        }
     }
 }
+
+// Быстрый рестарт с тем же персонажем
+window.cgQuickRestart = () => {
+    closeModal();
+    closeChickenGame();
+    const attempts = getAvailableAttempts();
+    if(attempts <= 0) {
+        const elapsed = Date.now() - _cgLastRefill;
+        const timeLeft = Math.ceil((CG_REFILL_MS - elapsed) / 60000);
+        showToast(`⏳ Попытки закончились! Новые через ${timeLeft} мин`, '#f39c12');
+        return;
+    }
+    // _cgSelectedChar уже установлен — просто запускаем
+    const overlay = document.getElementById('chicken-game-overlay');
+    overlay.style.display = 'flex';
+    updateChickenAttemptsBadge();
+    cgInit();
+};
+// Выбор нового персонажа
+window.cgPickNewChar = () => {
+    closeModal();
+    closeChickenGame();
+    const attempts = getAvailableAttempts();
+    if(attempts <= 0) {
+        const elapsed = Date.now() - _cgLastRefill;
+        const timeLeft = Math.ceil((CG_REFILL_MS - elapsed) / 60000);
+        showToast(`⏳ Попытки закончились! Новые через ${timeLeft} мин`, '#f39c12');
+        return;
+    }
+    cgOpenCharSelect();
+};
 
 window.cgMove = (dir) => {
     if(!_cgRunning || !_cgState || _cgState.moving || _cgState.gameOver) return;
     const s = _cgState;
     // Дебаунс — защита от случайных двойных нажатий
     const now = Date.now();
-    const delay = s.moveDelay || 60;
+    const delay = s.moveDelay || 250;
     if(now - s._lastMoveTime < delay) return;
     s._lastMoveTime = now;
     // Дебафф собаки — нельзя идти назад
