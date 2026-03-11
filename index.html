@@ -3322,7 +3322,7 @@
 
         });
         // 🎮 Прогреваем данные игры
-        updateChickenAttemptsBadge().catch(()=>{});
+        cgLoadData().then(()=>updateChickenAttemptsBadge()).catch(()=>updateChickenAttemptsBadge());
         // 🚀 Запускаем слушатели и кеши немедленно
         listenMarket(); giveNftToCkovoroda(); listenTradeOffers(); listenDuelChallenges(); listenDuelResults();
         startShopPricesListener();
@@ -10708,51 +10708,57 @@ window.openDuelFromGames = () => {
 const CG_MAX_ATTEMPTS = 10;
 const CG_REFILL_MS    = 60 * 60 * 1000; // 1 час
 
-async function getCGData() {
-    if(!window.user) return null;
-    const snap = await get(ref(db, 'gameData/' + user.id + '/chicken'));
-    return snap.val() || { attempts: CG_MAX_ATTEMPTS, lastRefill: Date.now() };
+// Попытки хранятся в памяти (синхронно, без Firebase)
+let _cgAttempts = CG_MAX_ATTEMPTS;
+let _cgLastRefill = Date.now();
+let _cgDataLoaded = false;
+
+// Загружаем данные из Firebase один раз при логине
+async function cgLoadData() {
+    try {
+        if(!window.user || !window.db) return;
+        const { get: fbGet, ref: fbRef } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js').catch(()=>({}));
+        const _get = (typeof get !== 'undefined') ? get : fbGet;
+        const _ref = (typeof ref !== 'undefined') ? ref : fbRef;
+        if(!_get || !_ref) return;
+        const snap = await _get(_ref(db, 'gameData/' + user.id + '/chicken'));
+        const d = snap.val();
+        if(d) { _cgAttempts = d.attempts ?? CG_MAX_ATTEMPTS; _cgLastRefill = d.lastRefill || Date.now(); }
+        _cgDataLoaded = true;
+    } catch(e) { _cgDataLoaded = true; }
 }
-async function saveCGData(data) {
-    if(!window.user) return;
-    await update(ref(db, 'gameData/' + user.id + '/chicken'), data);
+async function cgSaveData() {
+    try {
+        if(!window.user || !window.db) return;
+        await update(ref(db, 'gameData/' + user.id + '/chicken'), { attempts: _cgAttempts, lastRefill: _cgLastRefill });
+    } catch(e) {}
 }
-async function getAvailableAttempts() {
-    const data = await getCGData();
-    if(!data) return 0;
-    const now = Date.now();
-    const elapsed = now - (data.lastRefill || 0);
+function cgGetCurrent() {
+    const elapsed = Date.now() - _cgLastRefill;
     if(elapsed >= CG_REFILL_MS) {
-        // Пополняем
-        const newData = { attempts: CG_MAX_ATTEMPTS, lastRefill: now };
-        await saveCGData(newData);
-        return CG_MAX_ATTEMPTS;
+        _cgAttempts = CG_MAX_ATTEMPTS;
+        _cgLastRefill = Date.now();
+        cgSaveData();
     }
-    return Math.max(0, data.attempts || 0);
+    return Math.max(0, _cgAttempts);
 }
-async function spendAttempt() {
-    const data = await getCGData();
-    if(!data) return false;
-    const now = Date.now();
-    const elapsed = now - (data.lastRefill || 0);
-    if(elapsed >= CG_REFILL_MS) {
-        await saveCGData({ attempts: CG_MAX_ATTEMPTS - 1, lastRefill: now });
-        return true;
-    }
-    if((data.attempts || 0) <= 0) return false;
-    await saveCGData({ attempts: (data.attempts || 0) - 1, lastRefill: data.lastRefill || now });
+function getAvailableAttempts() {
+    return cgGetCurrent();
+}
+function spendAttempt() {
+    const cur = cgGetCurrent();
+    if(cur <= 0) return false;
+    _cgAttempts = cur - 1;
+    cgSaveData();
     return true;
 }
-async function updateChickenAttemptsBadge() {
-    const data = await getCGData();
-    if(!data) return;
-    const now = Date.now();
-    const elapsed = now - (data.lastRefill || 0);
-    const current = elapsed >= CG_REFILL_MS ? CG_MAX_ATTEMPTS : Math.max(0, data.attempts || 0);
+function updateChickenAttemptsBadge() {
+    const current = cgGetCurrent();
     const badge = document.getElementById('chicken-attempts-badge');
     const cgBadge = document.getElementById('cg-attempts');
-    const timeLeft = elapsed >= CG_REFILL_MS ? 0 : Math.ceil((CG_REFILL_MS - elapsed) / 60000);
-    const txt = current > 0 
+    const elapsed = Date.now() - _cgLastRefill;
+    const timeLeft = Math.ceil((CG_REFILL_MS - elapsed) / 60000);
+    const txt = current > 0
         ? `🎮 ${current}/${CG_MAX_ATTEMPTS} попыток`
         : `⏳ Через ${timeLeft} мин`;
     if(badge) { badge.textContent = txt; badge.style.color = current > 0 ? 'var(--text)' : '#e74c3c'; }
@@ -10766,11 +10772,11 @@ let _cgRunning = false;
 let _cgAnimId  = null;
 let _cgState   = null;
 
-window.openChickenGame = async () => {
-    const attempts = await getAvailableAttempts();
+window.openChickenGame = () => {
+    const attempts = getAvailableAttempts();
     if(attempts <= 0) {
-        const data = await getCGData();
-        const timeLeft = Math.ceil((CG_REFILL_MS - (Date.now() - data.lastRefill)) / 60000);
+        const elapsed = Date.now() - _cgLastRefill;
+        const timeLeft = Math.ceil((CG_REFILL_MS - elapsed) / 60000);
         showToast(`⏳ Попытки закончились! Новые через ${timeLeft} мин`, '#f39c12');
         return;
     }
@@ -10986,7 +10992,7 @@ async function cgGameOver() {
     const s = _cgState;
 
     // Тратим попытку
-    const ok = await spendAttempt();
+    spendAttempt();
 
     // Начисляем награды
     if(s.coins > 0 || s.xpGained > 0) {
@@ -11038,13 +11044,14 @@ async function cgGameOver() {
     openModal();
 
     // Обновляем инфо о попытках в модале
-    const data = await getCGData();
-    const timeLeft = data.attempts > 0 ? null : Math.ceil((CG_REFILL_MS - (Date.now() - data.lastRefill)) / 60000);
+    const _remaining = cgGetCurrent();
+    const _elapsed2 = Date.now() - _cgLastRefill;
+    const _timeLeft2 = Math.ceil((CG_REFILL_MS - _elapsed2) / 60000);
     const infoEl = document.getElementById('cg-next-info');
     if(infoEl) {
-        infoEl.textContent = data.attempts > 0
-            ? `🎮 Осталось попыток: ${data.attempts}/${CG_MAX_ATTEMPTS}`
-            : `⏳ Следующие попытки через ${timeLeft} мин`;
+        infoEl.textContent = _remaining > 0
+            ? `🎮 Осталось попыток: ${_remaining}/${CG_MAX_ATTEMPTS}`
+            : `⏳ Следующие попытки через ${_timeLeft2} мин`;
     }
 }
 
