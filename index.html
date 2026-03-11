@@ -3241,6 +3241,12 @@
     function startApp(name,id) {
         user={name,id,isAdm:(id==='ckovoroda'||id==='kukumbr'),isMod:MOD_IDS.has(id),pic:''};
         window.user = user; // expose for maintenance system
+        // Экспортируем Firebase утилиты для игр в других скриптах
+        window.db = db;
+        window._ref = ref;
+        window._runTransaction = runTransaction;
+        window._awardXp = awardXp;
+        window._update  = update;
         document.getElementById('auth-screen').style.display='none'; document.getElementById('auth-screen').style.minHeight='0';
         document.getElementById('app').style.display='block';
         document.getElementById('main-nav').style.display='flex';
@@ -10677,7 +10683,79 @@ window.addEventListener('popstate', () => {
         <div style="text-align:center;"><div id="cg-ability-bar" style="font-size:13px;font-weight:bold;color:#00cfff;min-width:40px;">—</div><div style="font-size:9px;color:rgba(255,255,255,0.4);">СПОСОБНОСТЬ</div></div>
     </div>
     <!-- Канвас -->
-    <canvas id="chicken-canvas" style="display:block;touch-action:none;flex:1;min-height:0;"></canvas>
+    <div style="position:relative;flex:1;min-height:0;width:100%;display:flex;">
+        <canvas id="chicken-canvas" style="display:block;touch-action:none;width:100%;height:100%;"></canvas>
+
+        <!-- Оверлей: конец уровня (каждые 3 перехода) -->
+        <div id="cg-level-overlay" style="display:none;position:absolute;inset:0;background:rgba(0,0,0,0.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);flex-direction:column;align-items:center;justify-content:center;z-index:10;">
+            <div style="text-align:center;padding:0 24px;max-width:320px;width:100%;">
+                <div id="cg-lvl-emoji" style="font-size:52px;margin-bottom:8px;">🏆</div>
+                <div id="cg-lvl-title" style="font-size:22px;font-weight:900;color:#ffd700;margin-bottom:4px;">Уровень пройден!</div>
+                <div id="cg-lvl-sub" style="font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:20px;"></div>
+                <!-- Награда -->
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:20px;">
+                    <div style="background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.2);border-radius:14px;padding:12px 6px;">
+                        <div id="cg-lvl-score" style="font-size:18px;font-weight:900;color:#ffd700;">0</div>
+                        <div style="font-size:9px;color:rgba(255,255,255,0.4);margin-top:2px;">ОЧКИ</div>
+                    </div>
+                    <div style="background:rgba(46,204,113,0.1);border:1px solid rgba(46,204,113,0.2);border-radius:14px;padding:12px 6px;">
+                        <div id="cg-lvl-coins" style="font-size:18px;font-weight:900;color:#2ecc71;">+0</div>
+                        <div style="font-size:9px;color:rgba(255,255,255,0.4);margin-top:2px;">МОНЕТ</div>
+                    </div>
+                    <div style="background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.2);border-radius:14px;padding:12px 6px;">
+                        <div id="cg-lvl-xp" style="font-size:18px;font-weight:900;color:#a855f7;">+0</div>
+                        <div style="font-size:9px;color:rgba(255,255,255,0.4);margin-top:2px;">XP</div>
+                    </div>
+                </div>
+                <!-- Кнопки -->
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                    <button id="cg-lvl-take" style="padding:14px;border:none;border-radius:16px;background:linear-gradient(135deg,#f39c12,#e67e22);color:white;font-size:14px;font-weight:900;cursor:pointer;-webkit-tap-highlight-color:transparent;">
+                        💰 Забрать
+                    </button>
+                    <button id="cg-lvl-continue" style="padding:14px;border:none;border-radius:16px;background:linear-gradient(135deg,#2ecc71,#27ae60);color:white;font-size:14px;font-weight:900;cursor:pointer;-webkit-tap-highlight-color:transparent;">
+                        ▶ Дальше
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Оверлей: смерть / конец игры -->
+        <div id="cg-death-overlay" style="display:none;position:absolute;inset:0;background:rgba(0,0,0,0.78);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);flex-direction:column;align-items:center;justify-content:center;z-index:10;">
+            <div style="text-align:center;padding:0 24px;max-width:320px;width:100%;">
+                <div id="cg-death-emoji" style="font-size:52px;margin-bottom:8px;filter:grayscale(0.5);">💀</div>
+                <div style="font-size:22px;font-weight:900;color:#ff6b6b;margin-bottom:4px;">Игра окончена</div>
+                <div id="cg-death-char" style="font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:20px;"></div>
+                <!-- Итог -->
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:20px;">
+                    <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:12px 6px;">
+                        <div id="cg-death-score" style="font-size:18px;font-weight:900;color:#ffd700;">0</div>
+                        <div style="font-size:9px;color:rgba(255,255,255,0.4);margin-top:2px;">ОЧКИ</div>
+                    </div>
+                    <div style="background:rgba(46,204,113,0.08);border:1px solid rgba(46,204,113,0.15);border-radius:14px;padding:12px 6px;">
+                        <div id="cg-death-coins" style="font-size:18px;font-weight:900;color:#2ecc71;">+0</div>
+                        <div style="font-size:9px;color:rgba(255,255,255,0.4);margin-top:2px;">МОНЕТ</div>
+                    </div>
+                    <div style="background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.15);border-radius:14px;padding:12px 6px;">
+                        <div id="cg-death-xp" style="font-size:18px;font-weight:900;color:#a855f7;">+0</div>
+                        <div style="font-size:9px;color:rgba(255,255,255,0.4);margin-top:2px;">XP</div>
+                    </div>
+                </div>
+                <div id="cg-death-attempts" style="font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:16px;"></div>
+                <!-- Кнопки -->
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+                    <button id="cg-death-retry" style="padding:14px;border:none;border-radius:16px;background:linear-gradient(135deg,#2ecc71,#27ae60);color:white;font-size:13px;font-weight:900;cursor:pointer;-webkit-tap-highlight-color:transparent;">
+                        🔄 Снова
+                    </button>
+                    <button id="cg-death-newchar" style="padding:14px;border:none;border-radius:16px;background:linear-gradient(135deg,#2481cc,#1a6ab0);color:white;font-size:13px;font-weight:900;cursor:pointer;-webkit-tap-highlight-color:transparent;">
+                        👤 Другой герой
+                    </button>
+                </div>
+                <button id="cg-death-exit" style="width:100%;padding:12px;border:1px solid rgba(255,255,255,0.1);border-radius:16px;background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.5);font-size:13px;cursor:pointer;-webkit-tap-highlight-color:transparent;">
+                    ✕ Выйти
+                </button>
+            </div>
+        </div>
+    </div>
     <!-- Кнопки управления -->
     <div style="padding:4px 12px 10px;width:100%;box-sizing:border-box;flex-shrink:0;background:rgba(0,0,0,0.3);">
         <style>
@@ -10866,12 +10944,12 @@ let _cgDataLoaded = false;
 // Загружаем данные из Firebase один раз при логине
 async function cgLoadData() {
     try {
-        if(!window.user || !window.db) return;
-        const { get: fbGet, ref: fbRef } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js').catch(()=>({}));
-        const _get = (typeof get !== 'undefined') ? get : fbGet;
-        const _ref = (typeof ref !== 'undefined') ? ref : fbRef;
-        if(!_get || !_ref) return;
-        const snap = await _get(_ref(db, 'gameData/' + user.id + '/chicken'));
+        const _db = window.db;
+        const _r  = window._ref;
+        if(!window.user || !_db || !_r) return;
+        const { get: fbGet } = await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js').catch(()=>({}));
+        if(!fbGet) return;
+        const snap = await fbGet(_r(_db, 'gameData/' + window.user.id + '/chicken'));
         const d = snap.val();
         if(d) { _cgAttempts = d.attempts ?? CG_MAX_ATTEMPTS; _cgLastRefill = d.lastRefill || Date.now(); }
         _cgDataLoaded = true;
@@ -10879,8 +10957,11 @@ async function cgLoadData() {
 }
 async function cgSaveData() {
     try {
-        if(!window.user || !window.db) return;
-        await update(ref(db, 'gameData/' + user.id + '/chicken'), { attempts: _cgAttempts, lastRefill: _cgLastRefill });
+        const _db  = window.db;
+        const _r   = window._ref;
+        const _upd = window._update;
+        if(!window.user || !_db || !_r || !_upd) return;
+        await _upd(_r(_db, 'gameData/' + window.user.id + '/chicken'), { attempts: _cgAttempts, lastRefill: _cgLastRefill });
     } catch(e) {}
 }
 function cgIsAdmin() {
@@ -11096,6 +11177,10 @@ window.closeChickenGame = () => {
     if(_cgAnimId) cancelAnimationFrame(_cgAnimId);
     document.getElementById('chicken-game-overlay').style.display = 'none';
     document.getElementById('cg-char-select').style.display = 'none';
+    const lo = document.getElementById('cg-level-overlay');
+    const do_ = document.getElementById('cg-death-overlay');
+    if(lo)  lo.style.display  = 'none';
+    if(do_) do_.style.display = 'none';
     updateChickenAttemptsBadge();
 };
 
@@ -11161,7 +11246,10 @@ function cgInit() {
         lastCrossing: 0,
         coinsEarned: 0,
         xpGained: 0,
-        abilityCharges: char.abilityCharges,
+        levelCoins: 0,
+        levelXp: 0,
+        levelScore: 0,
+        abilityCharges: 1, // Старт с 1 заряда, макс = char.abilityCharges
         slowMode: 0,
         shieldFrames: 0,
         stunTimer: 0,
@@ -11197,17 +11285,15 @@ const CG_CAR_TYPES = [
     '🚗','🚕','🚙','🏎️','🚓','🚑','🚒','🚌','🚛','🚐'
 ];
 
-// Безопасные ряды (тротуары): каждый 3-й ряд дороги (r=3, r=6, ...)
-function cgIsSafeRow(r) { return r % 3 === 0; }
-
 function cgSpawnCars() {
     const s = _cgState;
     s.cars = [];
-    s.safeRows = new Set(); // запоминаем безопасные ряды
+    s.safeRows = new Set();
+    // Каждый 3-й ряд — пустой (передышка), без машин и без декора
     for(let r = 1; r < s.ROWS-1; r++) {
-        if(cgIsSafeRow(r)) {
+        if(r % 3 === 0) {
             s.safeRows.add(r);
-            continue; // тротуар — машин нет
+            continue;
         }
         const baseSpeed = 0.35 + Math.random() * 0.3;
         const levelBonus = (s.level - 1) * 0.07;
@@ -11373,24 +11459,9 @@ function cgLoop() {
     for(let r=1; r<s.ROWS-1; r++) {
         const y = r * s.cellH;
         if(safeRows.has(r)) {
-            // Тротуар — тёмно-зелёный с разметкой
-            ctx.fillStyle = '#1a3520';
+            // Пустой ряд — просто тёмная дорога без машин
+            ctx.fillStyle = '#1e1e1e';
             ctx.fillRect(0, y, s.canvas.width, s.cellH);
-            // Полосы тротуара
-            ctx.fillStyle = 'rgba(46,204,113,0.12)';
-            ctx.fillRect(0, y, s.canvas.width, s.cellH);
-            // Иконка скамейки/отдыха
-            ctx.font = `${s.cellH * 0.45}px serif`;
-            ctx.textAlign = 'center';
-            ctx.globalAlpha = 0.35;
-            for(let c = 1; c < s.COLS; c += 2) {
-                ctx.fillText('🌿', c * s.cellW + s.cellW/2, y + s.cellH*0.72);
-            }
-            ctx.globalAlpha = 1;
-            // Надпись SAFE
-            ctx.fillStyle = 'rgba(46,204,113,0.5)';
-            ctx.font = `bold ${s.cellH * 0.28}px sans-serif`;
-            ctx.fillText('SAFE', s.canvas.width/2, y + s.cellH*0.68);
         } else {
             ctx.fillStyle = r % 2 === 0 ? '#242424' : '#2c2c2c';
             ctx.fillRect(0, y, s.canvas.width, s.cellH);
@@ -11431,11 +11502,11 @@ function cgLoop() {
         }
     }
 
-    // Машины
-    const carFontSize = Math.floor(s.cellH * 0.72);
-    ctx.font = carFontSize + 'px serif';
+    // Машины — всегда через translate+scale для корректного зеркалирования
+    ctx.save();
+    ctx.font = Math.floor(s.cellH * 0.7) + 'px serif';
     ctx.textBaseline = 'middle';
-    ctx.textAlign = 'left';
+    ctx.textAlign = 'center';
 
     for(const car of s.cars) {
         if(car.stunned > 0) { car.stunned--; }
@@ -11445,26 +11516,20 @@ function cgLoop() {
         if(car.speed < 0 && car.x < -s.cellW*3) car.x = s.canvas.width + s.cellW*2;
 
         if(car.stunned > 0 && Math.floor(car.stunned / 8) % 2 === 0) ctx.globalAlpha = 0.35;
+        else ctx.globalAlpha = 1;
 
-        const drawY = car.row * s.cellH + s.cellH * 0.5;
+        const centerX = car.x + car.w * 0.5;
+        const centerY = car.row * s.cellH + s.cellH * 0.5;
 
-        if(car.facingRight) {
-            // Едет вправо — рисуем как есть
-            ctx.fillText(car.emoji, car.x, drawY);
-        } else {
-            // Едет влево — зеркалим через transform относительно центра машины
-            const midX = car.x + car.w * 0.5;
-            ctx.save();
-            ctx.translate(midX, drawY);
-            ctx.scale(-1, 1);
-            ctx.fillText(car.emoji, -car.w * 0.5, 0);
-            ctx.restore();
-        }
-
-        ctx.globalAlpha = 1;
+        ctx.save();
+        ctx.translate(centerX, centerY);
+        // Едет влево = facingRight:false → отражаем по X
+        if(!car.facingRight) ctx.transform(-1, 0, 0, 1, 0, 0);
+        ctx.fillText(car.emoji, 0, 0);
+        ctx.restore();
     }
-    ctx.textBaseline = 'alphabetic';
-    ctx.textAlign = 'center';
+    ctx.restore();
+    ctx.globalAlpha = 1;
 
     // Игрок
     const px = s.player.col * s.cellW + s.cellW/2;
@@ -11583,100 +11648,168 @@ async function cgCrossed() {
 }
 async function cgCrossedInner() {
     const s = _cgState;
-    if(s.moving) return; // защита от двойного вызова
+    if(s.moving) return;
     s.moving = true;
 
     s.crossings++;
     const scoreGain = 10 + s.level * 4;
     const coinsGain = 20 + s.level * 10;
     const xpGain    = 4  + s.level * 2;
-    s.score      += scoreGain;
+    s.score       += scoreGain;
     s.coinsEarned += coinsGain;
-    s.xpGained   += xpGain;
+    s.xpGained    += xpGain;
+    // Считаем накопленное за уровень (с последнего level-up)
+    s.levelCoins  = (s.levelCoins || 0) + coinsGain;
+    s.levelXp     = (s.levelXp    || 0) + xpGain;
+    s.levelScore  = (s.levelScore  || 0) + scoreGain;
 
     document.getElementById('cg-score').textContent = s.score;
-    showToast(`✅ Переход! +${coinsGain} монет +${xpGain} XP`, '#2ecc71');
-
-    if(s.crossings % 3 === 0) {
-        s.level++;
-        document.getElementById('cg-level').textContent = s.level;
-        showToast(`🆙 Уровень ${s.level}! Осторожнее!`, '#a855f7');
-        cgSpawnCars();
-    }
 
     // Перезаряд способности каждые 2 перехода
     if(s.crossings % 2 === 0 && s.abilityCharges < s.char.abilityCharges) {
         s.abilityCharges++;
         cgUpdateAbilityBtn();
-        showToast(`⚡ Способность перезаряжена!`, '#00cfff');
     }
 
     cgSpawnCoins();
     s.player.col = Math.floor(s.COLS/2);
     s.player.row = s.ROWS-1;
-    setTimeout(()=>{ s.moving = false; }, 250);
+
+    // Каждые 3 перехода — повышение уровня + оверлей
+    if(s.crossings % 3 === 0) {
+        s.level++;
+        document.getElementById('cg-level').textContent = s.level;
+        cgSpawnCars();
+        // Показываем level overlay (пауза)
+        _cgRunning = false;
+        cgShowLevelOverlay(s.level, s.levelScore, s.levelCoins, s.levelXp);
+        // Сбрасываем накопленное за уровень
+        s.levelCoins = 0; s.levelXp = 0; s.levelScore = 0;
+    } else {
+        showToast('✅ +' + coinsGain + '💰 +' + xpGain + ' XP', '#2ecc71');
+        setTimeout(()=>{ s.moving = false; }, 250);
+    }
 }
 
-// ─── Конец игры ───────────────────────────────────────────────────
+function cgShowLevelOverlay(newLevel, sc, coins, xp) {
+    const ov = document.getElementById('cg-level-overlay');
+    if(!ov) return;
+    document.getElementById('cg-lvl-title').textContent = 'Уровень ' + newLevel + ' пройден!';
+    document.getElementById('cg-lvl-sub').textContent   = 'Дальше будет сложнее...';
+    document.getElementById('cg-lvl-score').textContent = sc;
+    document.getElementById('cg-lvl-coins').textContent = '+' + coins;
+    document.getElementById('cg-lvl-xp').textContent    = '+' + xp;
+    // emoji уровня
+    const emojis = ['🌱','🌿','🌲','🔥','⚡','💎','👑','🚀','🌌','💥'];
+    document.getElementById('cg-lvl-emoji').textContent = emojis[Math.min(newLevel - 1, emojis.length-1)];
+    ov.style.display = 'flex';
+
+    // Кнопка "Забрать" — начисляем монеты/XP прямо сейчас, выходим
+    document.getElementById('cg-lvl-take').onclick = async () => {
+        ov.style.display = 'none';
+        await cgAwardAndExit();
+    };
+    // Кнопка "Дальше" — продолжаем
+    document.getElementById('cg-lvl-continue').onclick = () => {
+        ov.style.display = 'none';
+        const s = _cgState;
+        s.moving = false;
+        _cgRunning = true;
+        cgLoop();
+        showToast('🆙 Уровень ' + newLevel + '! Осторожнее!', '#a855f7');
+    };
+}
+
+// ─── Начислить награды и выйти ("Забрать") ────────────────────────
+async function cgAwardAndExit() {
+    _cgRunning = false;
+    if(_cgAnimId) cancelAnimationFrame(_cgAnimId);
+    const s = _cgState;
+    await cgDoAward(s);
+    document.getElementById('cg-level-overlay').style.display  = 'none';
+    document.getElementById('cg-death-overlay').style.display  = 'none';
+    closeChickenGame();
+}
+
+// ─── Firebase: начислить монеты + XP ─────────────────────────────
+async function cgDoAward(s) {
+    spendAttempt();
+    try {
+        const _db = window.db;
+        const _r  = window._ref;
+        const _tx = window._runTransaction;
+        const _xp = window._awardXp;
+        if(_db && _r && _tx && window.user) {
+            const userRef = _r(_db, 'users/' + window.user.id);
+            if(s.coinsEarned > 0) {
+                await _tx(userRef, cur => {
+                    if(!cur) return cur;
+                    return { ...cur, balance: (cur.balance || 0) + s.coinsEarned };
+                });
+                const balEl = document.getElementById('u-bal');
+                if(balEl) { balEl.classList.remove('balance-flash'); void balEl.offsetWidth; balEl.classList.add('balance-flash'); }
+            }
+            if(s.xpGained > 0 && _xp) await _xp(window.user.id, s.xpGained);
+        }
+    } catch(e) { console.error('cgDoAward error:', e); }
+    updateChickenAttemptsBadge();
+}
+
+// ─── Конец игры (все жизни) ───────────────────────────────────────
 async function cgGameOver() {
     _cgRunning = false;
     if(_cgAnimId) cancelAnimationFrame(_cgAnimId);
     const s = _cgState;
 
-    spendAttempt();
+    // Начисляем всё заработанное
+    await cgDoAward(s);
 
-    if(s.coinsEarned > 0 || s.xpGained > 0) {
-        try {
-            const r = ref(db,'users/'+user.id);
-            await runTransaction(r, cur => {
-                if(!cur) return cur;
-                return {...cur, balance: (cur.balance||0) + s.coinsEarned };
-            }).catch(()=>{});
-            if(s.xpGained > 0) awardXp(user.id, s.xpGained);
-        } catch(e) {}
-    }
+    // Показываем death overlay поверх canvas
+    const ov = document.getElementById('cg-death-overlay');
+    if(!ov) { closeChickenGame(); return; }
 
-    updateChickenAttemptsBadge();
+    document.getElementById('cg-death-emoji').textContent  = s.char.emoji;
+    document.getElementById('cg-death-char').textContent   = 'Дорожный Безумец — ' + s.char.name;
+    document.getElementById('cg-death-score').textContent  = s.score;
+    document.getElementById('cg-death-coins').textContent  = '+' + s.coinsEarned;
+    document.getElementById('cg-death-xp').textContent     = '+' + s.xpGained;
 
-    const _charEmoji = s.char.emoji;
-    const _charName  = s.char.name;
-    const _score     = s.score;
-    const _coins     = s.coinsEarned;
-    const _xp        = s.xpGained;
-    document.getElementById('modal-content').innerHTML =
-        '<div style="text-align:center;padding:10px 0;">' +
-        '<div style="font-size:44px;margin-bottom:6px;">' + _charEmoji + '</div>' +
-        '<div style="font-size:18px;font-weight:900;color:#ff6b6b;margin-bottom:2px;">Игра окончена!</div>' +
-        '<div style="font-size:12px;color:var(--secondary);margin-bottom:14px;">Дорожный Безумец — ' + _charName + '</div>' +
-        '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">' +
-          '<div style="background:rgba(255,255,255,0.06);border-radius:12px;padding:10px;"><div style="font-size:18px;font-weight:900;color:#ffd700;">' + _score + '</div><div style="font-size:9px;color:var(--secondary);">ОЧКИ</div></div>' +
-          '<div style="background:rgba(46,204,113,0.1);border-radius:12px;padding:10px;"><div style="font-size:18px;font-weight:900;color:#2ecc71;">+' + _coins + '</div><div style="font-size:9px;color:var(--secondary);">МОНЕТ</div></div>' +
-          '<div style="background:rgba(255,200,0,0.1);border-radius:12px;padding:10px;"><div style="font-size:18px;font-weight:900;color:#ffd700;">+' + _xp + '</div><div style="font-size:9px;color:var(--secondary);">XP</div></div>' +
-        '</div>' +
-        '<div id="cg-next-info" style="background:rgba(255,255,255,0.04);border-radius:10px;padding:8px;font-size:11px;color:var(--secondary);margin-bottom:14px;"></div>' +
-        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">' +
-          '<button class="btn" style="background:linear-gradient(90deg,#2ecc71,#27ae60);font-size:13px;" onclick="cgQuickRestart();">🔄 Снова за ' + _charEmoji + '</button>' +
-          '<button class="btn" style="background:linear-gradient(90deg,#2481cc,#1a6ab0);font-size:13px;" onclick="cgPickNewChar();">👤 Другой герой</button>' +
-        '</div>' +
-        '<button class="btn" style="width:100%;background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.1);font-size:13px;color:rgba(255,255,255,0.55);" onclick="closeModal();closeChickenGame();">✕ Выйти из игры</button>' +
-        '</div>';
-    closeChickenGame();
-    openModal();
-
-    const _remaining = cgGetCurrent();
-    const _elapsed2 = Date.now() - _cgLastRefill;
-    const _timeLeft2 = Math.ceil((CG_REFILL_MS - _elapsed2) / 60000);
-    const infoEl = document.getElementById('cg-next-info');
-    if(infoEl) {
-        if(cgIsAdmin()) {
-            infoEl.textContent = '👑 Вы админ — попытки бесконечны';
-            infoEl.style.color = '#ffd700';
-        } else {
-            infoEl.textContent = _remaining > 0
-                ? `🎮 Осталось попыток: ${_remaining}/${CG_MAX_ATTEMPTS}`
-                : `⏳ Следующие попытки через ${_timeLeft2} мин`;
+    const rem = cgGetCurrent();
+    const attEl = document.getElementById('cg-death-attempts');
+    if(attEl) {
+        if(cgIsAdmin()) { attEl.textContent = '👑 Попытки бесконечны'; attEl.style.color = '#ffd700'; }
+        else if(rem > 0) attEl.textContent = '🎮 Осталось попыток: ' + rem + '/' + CG_MAX_ATTEMPTS;
+        else {
+            const tl = Math.ceil((CG_REFILL_MS - (Date.now() - _cgLastRefill)) / 60000);
+            attEl.textContent = '⏳ Новые попытки через ' + tl + ' мин';
         }
     }
+
+    // Кнопка "Снова" — тот же персонаж
+    document.getElementById('cg-death-retry').onclick = () => {
+        ov.style.display = 'none';
+        const attempts = getAvailableAttempts();
+        if(attempts <= 0) { showToast('⏳ Попытки закончились!', '#f39c12'); return; }
+        const overlay = document.getElementById('chicken-game-overlay');
+        overlay.style.display = 'flex';
+        updateChickenAttemptsBadge();
+        cgInit();
+    };
+    // Кнопка "Другой герой"
+    document.getElementById('cg-death-newchar').onclick = () => {
+        ov.style.display = 'none';
+        closeChickenGame();
+        const attempts = getAvailableAttempts();
+        if(attempts <= 0) { showToast('⏳ Попытки закончились!', '#f39c12'); return; }
+        cgOpenCharSelect();
+    };
+    // Кнопка "Выйти"
+    document.getElementById('cg-death-exit').onclick = () => {
+        ov.style.display = 'none';
+        closeChickenGame();
+    };
+
+    ov.style.display = 'flex';
 }
 
 // Быстрый рестарт с тем же персонажем
